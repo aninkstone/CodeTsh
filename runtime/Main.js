@@ -1,4 +1,4 @@
-require("runtime/InnerDef.js");
+require("runtime/object/InnerDef.js");
 
 var set = {
     font : {
@@ -12,40 +12,36 @@ var set = {
         path : "",
         curr : "",
     },
+    documents: new Map (),
 };
+
+var $ = {
+    api: {
+        document: {},
+        editor: {},
+        widget: {},
+    },
+};
+
+var windows = {};
 
 set.runtime.path = (new FileSystem()).getcwd();
 set.runtime.curr = (new FileSystem()).getcwd();
 
-Console.log (set.runtime.path);
-Console.log (set.runtime.curr);
+require(set.runtime.path + "/runtime/object/Document.js");
+require(set.runtime.path + "/runtime/object/Widget.js");
+require(set.runtime.path + "/runtime/object/Editor.js");
 
-var Document = require(set.runtime.path + "/runtime/Document.js");
-var Editor = require(set.runtime.path + "/runtime/Editor.js");
-var Widget = require(set.runtime.path + "/runtime/Widget.js");
+var Sept = require(set.runtime.path + "/runtime/Sept.js");
+var Stat = require(set.runtime.path + "/runtime/Stat.js");
+var Edit = require(set.runtime.path + "/runtime/Edit.js");
+var Nerd = require(set.runtime.path + "/runtime/Nerd.js");
+
 var Complete = require(set.runtime.path + "/runtime/AutoComp.js");
-var KeyInvoker = require(set.runtime.path + "/runtime/KeyBind.js");
+var HandlerDefault = require(set.runtime.path + "/runtime/DefaultHandler.js");
 var FilePath = require(set.runtime.path + "/runtime/Path.js");
 
-var defaultDocHandle = {
-    onModifyAttempt: function(){
-    }, 
-    onLexerChanged: function() {
-    }, 
-    onSavePoint: function() {
-    }, 
-    onStyleNeeded: function() {
-    }, 
-    onErrorOccurred: function() {
-    },
-    onDeleted: function() {
-    },
-    onModified: function() {
-    },
-};
-
-var defaultDoc = new Document("./CodeTor.txt", defaultDocHandle);
-Console.log ("E:/新建文件夹/a.txt");
+var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
 
 require(set.runtime.path + "/runtime/themes/default.js");
 require(set.runtime.path + "/runtime/themes/c.js");
@@ -57,8 +53,7 @@ require(set.runtime.path + "/runtime/themes/sb.js");
 Interact = require(set.runtime.path + "/runtime/Interact.js");
 NerdTree = require(set.runtime.path + "/runtime/NerdTree.js");
 EditView = require(set.runtime.path + "/runtime/EditView.js");
-WindowMgr = require(set.runtime.path + "/runtime/WindowMgr.js");
-Windows = new WindowMgr ();
+Windows =  require(set.runtime.path + "/runtime/Windows.js");
 
 //var t = new Thread ();
 //t.run (function (){

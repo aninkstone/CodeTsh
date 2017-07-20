@@ -1,11 +1,12 @@
 (function(){
-    function ExecuteScriptSlash (widget, editor) {
-        copen = widget.document;
+    function ExecuteScriptSlash (thiz, editor) {
+        copen = thiz.document;
         try {
             var content = "";
             for (idx = 0; idx < copen.length; ++idx) {
                 content += (String.fromCharCode(copen.charAt(idx))); 
             }
+
             if (content.length <= 0) {
                 return;
             }
@@ -46,8 +47,8 @@
         }
     }
 
-    function ExecuteScriptEnter (widget, editor){
-        copen = widget.document;
+    function ExecuteScriptEnter (thiz, editor){
+        copen = thiz.document;
         try {
             var content = "";
             for (idx = 0; idx < copen.length; ++idx) {
@@ -93,70 +94,65 @@
             copen.insertChars(e.toString());
         }
     };
+
     return function (parent, x, y, w, h) {
-        var widget = {};
-        widget = new Editor (parent, {"onDraw":function(canvas){
-            //p = widget.paint;
-            //p.style = 0x00;
-            //p.color = config.background.color;
-            //canvas.drawRect(0, 0, widget.width, widget.height, p);
-        }, "onEvent":function(event, argument){
-            switch (event) {
-                case "SYS:INPUTTEXT":
-                    ExecuteScriptSlash(widget, widget.focusView);
-                    break;
-                case "SYS:KEY":
-                    Console.log (argument.key);
-                    switch (argument.key) {
-                        case 47:  /* / */
-                            break;
-                        case 9:   /* tab */
-                            break;
-                        case 13:  /* enter  */
-                            ExecuteScriptEnter (widget, widget.focusView);
-                            widget.focusView.setFocus();
-                            return true;
-                        case 27:  /* escape */
-                            widget.focusView.setFocus();
-                            widget.document.deleteChars(0, widget.document.length);
-                            return true;
-                        default:
-                            break;
-                    }
-                    break;
-                case "SYS:SIZECHANGE":
-                    widget.onSizeChange();
-                    break;
-                case "SYS:CLICK":
-                    widget.onClick (argument)
-                    break;
-                case "SYS:FOCUSIN":
-                    SDL.setCursor(SDL_SYSTEM_CURSOR_IBEAM);
-                    break;
-                case "SYS:FOCUSOUT":
-                    break;
-                default:
-                    break;
-            }
-            return false;
-        }});
+        var thiz = $.api.editor.createEditor(parent);
+        var CB = {
+            OnDraw: function (thiz, canvas) {
+            },
+            OnEvent: function (thiz, evt, argument) {
+                switch (evt) {
+                    case "SYS:INPUTTEXT":
+                        ExecuteScriptSlash(thiz, thiz.focusView);
+                        break;
+                    case "SYS:KEY":
+                        switch (argument.key) {
+                            case 47:  /* / */
+                                break;
+                            case 9:   /* tab */
+                                break;
+                            case 13:  /* enter  */
+                                ExecuteScriptEnter (thiz, thiz.focusView);
+                                windows.focusView.setFocus();
+                                return true;
+                            case 27:  /* escape */
+                                windows.focusView.setFocus();
+                                thiz.document.deleteChars(0, thiz.document.length);
+                                return true;
+                            default:
+                                break;
+                        }
+                        break;
+                    case "SYS:SIZECHANGE":
+                        thiz.OnSizeChange();
+                        break;
+                    case "SYS:CLICK":
+                        thiz.OnClick (argument)
+                        break;
+                    case "SYS:FOCUSIN":
+                        SDL.setCursor(SDL_SYSTEM_CURSOR_IBEAM);
+                        break;
+                    case "SYS:FOCUSOUT":
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            },
+        };
+        thiz.setCB (CB);
 
-        widget.locX = x;
-        widget.locY = y;
-        widget.width  = w;
-        widget.height = h;
+        thiz.locX = x;
+        thiz.locY = y;
+        thiz.width  = w;
+        thiz.height = h;
 
-        widget.paint = new Paint();
-
-        widget.onClick = function (state) {
+        thiz.OnSizeChange = function () {
+            thiz.width = parent.width;
+            thiz.locY  = parent.height - thiz.height;
         }
 
-        widget.onSizeChange = function () {
-            widget.width = parent.width;
-            widget.locY  = parent.height - widget.height;
-        }
-
-        lexerSync(widget, lexer_commander);
-        return widget;
+        lexerSync(thiz, lexer_commander);
+        return thiz;
     };
 })();

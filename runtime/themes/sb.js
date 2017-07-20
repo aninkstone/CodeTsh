@@ -36,4 +36,3 @@ function* lexer_slidebar_font() {
 function* lexer_slidebar_margin_zero (){
     yield [SCI_SETMARGINS, 0x00, 0x00];
 };
-

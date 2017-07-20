@@ -1,10 +1,9 @@
-var window = {};
-
 (function namespace_none () {
-    window = new Window(null, {"onDraw":function(canvas){
-        p = window.paint;
+    var widget = {};
+    widget = new Window(null, {"OnDraw":function(thiz, canvas){
+        p = new Paint();
         p.color = 0xFFE0E0E0;
-        canvas.drawRect (0, 0, window.width, window.height, p);
+        canvas.drawRect (0, 0, thiz.width, thiz.height, p);
 
         p.color = 0xFF00E000;
         path = new Path();
@@ -14,14 +13,11 @@ var window = {};
         path.lineTo(40.0, 80.0);
         path.lineTo(40.0, 0.0);
         path.close();
-        canvas.drawPath(path, window.paint);
-    },"onEvent":function(event, argument){
+        canvas.drawPath(path, p);
+    },"OnEvent":function(thiz, event, argument){
         switch (event) {
             case "SYS:SIZECHANGE":
-                window.onResize();
-                break;
-            case "SYS:CLICK":
-                window.onClick (argument)
+                thiz.OnSizeChange(thiz);
                 break;
             default:
                 break;
@@ -29,19 +25,12 @@ var window = {};
         return false;
     }});
 
-    window.onClick = function (argument) {
+    windows = new Windows (widget);
+    widget.OnSizeChange = function (thiz) {
+        windows.resize (thiz);
     }
 
-    window.paint = new Paint();
-
-    window.onResize = function () {
-        Windows.resize (window);
-    }
-
-    Windows.init(window);
-
-    window.run(function(){
-    });
+    widget.run(function(){});
 })();
 
 function ExecuteCommand (widget, cmd, shift, alt, ctrl){
