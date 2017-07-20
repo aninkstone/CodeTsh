@@ -237,7 +237,6 @@
         thiz.nerd = {};
 
         thiz.nerd.view = new Nerd (thiz, interact);
-
         thiz.stat.view = new Stat (thiz, interact);
 
         thiz.OnSizeChange = function (thiz) {

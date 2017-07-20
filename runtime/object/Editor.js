@@ -3,8 +3,14 @@
         OnDraw: function (thiz, canvas) {
             p = new Paint ();
             p.style = 0x00;
-            p.color = 0xFFF300FF;
+            p.color = 0x11F300FF;
             canvas.drawRect(0, 0, thiz.width, thiz.height, p);
+
+            p.color = 0xFFEEEEEE;
+            p.fontSize = 48;
+            p.fontFamily = set.font.family;
+
+            canvas.drawText("1", 5, 48, p);
         },
         OnEvent:function (thiz, evt, argument) {
             try {

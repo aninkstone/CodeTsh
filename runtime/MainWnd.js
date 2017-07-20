@@ -25,6 +25,7 @@
         return false;
     }});
 
+    set.window = widget;
     windows = new Windows (widget);
     widget.OnSizeChange = function (thiz) {
         windows.resize (thiz);

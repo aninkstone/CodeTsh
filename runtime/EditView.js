@@ -1,25 +1,25 @@
 (function (){
     return function (parent, interact, x, y, w, h) {
-        var thiz = $.api.widget.createWidget(parent);
+        var handle = $.api.widget.createWidget(parent);
 
-        thiz.setFocus = function () {
-            thiz.edit.view.setFocus();
+        handle.setFocus = function () {
+            handle.edit.view.setFocus();
         };
 
-        thiz.locX = x;
-        thiz.locY = y;
-        thiz.width  = w;
-        thiz.height = h;
+        handle.locX = x;
+        handle.locY = y;
+        handle.width  = w;
+        handle.height = h;
 
-        thiz.stat = {};
-        thiz.sept = {};
-        thiz.edit = {};
+        handle.stat = {};
+        handle.sept = {};
+        handle.edit = {};
 
-        thiz.sept.view = new Sept (thiz, interact);
-        thiz.stat.view = new Stat (thiz, interact);
-        thiz.edit.view = new Edit (thiz, interact);
+        handle.sept.view = new Sept (handle, interact);
+        handle.stat.view = new Stat (handle, interact);
+        handle.edit.view = new Edit (handle, interact);
 
-        thiz.OnSizeChange = function (thiz) {
+        handle.OnSizeChange = function (thiz) {
             thiz.sept.view.locX   = 0;
             thiz.sept.view.locY   = 0;
             thiz.sept.view.width  = 8;
@@ -35,9 +35,9 @@
             thiz.edit.view.width  = thiz.width - thiz.sept.view.width;
             thiz.edit.view.height = thiz.height - thiz.stat.view.height;
         }
-        thiz.OnSizeChange (thiz);
+        handle.OnSizeChange (handle);
 
-        thiz.edit.view.document = defaultDoc;
-        return thiz;
+        handle.edit.view.document = defaultDoc;
+        return handle;
     };
 })();

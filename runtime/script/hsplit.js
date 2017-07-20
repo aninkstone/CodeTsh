@@ -1,6 +1,6 @@
 (function(){
     return function(doc, editor, text){
-        layout.hsplit(window);
+        windows.hsplit(set.window);
         return true;
     }
 })();

@@ -13,6 +13,7 @@ var set = {
         curr : "",
     },
     documents: new Map (),
+    window: {},
 };
 
 var $ = {
