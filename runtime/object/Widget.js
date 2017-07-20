@@ -29,6 +29,7 @@
                         }
                         break;
                     case "SYS:FOCUSIN":
+                        SDL.setCursor(SDL_SYSTEM_CURSOR_HAND);
                         if (typeof thiz.OnFocusIn === 'function') {
                             thiz.OnFocusIn (thiz);
                         }

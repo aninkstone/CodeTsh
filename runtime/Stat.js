@@ -33,10 +33,13 @@
         thiz.OnClick = function (thiz, argument){
             switch (argument.state) {
                 case 0: /* mouse down */
+                    windows.statClick (parent, argument, 0);
                     break;
                 case 1: /* mouse move */
+                    windows.statClick (parent, argument, 1);
                     break;
                 case 2: /* mouse up */
+                    windows.statClick (parent, argument, 2);
                     break;
                 default:
                     break;

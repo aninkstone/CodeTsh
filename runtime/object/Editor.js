@@ -2,15 +2,15 @@
     var defaultCB = {
         OnDraw: function (thiz, canvas) {
             p = new Paint ();
-            p.style = 0x00;
-            p.color = 0x11F300FF;
-            canvas.drawRect(0, 0, thiz.width, thiz.height, p);
+            //p.style = 0x00;
+            //p.color = 0x11F300FF;
+            //canvas.drawRect(0, 0, thiz.width, thiz.height, p);
 
             p.color = 0xFFEEEEEE;
             p.fontSize = 48;
             p.fontFamily = set.font.family;
 
-            canvas.drawText("1", 5, 48, p);
+            canvas.drawText(thiz.name, 5, 48, p);
         },
         OnEvent:function (thiz, evt, argument) {
             try {
@@ -79,6 +79,7 @@
 
             var thiz = new Editor (parent, CB);
             thiz.parent = parent;
+            thiz.name = "";
 
             thiz.setCB = function (cb) {
                 if (typeof cb !== 'object') {

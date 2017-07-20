@@ -6,6 +6,10 @@
             handle.edit.view.setFocus();
         };
 
+        handle.setName = function (name) {
+            handle.edit.view.name = name.toString();
+        };
+
         handle.locX = x;
         handle.locY = y;
         handle.width  = w;

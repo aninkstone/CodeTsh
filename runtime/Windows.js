@@ -1,5 +1,5 @@
 (function(){
-    var INDEXOFVIEW = 1;
+    var INDEXOFVIEW = 0;
     function Windows (parent) {
 
         this.interact = new Interact (parent, 0, parent.height - 24, parent.width, 24);
@@ -38,7 +38,7 @@
                 var leftMax = 0;
                 this.views.forEach((v, k) => {
                     var x = v.locX + v.width;
-                    if (leftMax < x) {
+                    if (leftMax <= x) {
                         leftMax = x;
                     }
                 });
@@ -48,7 +48,7 @@
                 var botmMax = 0;
                 this.views.forEach((v, k) => {
                     var y = v.locY + v.height;
-                    if (botmMax < y) {
+                    if (botmMax <= y) {
                         botmMax = y;
                     }
                 });
@@ -60,7 +60,7 @@
                 var match = [];
                 this.views.forEach((v, k) => {
                     var x = v.locX + v.width;
-                    if (leftMax == x) {
+                    if (Math.abs(leftMax - x) <= 2) {
                         match.push(v);
                     }
                 });
@@ -72,7 +72,7 @@
                 var match = [];
                 this.views.forEach((v, k) => {
                     var y = v.locY + v.height;
-                    if (botmMax == y) {
+                    if (Math.abs(botmMax - y) <= 2) {
                         match.push(v);
                     }
                 });
@@ -91,10 +91,25 @@
 
         };
 
-        this.vsplit(parent);
-        this.hsplit(parent);
-        this.vsplit(parent);
-        this.hsplit(parent);
+        //this.vsplit(parent);
+        //this.vsplit(parent);
+        //this.hsplit(parent);
+        //this.hsplit(parent);
+
+        this.views.forEach((v, k)=>{ 
+            try {
+                v.setName(k); 
+            }
+            catch (e){
+            }
+        });
+    };
+
+    Windows.prototype.setFocus = function (index) {
+        var obj = this.views.get (index);
+        if (obj) {
+            obj.setFocus();
+        }
     };
 
     Windows.prototype.septClick = function (widget, pos, stat) {
@@ -144,9 +159,6 @@
                 v.width = v.click.w + offsetX;
             });
 
-            if (this.same.length > 1) {
-                return;
-            }
             this.same.forEach((v)=>{
                 v.locX  = widget.locX;
                 v.width = v.click.w - offsetX;
@@ -154,7 +166,59 @@
         }
     };
 
-    Windows.prototype.statClick = function (widget, pos) {
+    Windows.prototype.statClick = function (widget, pos, stat) {
+        if (stat == 0) {
+            this.views.forEach((v, k) => {
+                v.click.x = v.locX;
+                v.click.y = v.locY;
+                v.click.w = v.width;
+                v.click.h = v.height;
+            });
+        }
+
+        var same = (resizeWidget)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                if ((v.locY + v.height) == (resizeWidget.height + resizeWidget.locY)) {
+                    if (this.viewID(v) != this.viewID(resizeWidget)) {
+                        match.push (v);
+                    }
+                }
+            });
+            return match;
+        }
+
+        var near = (resizeWidget)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var y = v.locY;
+                if (Math.abs(y - (resizeWidget.locY + resizeWidget.height)) <= 1) {
+                    match.push(v);
+                }
+            });
+            return match;
+        }
+
+        if (stat == 1) {
+            this.same = same (widget);
+            this.near = near (widget);
+        }
+
+        if (stat == 2) {
+            var offsetY = (pos.currY - pos.origY);
+            Console.log ("1:" + offsetY);
+            Console.log ("2:" + widget.height);
+            Console.log ("3:" + widget.click.y);
+            //widget.height = widget.height - widget.click.y + offsetY; 
+            widget.height = widget.height - (widget.click.y - offsetY); 
+            Console.log ("4:" + widget.height);
+
+            //this.near.forEach((v)=>{
+            //    //v.locY = v.click.y + offsetY;
+            //    //var dist = v.locY - v.click.y;
+            //    //v.height = v.height - dist;
+            //});
+        }
     };
 
     Windows.prototype.vsplit = function (parent) {
