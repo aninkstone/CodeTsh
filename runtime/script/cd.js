@@ -11,7 +11,7 @@
         doc.insertChars(l);
         set.runtime.curr = l;
 
-        Windows.chdir(set.runtime.curr);
+        windows.chdir(set.runtime.curr);
     }
     return true;
 })();

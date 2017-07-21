@@ -19,9 +19,9 @@
         handle.sept = {};
         handle.edit = {};
 
-        handle.sept.view = new Sept (handle, interact);
-        handle.stat.view = new Stat (handle, interact);
         handle.edit.view = new Edit (handle, interact);
+        handle.stat.view = new Stat (handle, interact);
+        handle.sept.view = new Sept (handle, interact);
 
         handle.OnSizeChange = function (thiz) {
             thiz.sept.view.locX   = 0;
@@ -42,6 +42,8 @@
         handle.OnSizeChange (handle);
 
         handle.edit.view.document = defaultDoc;
+        lexerSync (handle.edit.view, lexer_c);
+        handle.edit.view.ro (true);
         return handle;
     };
 })();

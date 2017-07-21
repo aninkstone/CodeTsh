@@ -928,3 +928,7 @@ var SDL_SYSTEM_CURSOR_SIZEALL = 9;   /**< Four pointed arrow pointing north, sou
 var SDL_SYSTEM_CURSOR_NO = 10;       /**< Slashed circle or crossbones */
 var SDL_SYSTEM_CURSOR_HAND = 11;     /**< Hand */
 var SDL_NUM_SYSTEM_CURSORS = 12;
+
+EDGE_NONE = 0;
+EDGE_LINE = 1;
+

@@ -33,7 +33,7 @@
             }
         };
 
-        f(thiz, lexer_default); thiz.ro(true);
+        f(thiz, lexer_c); thiz.ro(true);
         return thiz;
     };
     return Edit;

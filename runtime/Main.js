@@ -7,6 +7,7 @@ var set = {
     },
     vim: {
         search: {},
+        cmd:"",
     },
     runtime: {
         path : "",

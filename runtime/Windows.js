@@ -5,6 +5,7 @@
         this.interact = new Interact (parent, 0, parent.height - 24, parent.width, 24);
         this.nerdtree = new NerdTree (parent, this.interact, 0, 0, 300, parent.height - this.interact.height)
         this.focusView = new EditView (parent, this.interact, 300, 0, parent.width - 300, parent.height - this.interact.height);
+        this.prevFocus = null;
 
         this.interact.click = {};
         this.nerdtree.click = {};
@@ -17,7 +18,7 @@
         this.views.set (INDEXOFVIEW++, this.focusView);
 
         this.chdir = function (p) {
-            this.nerdtree.edit.view.chdir (p);
+            this.nerdtree.nerd.view.chdir (p);
         }
 
         this.viewID = function (view) {
@@ -105,11 +106,19 @@
         });
     };
 
-    Windows.prototype.setFocus = function (index) {
+    Windows.prototype.setFocusID  = function (index) {
         var obj = this.views.get (index);
         if (obj) {
             obj.setFocus();
         }
+    };
+
+    Windows.prototype.focusViewID = function () {
+        return this.viewID(this.focusView);
+    };
+
+    Windows.prototype.viewsCount = function () {
+        return this.views.size;
     };
 
     Windows.prototype.septClick = function (widget, pos, stat) {
@@ -258,6 +267,7 @@
         try {
             this.views.forEach ((v, k, map)=>{
                 if (v == widget.parent) {
+                    this.prevFocus = this.focusView;
                     this.focusView = widget.parent;
                     this.interact.focusView = widget;
                     widget.inval ();

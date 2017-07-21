@@ -8,6 +8,7 @@ function* lexer_default (){
     yield* lexer_caret();
     yield* lexer_tab_width();
     yield* lexer_eolmode();
+    yield* lexer_linemode();
 
     yield [SCI_STYLECLEARALL, 0x00, 0x00];
     //yield [SCI_SETLEXERLANGUAGE, 0x00, "null"];
@@ -52,4 +53,9 @@ function* lexer_tab_width() {
 
 function* lexer_eolmode () {
     yield [SCI_SETEOLMODE, SC_EOL_LF, 0x00];
+};
+
+function* lexer_linemode() {
+    yield [SCI_SETEDGEMODE, EDGE_LINE, 0x00];
+    yield [SCI_SETEDGECOLUMN, 80, 0x00];
 };

@@ -3,10 +3,19 @@
         OnModifyAttempt: function(){ Console.log ("OnModifyAttempt"); }, 
         OnLexerChanged:  function(){ Console.log ("OnLexerChanged"); }, 
         OnSavePoint:     function(){ Console.log ("OnSavePoint"); }, 
-        OnStyleNeeded:   function(){ /* Console.log ("OnStyleNeeded"); */ }, 
+        //OnStyleNeeded:   function(){ Console.log ("OnStyleNeeded");  }, 
+        OnStyleNeeded:   function(thiz, endPos) { OnStyleNeeded(thiz, endPos); }, 
         OnErrorOccurred: function(){ Console.log ("OnErrorOccurred"); },
         OnDeleted:       function(){ Console.log ("OnDeleted"); },
         OnModified:      function(){ Console.log ("OnModified"); },
+    };
+
+    var OnStyleNeeded = function (thiz, endPos) {
+        var startPos = thiz.endStyled ();
+        var lineNumber = thiz.lineFromPosition(startPos);
+        startPos = thiz.lineStart(lineNumber);
+        Console.log (startPos);
+        Console.log (endPos);
     };
 
     $.api.document = {
