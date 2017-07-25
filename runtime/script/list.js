@@ -7,62 +7,6 @@
         array = new Array ();
         dir = new Document();
 
-        //content = fs.listDir(fpath, function(type, name){
-        //    switch (type) {
-        //        case 0: /* DT_UNKNOWN */
-        //            obj = ["|-", name, fpath];
-        //            array.push (obj);
-        //            break;
-        //        case 1: /* DT_REG */
-        //            obj = ["|-", name, fpath];
-        //            array.push (obj);
-        //            break;
-        //        case 2: /* DT_DIR */
-        //            if (name == "." || name == "..") {
-        //                break;
-        //            }
-        //            obj = ["|+", name, fpath];
-        //            array.push (obj);
-        //            break;
-        //            obj = ["|-", name, fpath];
-        //            array.push (obj);
-        //        case 3: /* DT_LNK */
-        //            obj = ["|-", name, fpath];
-        //            array.push (obj);
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //});
-
-        content = fs.listDir(fpath, function(type, name){
-            switch (type) {
-                case 0: /* DT_UNKNOWN */
-                    obj = [name, fpath];
-                    array.push (obj);
-                    break;
-                case 1: /* DT_REG */
-                    obj = [name, fpath];
-                    array.push (obj);
-                    break;
-                case 2: /* DT_DIR */
-                    if (name == "." || name == "..") {
-                        break;
-                    }
-                    obj = [name, fpath];
-                    array.push (obj);
-                    break;
-                    obj = [name, fpath];
-                    array.push (obj);
-                case 3: /* DT_LNK */
-                    obj = [name, fpath];
-                    array.push (obj);
-                    break;
-                default:
-                    break;
-            }
-        });
-
         nameMax = 0;
         pathMax = 0;
 
@@ -73,6 +17,9 @@
             if (pathMax < ele[1].length) {
                 pathMax = ele[1].length;
             }
+        });
+
+        set.documents.forEach((v,k)=>{
         });
 
         var comment = '" Press <F1> for Help \n';

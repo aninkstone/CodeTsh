@@ -27,13 +27,13 @@
     };
 
     var nerdTreeCB= {
-        OnModifyAttempt: function(){ Console.log ("NerdTree:OnModifyAttempt"); }, 
-        OnLexerChanged:  function(){ Console.log ("NerdTree:OnLexerChanged"); }, 
-        OnSavePoint:     function(){ Console.log ("NerdTree:OnSavePoint"); }, 
+        OnModifyAttempt: function(){ }, 
+        OnLexerChanged:  function(){ }, 
+        OnSavePoint:     function(){ }, 
         OnStyleNeeded:   function(doc, end) { OnStyleNeededHandle(doc, end); }, 
-        OnErrorOccurred: function(){ Console.log ("NerdTree:OnErrorOccurred"); },
-        OnDeleted:       function(){ Console.log ("NerdTree:OnDeleted"); },
-        OnModified:      function(){ Console.log ("NerdTree:OnModified"); },
+        OnErrorOccurred: function(){ },
+        OnDeleted:       function(){ },
+        OnModified:      function(){ },
     };
 
     var nodeClick = function (thiz) {

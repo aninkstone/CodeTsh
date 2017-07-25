@@ -32,5 +32,4 @@
         thiz.OnSizeChange (thiz);
         return thiz;
     };
-
 })();

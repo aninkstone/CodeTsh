@@ -1,7 +1,18 @@
 function* lexer_c (){
-    yield* lexer_c_language();
-    yield* lexer_default();
+    yield [SCI_SETLEXERLANGUAGE, 0x00, "cpp"];
+
+    yield* lexer_background_color();
+    yield* lexer_foreground_color();
+    yield [SCI_STYLECLEARALL, 0x00, 0x00];
+
+    yield* lexer_default_margin_zero ();
+    yield* lexer_default_tabwidth();
+    yield* lexer_default_caret();
+    yield* lexer_default_eolmode();
+    yield* lexer_default_linemode();
+
     yield* lexer_c_keywords();
+    yield* lexer_c_font();
     yield* lexer_c_default();
     yield* lexer_c_comment();
     yield* lexer_c_commentline();
@@ -31,13 +42,30 @@ function* lexer_c (){
     yield* lexer_taskmarker();
     yield* lexer_escapesequence();
     yield* lexer_wordchars();
+    yield* lexer_usingtab();
+    yield* lexer_setindent();
+};
+
+function* lexer_margin_zero (){
+    yield [SCI_SETMARGINS, 0x00, 0x00];
+};
+
+function* lexer_c_font() {
+    yield [SCI_STYLESETFONT, STYLE_DEFAULT, set.font.family];
+    yield [SCI_STYLESETSIZEFRACTIONAL, STYLE_DEFAULT, set.font.size];
+};
+
+function* lexer_background_color () {
+    yield [SCI_STYLESETBACK, STYLE_DEFAULT, 0x222827];
+};
+
+function* lexer_foreground_color () {
+    yield [SCI_STYLESETFORE, STYLE_DEFAULT, 0xE0E0E0];
 };
 
 function* lexer_c_default(){
     yield [SCI_STYLESETBACK, SCE_C_DEFAULT, 0x222827];
     yield [SCI_STYLESETFORE, SCE_C_DEFAULT, 0xE0E0E0];
-    //yield [SCI_STYLESETFONT, SCE_C_DEFAULT, set.font.family];
-    //yield [SCI_STYLESETFONT, SCE_C_DEFAULT, set.font.size];
 };
 
 function* lexer_c_comment(){
@@ -229,6 +257,20 @@ function* lexer_escapesequence() {
     yield [SCI_STYLESETSIZEFRACTIONAL, SCE_C_ESCAPESEQUENCE, set.font.size];
 };
 
+function* lexer_usingtab() {
+    yield [SCI_SETUSETABS, 0x00, 0x00]; /* don't use tab */
+};
+
+function* lexer_setindent() {
+    yield [SCI_SETINDENT, 0x04, 0x00];
+    yield [SCI_SETTABINDENTS, 0x00, 0x00];
+    //yield [SCI_SETBACKSPACEUNINDENTS, 0x01, 0x00];
+    yield [SCI_SETINDENTATIONGUIDES, SC_IV_LOOKBOTH, 0x00];
+
+    yield [SCI_STYLESETFORE, STYLE_INDENTGUIDE, 0xE500FF];
+    yield [SCI_STYLESETBACK, STYLE_INDENTGUIDE, 0xE5FFFF];
+};
+
 function* lexer_wordchars() {
     yield [SCI_SETWORDCHARS, 0x00, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"];
 };
@@ -236,7 +278,3 @@ function* lexer_wordchars() {
 function* lexer_c_keywords() {
     yield [SCI_SETKEYWORDS, 0x00, "class bool define else endif alignas alignof and const_cast constexpr const continue decltype default delete do double dynamic_cast else enum explicit export extern friend goto if inline mutable namespace new noexcept nullptr not not_eq operator or private protected public register reinterpret_cast return sizeof static static_assert static_cast switch case template this throw try typedef typeid typename union using virtual volatile while void int float double char unsigned short bool break for std string wchar_t vector map set list iterator tr1 regex foreach slots signal emit"];
 };
-
-function* lexer_c_language () {
-    yield [SCI_SETLEXERLANGUAGE, 0x00, "cpp"];
-}
