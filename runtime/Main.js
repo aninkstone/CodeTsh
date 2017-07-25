@@ -55,6 +55,7 @@ require(set.runtime.path + "/runtime/themes/commander.js");
 require(set.runtime.path + "/runtime/themes/sb.js");
 require(set.runtime.path + "/runtime/themes/customize.js");
 require(set.runtime.path + "/runtime/themes/nerdtree.js");
+require(set.runtime.path + "/runtime/themes/javascript.js");
 
 Interact = require(set.runtime.path + "/runtime/Interact.js");
 NerdTree = require(set.runtime.path + "/runtime/NerdTree.js");

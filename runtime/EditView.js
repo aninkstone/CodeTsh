@@ -13,6 +13,9 @@
                 case ".h":
                     lexerSync (handle.edit, lexer_c);
                     break;
+                case ".js":
+                    lexerSync (handle.edit, lexer_javascript);
+                    break;
                 default:
                     lexerSync (handle.edit, lexer_default);
                     break;

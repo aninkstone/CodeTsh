@@ -10,6 +10,8 @@ function* lexer_c (){
     yield* lexer_default_caret();
     yield* lexer_default_eolmode();
     yield* lexer_default_linemode();
+    yield* lexer_default_margin_linenumber();
+    yield* lexer_default_selection();
 
     yield* lexer_c_keywords();
     yield* lexer_c_font();
@@ -20,6 +22,7 @@ function* lexer_c (){
     yield* lexer_c_commentlinedoc();
     yield* lexer_c_number();
     yield* lexer_c_word();
+    yield* lexer_c_word2();
     yield* lexer_c_string();
     yield* lexer_c_character();
     yield* lexer_c_uuid();
@@ -29,7 +32,6 @@ function* lexer_c (){
     yield* lexer_c_stringeol();
     yield* lexer_c_verbatim();
     yield* lexer_c_regex();
-    yield* lexer_c_word2();
     yield* lexer_c_commentdockeyword();
     yield* lexer_c_commentdockeyworderror();
     yield* lexer_c_globalclass();
@@ -264,11 +266,13 @@ function* lexer_usingtab() {
 function* lexer_setindent() {
     yield [SCI_SETINDENT, 0x04, 0x00];
     yield [SCI_SETTABINDENTS, 0x00, 0x00];
-    //yield [SCI_SETBACKSPACEUNINDENTS, 0x01, 0x00];
     yield [SCI_SETINDENTATIONGUIDES, SC_IV_LOOKBOTH, 0x00];
 
+    //FIXME: not working
     yield [SCI_STYLESETFORE, STYLE_INDENTGUIDE, 0xE500FF];
     yield [SCI_STYLESETBACK, STYLE_INDENTGUIDE, 0xE5FFFF];
+    yield [SCI_STYLESETFORE, STYLE_BRACEBAD, 0xE0E0E0];
+    yield [SCI_STYLESETBACK, STYLE_BRACEBAD, 0x222827];
 };
 
 function* lexer_wordchars() {
@@ -276,5 +280,6 @@ function* lexer_wordchars() {
 };
 
 function* lexer_c_keywords() {
-    yield [SCI_SETKEYWORDS, 0x00, "class bool define else endif alignas alignof and const_cast constexpr const continue decltype default delete do double dynamic_cast else enum explicit export extern friend goto if inline mutable namespace new noexcept nullptr not not_eq operator or private protected public register reinterpret_cast return sizeof static static_assert static_cast switch case template this throw try typedef typeid typename union using virtual volatile while void int float double char unsigned short bool break for std string wchar_t vector map set list iterator tr1 regex foreach slots signal emit"];
+    yield [SCI_SETKEYWORDS, 0x01, "class define else endif alignas alignof const_cast constexpr const continue decltype default delete do dynamic_cast else enum explicit export extern friend goto if inline mutable namespace new noexcept nullptr operator private protected public register reinterpret_cast return sizeof static static_cast switch case template this throw try typedef typename union using virtual volatile while break for std"];
+    yield [SCI_SETKEYWORDS, 0x00, "bool double void int float double char unsigned short string wchar_t vector map set list iterator tr1 regex"];
 };
