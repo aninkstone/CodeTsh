@@ -239,5 +239,4 @@ function* lexer_c_keywords() {
 
 function* lexer_c_language () {
     yield [SCI_SETLEXERLANGUAGE, 0x00, "cpp"];
-    yield [SCI_SETLEXERLANGUAGE, 0x00, "indent"];
 }

@@ -12,7 +12,7 @@
             }
             fs = new FileSystem();
             fs.saveFile(fname, content);
-            editor.document.direct = fname;
+            doc.setSavePoint();
             copen.deleteChars(0, doc.length);
             copen.insertChars(fname + " 已写入");
         }

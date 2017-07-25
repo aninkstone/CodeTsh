@@ -1,36 +1,79 @@
 (function(){
+    var OnStyleNeededHandle = function (doc, endPos) {
+
+        function WordMatch (beg, end, words) {
+            switch (words) {
+                case "CodeTor":
+                case ":h":
+                case ":q":
+                case "thatways.c@aliyun.com":
+                    doc.startStyling(beg, 0xFF);
+                    doc.setStyleFor(end - beg, 100);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        var word = "";
+        var wbeg = 0;
+        for (var idx = 0; idx < endPos; ++idx) {
+            var c = String.fromCharCode(doc.charAt(idx));
+            switch (c) {
+                case " ":
+                    WordMatch (wbeg, idx, word);
+                    word = "";
+                    break;
+                case "\t":
+                    WordMatch (wbeg, idx, word);
+                    word = "";
+                    break;
+                case "\n":
+                    WordMatch (wbeg, idx, word);
+                    word = "";
+                    break;
+                case "\r":
+                    WordMatch (wbeg, idx, word);
+                    word = "";
+                    break;
+                default:
+                    if (word.length == 0) {
+                        wbeg = idx;
+                    }
+                    word = word + c;
+                    break;
+            };
+        }
+    };
+
     var defaultCB = {
         OnModifyAttempt: function(){ Console.log ("OnModifyAttempt"); }, 
         OnLexerChanged:  function(){ Console.log ("OnLexerChanged"); }, 
         OnSavePoint:     function(){ Console.log ("OnSavePoint"); }, 
-        //OnStyleNeeded:   function(){ Console.log ("OnStyleNeeded");  }, 
-        OnStyleNeeded:   function(thiz, endPos) { OnStyleNeeded(thiz, endPos); }, 
+        OnStyleNeeded:   function(doc, end) { OnStyleNeededHandle(doc, end); }, 
         OnErrorOccurred: function(){ Console.log ("OnErrorOccurred"); },
         OnDeleted:       function(){ Console.log ("OnDeleted"); },
         OnModified:      function(){ Console.log ("OnModified"); },
     };
 
-    var OnStyleNeeded = function (thiz, endPos) {
-        var startPos = thiz.endStyled ();
-        var lineNumber = thiz.lineFromPosition(startPos);
-        startPos = thiz.lineStart(lineNumber);
-        Console.log (startPos);
-        Console.log (endPos);
-    };
-
     $.api.document = {
-        createDocument: function (fpath) {
-            return $.api.document.openDocument(fpath);
+        createDocument: function (fpath, cb) {
+            return $.api.document.openDocument(fpath, cb);
         },
 
         deleteDocument: function (fpath) {
             set.documents.delete (fpath);
         },
 
-        openDocument: function (fpath) {
+        openDocument: function (fpath, cb) {
             var doc = null;
             if (set.documents.has (fpath) == false) {
-                doc = new Document (fpath, defaultCB);
+                if (typeof cb == 'undefined') {
+                    doc = new Document (fpath, defaultCB);
+                }
+                else {
+                    doc = new Document (fpath, cb);
+                }
                 set.documents.set (fpath, doc);
                 doc.direct = fpath;
             }

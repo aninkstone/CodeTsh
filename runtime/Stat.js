@@ -74,7 +74,7 @@
         }
         thiz.draw_01 = function (canvas, paint, offset) {
             paint.color = 0xFFF0F0F0;
-            var p = FilePath.basename (parent.edit.view.document.path);
+            var p = FilePath.basename (parent.edit.document.path);
             canvas.drawText(p, offset + MARGIN, thiz.height / 2 + 5, paint) ;
             return 0;
         }

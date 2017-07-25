@@ -18,7 +18,7 @@
         this.views.set (INDEXOFVIEW++, this.focusView);
 
         this.chdir = function (p) {
-            this.nerdtree.nerd.view.chdir (p);
+            this.nerdtree.nerd.chdir (p);
         }
 
         this.viewID = function (view) {
@@ -91,12 +91,6 @@
             });
 
         };
-
-        //this.vsplit(parent);
-        //this.vsplit(parent);
-        //this.hsplit(parent);
-        //this.hsplit(parent);
-
         this.views.forEach((v, k)=>{ 
             try {
                 v.setName(k); 
@@ -215,19 +209,22 @@
 
         if (stat == 2) {
             var offsetY = (pos.currY - pos.origY);
-            Console.log ("1:" + offsetY);
-            Console.log ("2:" + widget.height);
-            Console.log ("3:" + widget.click.y);
-            //widget.height = widget.height - widget.click.y + offsetY; 
-            widget.height = widget.height - (widget.click.y - offsetY); 
-            Console.log ("4:" + widget.height);
+            widget.height = widget.height + (offsetY); 
 
-            //this.near.forEach((v)=>{
-            //    //v.locY = v.click.y + offsetY;
-            //    //var dist = v.locY - v.click.y;
-            //    //v.height = v.height - dist;
-            //});
+            this.near.forEach((v)=>{
+                v.locY = v.locY + offsetY;
+                v.height = v.height - offsetY;
+            });
+
+            Console.log (this.same.length);
+            this.same.forEach((v)=>{
+                v.height = v.height + offsetY;
+            });
         }
+    };
+
+    Windows.prototype.closeFocusView = function () {
+        this.focusView.visiable = false;
     };
 
     Windows.prototype.vsplit = function (parent) {
@@ -243,6 +240,14 @@
 
         this.focusView.click = {};
         this.views.set (INDEXOFVIEW++, this.focusView);
+
+        this.views.forEach((v, k)=>{ 
+            try {
+                v.setName(k); 
+            }
+            catch (e){
+            }
+        });
         return this.focusView;
     };
 
@@ -260,6 +265,14 @@
 
         this.focusView.click = {};
         this.views.set (INDEXOFVIEW++, this.focusView);
+
+        this.views.forEach((v, k)=>{ 
+            try {
+                v.setName(k); 
+            }
+            catch (e){
+            }
+        });
         return this.focusView;
     };
 

@@ -1,4 +1,41 @@
 (function (){
+    function OnStyleNeededHandle (doc, endPos) {
+        for (var idx = 0; idx < endPos; ++idx) {
+            var c = String.fromCharCode(doc.charAt(idx));
+            switch (c) {
+                case "|":
+                    doc.startStyling(idx, 0xFF);
+                    doc.setStyleFor(1, 128);
+                    break;
+                case "-":
+                    doc.startStyling(idx, 0xFF);
+                    doc.setStyleFor(1, 130);
+                    break;
+                case "+":
+                    var nu = doc.lineFromPosition(idx);
+                    var s = doc.lineStart(nu);
+                    var e = doc.lineStart(nu + 1);
+                    doc.startStyling(idx, 0xFF);
+                    doc.setStyleFor(1, 129);
+                    doc.startStyling(idx + 1, 0xFF);
+                    doc.setStyleFor(e - idx, 131);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    var nerdTreeCB= {
+        OnModifyAttempt: function(){ Console.log ("NerdTree:OnModifyAttempt"); }, 
+        OnLexerChanged:  function(){ Console.log ("NerdTree:OnLexerChanged"); }, 
+        OnSavePoint:     function(){ Console.log ("NerdTree:OnSavePoint"); }, 
+        OnStyleNeeded:   function(doc, end) { OnStyleNeededHandle(doc, end); }, 
+        OnErrorOccurred: function(){ Console.log ("NerdTree:OnErrorOccurred"); },
+        OnDeleted:       function(){ Console.log ("NerdTree:OnDeleted"); },
+        OnModified:      function(){ Console.log ("NerdTree:OnModified"); },
+    };
+
     var nodeClick = function (thiz) {
         try {
             var curpos = thiz.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
@@ -23,7 +60,7 @@
     var openFile = function (name) {
         name = name.trim('\n').trim(' ').trim('\r');
         var doc = $.api.document.createDocument(set.runtime.curr + "/" + name);
-        windows.prevFocus.edit.view.document = doc;
+        windows.prevFocus.setDocument(doc);
     }
 
     var openNode = function (name) {
@@ -32,6 +69,7 @@
         name = set.runtime.curr + "/" + name;
         l = fs.chdir (name);
         set.runtime.curr = l;
+        Console.log (l);
         windows.chdir(set.runtime.curr);
     }
 
@@ -180,16 +218,19 @@
             });
 
             var comment = fp + '\n';
-            comment += '|+.. (Up directory)\n';
+            comment += '|+..\n';
             array.forEach((ele)=>{
                 comment += ele[0] + ele[1] + "\n";
             });
 
-            thiz.document.readonly = false;
-            thiz.document.setUndoCollection (false);
-            thiz.document.deleteChars (0, thiz.document.length);
-            thiz.document.insertChars (comment);
-            thiz.document.readonly = true;
+            var doc = $.api.document.createDocument("nerdtree", nerdTreeCB);
+            //var doc = $.api.document.createDocument("nerdtree");
+            doc.readonly = false;
+            doc.deleteChars (0, doc.length);
+            doc.insertChars (comment);
+            doc.readonly = true;
+
+            thiz.document = doc;
         }
 
         thiz.chdir = function (p) {
@@ -227,7 +268,8 @@
             }
         };
 
-        f(thiz, lexer_default); thiz.ro(true);
+        f(thiz, lexer_nerdtree); 
+        thiz.ro(true);
         return thiz;
     };
     return Nerd;
