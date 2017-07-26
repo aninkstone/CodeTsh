@@ -20,7 +20,6 @@
             copen.deleteChars(0, doc.length);
             copen.insertChars("Invalidate Document");
         }
-        Console.log ("end");
     }
 })();
 

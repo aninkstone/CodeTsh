@@ -16,6 +16,10 @@
                 case ".js":
                     lexerSync (handle.edit, lexer_javascript);
                     break;
+                case ".html":
+                case ".htm":
+                    lexerSync (handle.edit, lexer_html);
+                    break;
                 default:
                     lexerSync (handle.edit, lexer_default);
                     break;

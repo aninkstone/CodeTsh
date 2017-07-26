@@ -20,6 +20,7 @@
         });
 
         set.documents.forEach((v,k)=>{
+            array.push ([FilePath.basename(k), k]);
         });
 
         var comment = '" Press <F1> for Help \n';
@@ -43,11 +44,7 @@
             dir.insertChars (formatter_beg + name + "             " + path + formatter_end + "\n");
         });
 
-        editor.document = dir;
-
-        set.vim.list = array;
+        editor.setDocument(dir);
         editor.sync(SCI_SETREADONLY, 0x01, 0x00);
-
-        return array;
     }
 })();
