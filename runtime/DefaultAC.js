@@ -1,14 +1,20 @@
 (function (){
-    function handleBasicAC (editor, ch) {
-        var act = editor.sync(SCI_AUTOCACTIVE, 0, 0);
+    function ac (editor, ch) {
+        var active  = editor.sync(SCI_AUTOCACTIVE, 0, 0);
         switch (ch) {
-            case 13:  /* enter */
-                if (act) {
+            case 27:  /* escape */
+                if (active) {
+                    editor.sync(SCI_AUTOCCANCEL, 0x00, 0x00);
                     return true;
                 }
-                return false;
+                break;
+            case 13:  /* enter */
+                if (active) {
+                    return true;
+                }
+                break;
             case 9:   /* tab */
-                if (act) {
+                if (active) {
                     editor.sync(SCI_AUTOCCOMPLETE, 0x00, 0x00);
                     return true;
                 }
@@ -30,33 +36,39 @@
             chars += String.fromCharCode(c);
         }
 
-        if (chars.length < 3) {
-            return;
-        }
-
-        var pip = execute ("global", "-clM", chars);
-        //var pip = execute ("/usr/local/Cellar/global/6.5.6/bin/global", "-c", chars);
-
-        if (pip == undefined || pip.length == 0) {
+        if (chars.length < 1) {
             return false;
         }
 
-        var array = pip.split("\n").filter(v => v != '').map(s => s.trim());
-        array.forEach (function (ele){
-            Console.log (ele.toString());
+        //var pip = execute ("global", "-clM", chars);
+        //var pip = execute ("/usr/local/Cellar/global/6.5.6/bin/global", "-c", chars);
+        //var array = pip.split("\n").filter(v => v != '').map(s => s.trim());
+
+        var pip = editor.document.completes;
+
+        if (pip == undefined || pip.length == 0) {
+            Console.log ("AC: Key words list is empty");
+            return false;
+        }
+
+        var match = [];
+        pip.forEach((v)=>{
+            if (v.match (chars + ".*")) {
+                match.push (v);
+            }
         });
+        Console.log (match.toString());
+
+        if (match.length == 0) {
+            return false;
+        }
 
         editor.sync(SCI_AUTOCSETSEPARATOR, 0x2C/*,*/, 0);
-        editor.sync(SCI_AUTOCSHOW, lenEntered, array.toString());
+        editor.sync(SCI_AUTOCSHOW, lenEntered, match.toString());
         return true;
     };
 
     return function (editor, ch) {
-        switch (ch) {
-            case 9: /* tab */
-            default:
-                break;
-        }
-        return handleBasicAC(editor, ch);
+        return ac(editor, ch);
     }
 })();

@@ -40,7 +40,7 @@ var Stat = require(set.runtime.path + "/runtime/Stat.js");
 var Edit = require(set.runtime.path + "/runtime/Edit.js");
 var Nerd = require(set.runtime.path + "/runtime/Nerd.js");
 
-var Complete = require(set.runtime.path + "/runtime/AutoComp.js");
+var Complete = require(set.runtime.path + "/runtime/DefaultAC.js");
 var HandlerDefault = require(set.runtime.path + "/runtime/DefaultHandler.js");
 var FilePath = require(set.runtime.path + "/runtime/Path.js");
 

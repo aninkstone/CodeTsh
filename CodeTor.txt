@@ -1,4 +1,4 @@
-Code Tor
+CodeTor
 
 Version 0.1.9
 

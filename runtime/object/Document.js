@@ -1,12 +1,87 @@
 (function(){
-    var OnStyleNeededHandle = function (doc, endPos) {
+    function SampleCodeAnalyze (doc) {
+        doc.completes = [];
 
-        function WordMatch (beg, end, words) {
-            switch (words) {
+        function unique(a) {
+            return a.sort().filter(function(item, pos, ary) {
+                return !pos || item != ary[pos - 1];
+            })
+        }
+
+        function SetComplete (beg, end, word) {
+            if (word.length <= 1 ) {
+                return;
+            }
+            doc.completes.push (word);
+            doc.completes = unique(doc.completes);
+        }
+
+        var word = "";
+        var wbeg = 0;
+        for (var idx = 0; idx < doc.length; ++idx) {
+            var c = String.fromCharCode(doc.charAt(idx));
+            switch (c) {
+                case "\r":
+                case "\n":
+                case "\t":
+                case " ":
+                case ":":
+                case "=":
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                case "!":
+                case "(":
+                case ")":
+                case ">":
+                case "<":
+                case "[":
+                case "]":
+                case "{":
+                case "}":
+                case "&":
+                case "^":
+                case "%":
+                case "$":
+                case "#":
+                case "@":
+                case "\\":
+                case "/":
+                case "~":
+                case "`":
+                case "_":
+                case ".":
+                case ",":
+                case ";":
+                case '"':
+                    SetComplete(wbeg, idx, word);
+                    word = "";
+                    break;
+                default:
+                    if (word.length == 0) {
+                        wbeg = idx;
+                    }
+                    word = word + c;
+                    break;
+            };
+        }
+    }
+
+    var OnModifiedHandle = function (doc) {
+    }
+
+    var OnSavePointHandle = function (doc) {
+        SampleCodeAnalyze (doc);
+    }
+
+    var OnStyleNeededHandle = function (doc, endPos) {
+        function SetStyle (beg, end, word) {
+            if (word.lenth <= 1 ) {
+                return;
+            }
+            switch (word) {
                 case "CodeTor":
-                case ":h":
-                case ":q":
-                case "thatways.c@aliyun.com":
                     doc.startStyling(beg, 0xFF);
                     doc.setStyleFor(end - beg, 100);
                     break;
@@ -17,23 +92,43 @@
 
         var word = "";
         var wbeg = 0;
-        for (var idx = 0; idx < endPos; ++idx) {
+        for (var idx = 0; idx < doc.length; ++idx) {
             var c = String.fromCharCode(doc.charAt(idx));
             switch (c) {
-                case " ":
-                    WordMatch (wbeg, idx, word);
-                    word = "";
-                    break;
-                case "\t":
-                    WordMatch (wbeg, idx, word);
-                    word = "";
-                    break;
-                case "\n":
-                    WordMatch (wbeg, idx, word);
-                    word = "";
-                    break;
                 case "\r":
-                    WordMatch (wbeg, idx, word);
+                case "\n":
+                case "\t":
+                case " ":
+                case ":":
+                case "=":
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                case "!":
+                case "(":
+                case ")":
+                case ">":
+                case "<":
+                case "[":
+                case "]":
+                case "{":
+                case "}":
+                case "&":
+                case "^":
+                case "%":
+                case "$":
+                case "#":
+                case "@":
+                case "\\":
+                case "/":
+                case "~":
+                case "`":
+                case "_":
+                case ".":
+                case ",":
+                case ",":
+                    SetStyle (wbeg, idx, word);
                     word = "";
                     break;
                 default:
@@ -47,13 +142,13 @@
     };
 
     var defaultCB = {
-        OnModifyAttempt: function(){ Console.log ("OnModifyAttempt"); }, 
-        OnLexerChanged:  function(){ Console.log ("OnLexerChanged"); }, 
-        OnSavePoint:     function(){ Console.log ("OnSavePoint"); }, 
+        OnModifyAttempt: function(){ }, 
+        OnLexerChanged:  function(){ }, 
+        OnSavePoint:     function(doc) { OnSavePointHandle (doc); }, 
         OnStyleNeeded:   function(doc, end) { OnStyleNeededHandle(doc, end); }, 
-        OnErrorOccurred: function(){ Console.log ("OnErrorOccurred"); },
-        OnDeleted:       function(){ Console.log ("OnDeleted"); },
-        OnModified:      function(){ Console.log ("OnModified"); },
+        OnErrorOccurred: function(){ },
+        OnDeleted:       function(){ },
+        OnModified:      function(doc){ OnModifiedHandle(doc); },
     };
 
     $.api.document = {

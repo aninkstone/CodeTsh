@@ -20,6 +20,9 @@
                 case ".htm":
                     lexerSync (handle.edit, lexer_html);
                     break;
+                case ".txt":
+                    lexerSync (handle.edit, lexer_customize);
+                    break;
                 default:
                     lexerSync (handle.edit, lexer_default);
                     break;

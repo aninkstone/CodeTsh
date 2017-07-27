@@ -7,4 +7,3 @@
         editor.sync(SCI_SETEMPTYSELECTION, s, 0x00);
     }
 })();
-

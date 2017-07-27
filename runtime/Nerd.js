@@ -59,6 +59,7 @@
 
     var openFile = function (name) {
         name = name.trim('\n').trim(' ').trim('\r');
+        Console.log ("Create document");
         var doc = $.api.document.createDocument(set.runtime.curr + "/" + name);
         windows.prevFocus.setDocument(doc);
     }
@@ -224,7 +225,6 @@
             });
 
             var doc = $.api.document.createDocument("nerdtree", nerdTreeCB);
-            //var doc = $.api.document.createDocument("nerdtree");
             doc.readonly = false;
             doc.deleteChars (0, doc.length);
             doc.insertChars (comment);

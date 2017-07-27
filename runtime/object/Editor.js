@@ -15,6 +15,9 @@
         OnEvent:function (thiz, evt, argument) {
             try {
                 switch (evt) {
+                    case "SYS:CHARADDED":
+                        Complete(thiz, String.fromCharCode(argument));
+                        break;
                     case "SYS:SIZECHANGE":
                         if (typeof thiz.OnSizeChange === 'function') {
                             thiz.OnSizeChange(thiz);
