@@ -16,6 +16,9 @@ function* lexer_nerdtree(){
     yield* lexer_nerdtree_plus();
     yield* lexer_nerdtree_directory();
 
+    yield* lexer_default_caret();
+    yield* lexer_default_selection();
+
     yield [SCI_SETLEXER, 0x00, 0];
 };
 

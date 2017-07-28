@@ -17,6 +17,12 @@
                     case 56:  /* * */
                         ExecuteCommand(this, "Asterisk", shift, alt, ctrl);
                         break;
+                    case 44:  /* , */
+                        ExecuteCommand(this, "Semi", shift, alt, ctrl);
+                        break;
+                    case 46:  /* . */
+                        ExecuteCommand(this, "Dot", shift, alt, ctrl);
+                        break;
                     case 48:  /* 0 */
                     case 49:  /* 1 */
                     case 50:  /* 2 */

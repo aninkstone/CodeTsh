@@ -44,8 +44,8 @@ var Complete = require(set.runtime.path + "/runtime/DefaultAC.js");
 var HandlerDefault = require(set.runtime.path + "/runtime/DefaultHandler.js");
 var FilePath = require(set.runtime.path + "/runtime/Path.js");
 
-//var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
-var defaultDoc = $.api.document.createDocument("./CTEditComplete.cpp");
+var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
+//var defaultDoc = $.api.document.createDocument("./CTEditComplete.cpp");
 
 require(set.runtime.path + "/runtime/themes/default.js");
 require(set.runtime.path + "/runtime/themes/c.js");

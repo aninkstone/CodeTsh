@@ -4,6 +4,8 @@
             editor.sync(SCI_LINESCROLL,0x00, -0x01);
             return true;
         }
+        if (cmd == "y") {
+        }
         if (cmd == "yw") {
             return true;
         }

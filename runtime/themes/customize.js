@@ -9,6 +9,7 @@ function* lexer_customize(){
     yield* lexer_linemode();
     yield* lexer_customize_word();
 
+    yield [SCI_STYLECLEARALL, 0x00, 0x00];
     yield [SCI_SETLEXER, 0x00, 0];
 };
 

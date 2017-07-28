@@ -4,7 +4,6 @@ function* lexer_default (){
     yield* lexer_background_color();
     yield* lexer_foreground_color();
     yield* lexer_font();
-    yield [SCI_STYLECLEARALL, 0x00, 0x00];
 
     yield* lexer_default_margin_zero();
     //yield* lexer_default_margin_linenumber();
@@ -13,6 +12,8 @@ function* lexer_default (){
     yield* lexer_default_eolmode();
     yield* lexer_default_linemode();
     yield* lexer_default_selection();
+
+    yield [SCI_STYLECLEARALL, 0x00, 0x00];
 };
 
 function* lexer_default_caret() {

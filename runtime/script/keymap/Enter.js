@@ -7,7 +7,7 @@
 
     function filePath (editor, chars) {
         col = chars.split(" ");
-        col = col.filter(v=>v!='');
+        col = col.filter(v => v != '');
         return col[3] + FilePath.win32.sep + col[2];
     }
 

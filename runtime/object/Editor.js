@@ -1,11 +1,7 @@
 (function(){
     var defaultCB = {
         OnDraw: function (thiz, canvas) {
-            p = new Paint ();
-            //p.style = 0x00;
-            //p.color = 0x11F300FF;
-            //canvas.drawRect(0, 0, thiz.width, thiz.height, p);
-
+            var p = thiz.paint;
             p.color = 0xFFEEEEEE;
             p.fontSize = 48;
             p.fontFamily = set.font.family;
@@ -15,8 +11,26 @@
         OnEvent:function (thiz, evt, argument) {
             try {
                 switch (evt) {
+                    case "SYS:SAVEPOINTREACHED":
+                        Console.log ("SYS:SAVEPOINTREACHED");
+                        break;
+                    case "SYS:SAVEPOINTLEFT":
+                        Console.log ("SYS:SAVEPOINTLEFT");
+                        break;
+                    case "SYS:MODIFYATTEMPTRO":
+                        Console.log ("SYS:MODIFYATTEMPTRO");
+                        break;
+                    case "SYS:DOUBLECLICK":
+                        Console.log ("SYS:DOUBLECLICK: line number = " + argument.lineNumber + " position = " + argument.position + " modifiers = " + argument.modifiers);
+                        break;
+                    case "SYS:STYLENEEDED":
+                        Console.log ("SYS:STYLENEEDED : position = " + argument);
+                        break;
                     case "SYS:CHARADDED":
-                        Complete(thiz, String.fromCharCode(argument));
+                        var b = thiz.sync(SCI_GETREADONLY, 0x00, 0x00);
+                        if (b == 0) {
+                            Complete(thiz, String.fromCharCode(argument));
+                        }
                         break;
                     case "SYS:SIZECHANGE":
                         if (typeof thiz.OnSizeChange === 'function') {
@@ -83,6 +97,7 @@
             var thiz = new Editor (parent, CB);
             thiz.parent = parent;
             thiz.name = "";
+            thiz.paint = new Paint ();
 
             thiz.setCB = function (cb) {
                 if (typeof cb !== 'object') {
@@ -96,6 +111,8 @@
         },
 
         deleteEditor: function (object) {
+            object.visiable = false;
+            delete object;
         },
     };
 
@@ -128,6 +145,21 @@
             this.sync(SCI_SETSELECTION, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
         } 
     };
+
+    Editor.prototype.ro = function (b) {
+        if (b) {
+            this.sync(SCI_SETREADONLY,   0x01, 0x00);
+            this.sync(SCI_SETCARETSTYLE, 0x02, 0x00);
+        }
+        else {
+            this.sync(SCI_SETREADONLY,   0x00, 0x00);
+            this.sync(SCI_SETCARETSTYLE, 0x01, 0x00);
+        }
+    }
+
+    Editor.prototype.isReadonly = function () {
+        return this.sync(SCI_GETREADONLY, 0x00, 0x00);
+    }
 
     Editor.prototype.searchBackward = function (target) {
         if (typeof (target) === 'string'){

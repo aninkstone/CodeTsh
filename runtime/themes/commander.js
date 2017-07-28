@@ -1,6 +1,5 @@
 function* lexer_commander (){
-    yield [SCI_STYLERESETDEFAULT, 0x00, 0x00];
-
+    //yield [SCI_STYLERESETDEFAULT, 0x00, 0x00];
     yield* lexer_commander_background_color();
     yield* lexer_commander_foreground_color();
     yield* lexer_commander_font();

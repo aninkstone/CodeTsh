@@ -1,7 +1,7 @@
 (function(){
     var defaultCB = {
         OnDraw: function (thiz, canvas) {
-            p = new Paint ();
+            var p = thiz.paint;
             p.style = 0x00;
             p.color = 0xFF0352FF;
             canvas.drawRect(0, 0, thiz.width, thiz.height, p);
@@ -61,6 +61,7 @@
             };
 
             var thiz = new Widget (parent, CB);
+            thiz.paint = new Paint ();
             thiz.setCB = function (cb) {
                 if (typeof cb !== 'object') {
                     return;

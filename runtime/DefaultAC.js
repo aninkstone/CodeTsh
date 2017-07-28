@@ -1,5 +1,5 @@
 (function (){
-    function ac (editor, ch) {
+    return function ac (editor, ch) {
         var active  = editor.sync(SCI_AUTOCACTIVE, 0, 0);
         switch (ch) {
             case 27:  /* escape */
@@ -67,8 +67,4 @@
         editor.sync(SCI_AUTOCSHOW, lenEntered, match.toString());
         return true;
     };
-
-    return function (editor, ch) {
-        return ac(editor, ch);
-    }
 })();

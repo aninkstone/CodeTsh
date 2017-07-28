@@ -113,10 +113,15 @@
                                 break;
                             case 13:  /* enter  */
                                 ExecuteScriptEnter (thiz, thiz.focusView);
-                                windows.focusView.setFocus();
+                                var f = windows.focusHistory(0);
+                                f.setFocus();
                                 return true;
                             case 27:  /* escape */
-                                windows.focusView.setFocus();
+                                var f = windows.focusHistory(0);
+                                if (f == null || typeof f == undefined) {
+                                    f = windows.focusHistory(1);
+                                }
+                                f.setFocus();
                                 thiz.document.deleteChars(0, thiz.document.length);
                                 return true;
                             default:

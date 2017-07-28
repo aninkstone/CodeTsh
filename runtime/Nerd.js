@@ -59,9 +59,9 @@
 
     var openFile = function (name) {
         name = name.trim('\n').trim(' ').trim('\r');
-        Console.log ("Create document");
         var doc = $.api.document.createDocument(set.runtime.curr + "/" + name);
-        windows.prevFocus.setDocument(doc);
+        var edt = windows.focusHistory(1);
+        edt.setDocument(doc);
     }
 
     var openNode = function (name) {
@@ -70,29 +70,17 @@
         name = set.runtime.curr + "/" + name;
         l = fs.chdir (name);
         set.runtime.curr = l;
-        Console.log (l);
         windows.chdir(set.runtime.curr);
     }
 
     var OnKeyD = function (key, shift, alt, ctrl) {
         ro = this.sync(SCI_GETREADONLY, 0x00, 0x00);
-        switch (key) {
-            case 27:  /* escape */
-                this.ro(true);
-                break;
-            default:
-                break;
-        }
         if (ro == 1) {
             switch (key) {
                 case 13:  /* enter */
                     nodeClick (this);
                     break;
-                case 56:  /* * */
-                case 52:  /* 4 */
-                case 97:  /* a */
                 case 98:  /* b */
-                case 99:  /* c */
                 case 100: /* d */
                 case 101: /* e */
                 case 102: /* f */
@@ -103,21 +91,11 @@
                 case 108: /* l */
                 case 109: /* m */
                 case 110: /* n */
-                case 111: /* o */
-                case 112: /* p */
-                case 113: /* q */
-                case 114: /* r */
-                case 115: /* s */
-                case 116: /* t */
                 case 117: /* u */
                 case 118: /* v */
                 case 119: /* w */
-                case 120: /* x */
                 case 121: /* y */
-                case 122: /* z */
                     ExecuteCommand(this, String.fromCharCode(key), shift, alt, ctrl);
-                    break;
-                case 105: /* i */
                     break;
                 case 47:  /* / */
                     this.interact.setFocus();
@@ -137,7 +115,6 @@
             }
         }
         else {
-            //return Complete(this, key);
         }
         return false;
     };
@@ -156,7 +133,7 @@
         var thiz = $.api.editor.createEditor (parent);
         thiz.interact = interact;
 
-        thiz.OnClick = function (arg) {
+        thiz.OnClick = function (thiz, arg) {
             switch (arg.state) {
                 case 0:
                     break;
@@ -274,4 +251,3 @@
     };
     return Nerd;
 })();
-
