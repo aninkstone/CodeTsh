@@ -5,6 +5,8 @@ function* lexer_c (){
     yield* lexer_foreground_color();
     yield [SCI_STYLECLEARALL, 0x00, 0x00];
 
+    yield* lexer_c_setindent();
+
     yield* lexer_default_margin_zero ();
     yield* lexer_default_tabwidth();
     yield* lexer_default_caret();
@@ -12,8 +14,8 @@ function* lexer_c (){
     yield* lexer_default_linemode();
     yield* lexer_default_margin_linenumber();
     yield* lexer_default_selection();
+    yield* lexer_default_indentguide();
 
-    yield* lexer_c_setindent();
     yield* lexer_c_keywords();
     yield* lexer_c_font();
     yield* lexer_c_default();
@@ -263,13 +265,6 @@ function* lexer_c_setindent() {
     yield [SCI_SETINDENT, 0x04, 0x00];
     yield [SCI_SETTABINDENTS, 0x00, 0x00];
     yield [SCI_SETINDENTATIONGUIDES, SC_IV_LOOKBOTH, 0x00];
-
-    //FIXME: not working
-    yield [SCI_STYLESETFORE, STYLE_INDENTGUIDE, 0xE500FF];
-    yield [SCI_STYLESETBACK, STYLE_INDENTGUIDE, 0xE5FFFF];
-    //yield [SCI_STYLESETFORE, STYLE_BRACEBAD, 0xE0E0E0];
-    //yield [SCI_STYLESETBACK, STYLE_BRACEBAD, 0x222827];
-    yield [SCI_SETHIGHLIGHTGUIDE, 8, 0x00];
 };
 
 function* lexer_c_wordchars() {

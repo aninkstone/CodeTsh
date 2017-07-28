@@ -12,6 +12,7 @@ function* lexer_javascript (){
     yield* lexer_default_linemode();
     yield* lexer_default_margin_linenumber();
     yield* lexer_default_selection();
+    yield* lexer_default_indentguide();
 
     yield* lexer_javascript_keywords();
     yield* lexer_javascript_font();
@@ -269,10 +270,8 @@ function* lexer_setindent() {
     yield [SCI_SETINDENTATIONGUIDES, SC_IV_LOOKBOTH, 0x00];
 
     //FIXME: not working
-    yield [SCI_STYLESETFORE, STYLE_INDENTGUIDE, 0xE500FF];
-    yield [SCI_STYLESETBACK, STYLE_INDENTGUIDE, 0xE5FFFF];
-    yield [SCI_STYLESETFORE, STYLE_BRACEBAD, 0xE0E0E0];
-    yield [SCI_STYLESETBACK, STYLE_BRACEBAD, 0x222827];
+    //yield [SCI_STYLESETFORE, STYLE_BRACEBAD, 0xE0E0E0];
+    //yield [SCI_STYLESETBACK, STYLE_BRACEBAD, 0x222827];
 };
 
 function* lexer_wordchars() {
@@ -283,4 +282,3 @@ function* lexer_javascript_keywords() {
     yield [SCI_SETKEYWORDS, 0x01, "yield switch case default break continue return if else true false this typeof new delete"];
     yield [SCI_SETKEYWORDS, 0x00, "var function undefined string object array map Map Array String Object Document Widget Window Editor"];
 };
-

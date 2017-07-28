@@ -59,6 +59,7 @@ function* lexer_default_tabwidth() {
 
 function* lexer_default_eolmode () {
     yield [SCI_SETEOLMODE, SC_EOL_LF, 0x00];
+    //yield [SCI_SETVIEWEOL, 0x01, 0x00];
 };
 
 function* lexer_default_linemode() {
@@ -71,3 +72,9 @@ function* lexer_default_selection() {
     yield [SCI_SETSELBACK, 0x01, 0x6B8E24];
     yield [SCI_SETSELALPHA, 256, 0x00];
 };
+
+function* lexer_default_indentguide () {
+    yield [SCI_STYLESETFORE, STYLE_INDENTGUIDE, 0xE500FF];
+    yield [SCI_STYLESETBACK, STYLE_INDENTGUIDE, 0x0000FF];
+};
+
