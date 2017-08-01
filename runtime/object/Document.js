@@ -169,8 +169,11 @@
                 else {
                     doc = new Document (fpath, cb);
                 }
+                doc.codepage = 65001; /* default code page */
+
                 set.documents.set (fpath, doc);
                 doc.direct = fpath;
+                doc.caretP = 0;
             }
             else {
                 doc = set.documents.get(fpath);
@@ -178,6 +181,7 @@
 
             return doc;
         },
+
         saveDocument: function (fpath) {
             if (typeof path == 'string') {
                 var content = "";

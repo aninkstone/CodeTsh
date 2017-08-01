@@ -264,7 +264,10 @@ function* lexer_c_usingtab() {
 function* lexer_c_setindent() {
     yield [SCI_SETINDENT, 0x04, 0x00];
     yield [SCI_SETTABINDENTS, 0x00, 0x00];
-    yield [SCI_SETINDENTATIONGUIDES, SC_IV_LOOKBOTH, 0x00];
+    //yield [SCI_SETINDENTATIONGUIDES, SC_IV_LOOKBOTH, 0x00];
+    //yield [SCI_SETINDENTATIONGUIDES, SC_IV_REAL, 0x00];
+    yield [SCI_SETINDENTATIONGUIDES, SC_IV_LOOKFORWARD, 0x00];
+    //yield [SCI_SETINDENTATIONGUIDES, SC_IV_NONE, 0x00];
 };
 
 function* lexer_c_wordchars() {

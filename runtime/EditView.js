@@ -27,7 +27,7 @@
                     lexerSync (handle.edit, lexer_default);
                     break;
             };
-
+            handle.edit.sync (SCI_SETCODEPAGE, 0, 0x00);
             handle.edit.ro (true);
         }
 
