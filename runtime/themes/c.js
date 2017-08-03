@@ -48,7 +48,12 @@ function* lexer_c (){
     yield* lexer_c_escapesequence();
     yield* lexer_c_wordchars();
     yield* lexer_c_usingtab();
+    yield* lexer_c_fold();
 };
+
+function* lexer_c_fold () {
+    yield [SCI_SETPROPERTY, "fold.cpp.explicit.anywhere", "1"];
+}
 
 function* lexer_c_font() {
     yield [SCI_STYLESETFONT, STYLE_DEFAULT, set.font.family];

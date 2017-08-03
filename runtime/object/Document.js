@@ -71,8 +71,21 @@
     var OnModifiedHandle = function (doc) {
     }
 
-    var OnSavePointHandle = function (doc) {
-        SampleCodeAnalyze (doc);
+    var OnSavePointHandle = function (doc){
+        var ext = FilePath.extname(doc.path);
+        switch (ext) {
+            case ".cpp":
+            case ".c":
+            case ".h":
+            case ".js":
+            case ".html":
+            case ".htm":
+            case ".txt":
+                SampleCodeAnalyze (doc);
+                break;
+            default:
+                break;
+        };
     }
 
     var OnStyleNeededHandle = function (doc, endPos) {
@@ -177,6 +190,7 @@
             }
             else {
                 doc = set.documents.get(fpath);
+                Console.log (doc.caretP);
             }
 
             return doc;

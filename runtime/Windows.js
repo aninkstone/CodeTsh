@@ -1,6 +1,7 @@
 (function(){
     var INDEXOFVIEW = 0;
     function Windows (parent) {
+        this.parent = parent;
         this.fHistory = [];
         this.near = {};
         this.same = {};
@@ -9,7 +10,6 @@
         this.interact = new Interact (parent, 0, parent.height - 24, parent.width, 24);
         this.nerdtree = new NerdTree (parent, this.interact, 0, 0, 300, parent.height - this.interact.height)
         this.focusView = new EditView (parent, this.interact, 300, 0, parent.width - 300, parent.height - this.interact.height);
-        this.focusChange (this.focusView);
 
         this.interact.click = {};
         this.nerdtree.click = {};
@@ -17,6 +17,10 @@
 
         this.views.set (INDEXOFVIEW++, this.nerdtree);
         this.views.set (INDEXOFVIEW++, this.focusView);
+
+        this.focusChange (this.focusView);
+        this.setFocus(this.focusView);
+        this.interact.focusView = this.focusView.edit;
 
         this.chdir = function (p) {
             this.nerdtree.nerd.chdir (p);
@@ -33,8 +37,8 @@
         }
 
         this.resize = function (widget) {
-            this.interact.locY   = widget.height - this.interact.height;
-            this.interact.width  = widget.width;
+            this.interact.locY  = widget.height - this.interact.height;
+            this.interact.width = widget.width;
 
             var maxLeft = (resizeWidget)=>{
                 var leftMax = 0;
@@ -92,54 +96,159 @@
             });
 
         };
-        this.views.forEach((v, k)=>{ 
-            try {
-                v.setName(k); 
-            }
-            catch (e){
-            }
-        });
-    };
+        this.autoWindowID();
+    }
 
     Windows.prototype.setFocus = function (widget) {
-        Console.log ("Focus Change");
         this.fHistory.unshift(widget);
 
         if (this.fHistory.length >= 20) {
             this.fHistory.pop();
         }
-    };
+    }
 
-    Windows.prototype.focusHistory = function (history) {
-        if (typeof history === 'number') {
-            if (history >= 6) {
-                history = 6;
+    Windows.prototype.showWindowID = function () {
+        this.views.forEach((v, k)=>{ 
+            try {
+                v.setName(k); 
+                v.inval();
             }
-            Console.log (this.fHistory.length);
-            if (this.fHistory.length < history) {
-                return this.fHistory[this.forEach.length - 1];
+            catch (e){
             }
-            else {
-                return this.fHistory[history];
+        });
+    }
+
+    Windows.prototype.autoWindowID = function () {
+        this.showWindowID();
+        var id = setTimeOut(function(){ 
+            windows.hideWindowID(); 
+        }, 3000);
+        Console.log (id);
+    }
+
+    Windows.prototype.hideWindowID = function () {
+        this.views.forEach((v, k)=>{ 
+            try {
+                v.setName(""); 
+                v.inval();
+            }
+            catch (e){
+            }
+        });
+    }
+
+    Windows.prototype.focusHistory = function (history, type) {
+        if (history >= 6) {
+            history = 6;
+        }
+
+        try {
+            for (var idx = history; idx >= 0; --idx) {
+                if (typeof this.fHistory[idx] == 'object') {
+                    if (typeof type == 'undefined'){
+                        return this.fHistory[idx];
+                    }
+                    else {
+                        if (this.fHistory[idx].type == type) {
+                            return this.fHistory[idx];
+                        }
+                    }
+                }
             }
         }
+        catch (e) {
+            Console.log (e.toString());
+        }
+
         return null;
-    };
+    }
 
     Windows.prototype.setFocusID  = function (index) {
         var obj = this.views.get (index);
         if (obj) {
             obj.setFocus();
         }
-    };
+    }
+
+    Windows.prototype.moveFocus2L = function () {
+        var findLeft = (resizeWidget)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var x = v.locX + v.width;
+                if (Math.abs(x - resizeWidget.locX) <= 2) {
+                    match.push (v);
+                }
+            });
+            return match;
+        };
+
+        var match = findLeft(this.focusView);
+        if (match.length > 0) {
+            match [0].setFocus();
+        }
+    }
+
+    Windows.prototype.moveFocus2R = function () {
+        var findRight = (resizeWidget)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var x = v.locX;
+                if (Math.abs(x - (resizeWidget.locX + resizeWidget.width)) <= 2) {
+                    match.push (v);
+                }
+            });
+            return match;
+        };
+
+        var match = findRight(this.focusView);
+        if (match.length > 0) {
+            match [0].setFocus();
+        }
+    }
+
+    Windows.prototype.moveFocus2T = function () {
+        var findTop = (resizeWidget)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var y = v.locY + v.height;
+                if (Math.abs(y - resizeWidget.locY) <= 2) {
+                    match.push (v);
+                }
+            });
+            return match;
+        };
+
+        var match = findTop (this.focusView);
+        if (match.length > 0) {
+            match [0].setFocus();
+        }
+    }
+
+    Windows.prototype.moveFocus2B = function () {
+        var findBottom = (resizeWidget)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var y = v.locY;
+                if (Math.abs(y - (resizeWidget.height + resizeWidget.locY)) <= 2) {
+                    match.push (v);
+                }
+            });
+            return match;
+        };
+
+        var match = findBottom (this.focusView);
+        if (match.length > 0) {
+            match [0].setFocus();
+        }
+    }
 
     Windows.prototype.focusViewID = function () {
         return this.viewID(this.focusView);
-    };
+    }
 
     Windows.prototype.viewsCount = function () {
         return this.views.size;
-    };
+    }
 
     Windows.prototype.septClick = function (widget, pos, stat) {
         if (stat == 0) {
@@ -193,7 +302,7 @@
                 v.width = v.click.w - offsetX;
             });
         }
-    };
+    }
 
     Windows.prototype.statClick = function (widget, pos, stat) {
         if (stat == 0) {
@@ -246,7 +355,7 @@
                 v.height = v.height + offsetY;
             });
         }
-    };
+    }
 
     Windows.prototype.mergeView = function (merge) {
         var k = this.viewID (merge);
@@ -326,10 +435,42 @@
                 v.width = v.width + merge.width;
             });
         }
-    };
+    }
 
-    Windows.prototype.closeFocusView = function () {
+    Windows.prototype.exit = function () {
+        var allSaved = true;
+        var matched = [];
+        this.views.forEach((v, k)=>{
+            try {
+                if (v.edit.document.savepoint == false) {
+                    allSaved = false;
+                    matched.push (v.edit.document.path);
+                }
+            }
+            catch (e) {
+            }
+        });
+
+        if (allSaved == true) {
+            SDL.postEvent(0x100); /* quit */
+        }
+        else {
+            this.interact.document.deleteChars(0, this.interact.document.length);
+            this.interact.document.insertChars(matched[0] + " is not saved.");
+        }
+    }
+
+    Windows.prototype.closeCurrView = function () {
+        var doc = this.focusView.edit.document;
+
+        if (doc.savepoint == false) {
+            this.interact.document.deleteChars(0, this.interact.document.length);
+            this.interact.document.insertChars("File is not saved.");
+            return;
+        }
+
         this.focusView.visiable = false;
+
         this.mergeView(this.focusView);
 
         this.focusView.width  = 0;
@@ -344,56 +485,62 @@
         catch (e) {
             Console.log(e.toString());
         }
-    };
+    }
 
-    Windows.prototype.vsplit = function (parent) {
+    Windows.prototype.vsplit = function (doc) {
         var h = this.focusView.height;
         h = h / 2;
         this.focusView.height = h;
 
-        this.focusView = new EditView (parent, this.interact, 
+        var document = this.focusView.edit.document;
+
+        this.focusView = new EditView (this.parent, this.interact, 
             this.focusView.locX, 
             this.focusView.locY + this.focusView.height, 
             this.focusView.width, 
             h);
 
+        if (typeof doc === 'undefined') {
+            this.focusView.changeDocument(document);
+        }
+        else {
+            this.focusView.changeDocument(doc);
+        }
+
         this.focusView.click = {};
         this.views.set (INDEXOFVIEW++, this.focusView);
 
-        this.views.forEach((v, k)=>{ 
-            try {
-                v.setName(k); 
-            }
-            catch (e){
-            }
-        });
+        this.autoWindowID();
+        this.focusView.setFocus();
         return this.focusView;
-    };
+    }
 
-    Windows.prototype.hsplit = function (parent) {
+    Windows.prototype.hsplit = function (doc) {
         var w = this.focusView.width;
         w = w / 2;
 
-        this.focusView.width = w;
+        var document = this.focusView.edit.document;
 
-        this.focusView = new EditView (parent, this.interact, 
+        this.focusView.width = w;
+        this.focusView = new EditView (this.parent, this.interact, 
             this.focusView.locX + this.focusView.width, 
             this.focusView.locY, 
             w, 
             this.focusView.height);
 
+        if (typeof doc === 'undefined') {
+            this.focusView.changeDocument(document);
+        }
+        else {
+            this.focusView.changeDocument(doc);
+        }
         this.focusView.click = {};
         this.views.set (INDEXOFVIEW++, this.focusView);
 
-        this.views.forEach((v, k)=>{ 
-            try {
-                v.setName(k); 
-            }
-            catch (e){
-            }
-        });
+        this.autoWindowID();
+        this.focusView.setFocus();
         return this.focusView;
-    };
+    }
 
     Windows.prototype.focusChange = function (widget) {
         try {
@@ -409,6 +556,6 @@
         catch (e) {
             Console.log (e.toString());
         }
-    };
+    }
     return Windows;
 })();

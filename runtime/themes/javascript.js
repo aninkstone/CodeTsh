@@ -14,6 +14,7 @@ function* lexer_javascript (){
     yield* lexer_default_selection();
     yield* lexer_default_indentguide();
 
+
     yield* lexer_javascript_keywords();
     yield* lexer_javascript_font();
     yield* lexer_javascript_default();

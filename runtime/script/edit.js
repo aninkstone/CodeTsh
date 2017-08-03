@@ -20,7 +20,6 @@
             }
         }
 
-
         if (fs.isRegularFile (fpath)) {
             content = fs.readFile(fpath);
             newDoc = new Document ();

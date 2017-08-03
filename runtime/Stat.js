@@ -86,7 +86,33 @@
         }
 
         thiz.draw_99 = function (canvas, paint, offset) {
-            text = "50%  172:  20";
+            var cp = parent.edit.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+            var ln = parent.edit.sync(SCI_LINEFROMPOSITION, cp, 0x00); 
+            var lc = parent.edit.sync(SCI_GETLINECOUNT);
+
+            var beg = parent.edit.document.lineStart(ln);
+            var end = parent.edit.document.lineEnd(ln);
+
+            var ps = Math.round((ln/lc)*100);
+            var lp = (cp - beg) + 1;
+            ln = ln + 1;
+
+            ps = ps.toString();
+            ln = ln.toString();
+
+            if (lp > 99) {
+                lp = lp.toString();
+            }
+            else if (lp > 9) {
+                lp = " " + lp.toString();
+            }
+            else {
+                lp = "  " + lp.toString();
+            }
+
+            lp = lp.toString();
+
+            text = ps + "%  " + ln + ":" + lp;
             measure = paint.measureText(text);
             measure.bounds.x = Math.abs(measure.bounds.x);
             measure.bounds.y = Math.abs(measure.bounds.y);

@@ -6,7 +6,7 @@ function* lexer_default (){
     yield* lexer_font();
 
     yield* lexer_default_margin_zero();
-    //yield* lexer_default_margin_linenumber();
+    yield* lexer_default_margin_linenumber();
     yield* lexer_default_caret();
     yield* lexer_default_tabwidth();
     yield* lexer_default_eolmode();
@@ -40,17 +40,18 @@ function* lexer_font() {
 };
 
 function* lexer_default_margin_zero (){
-    yield [SCI_SETMARGINS, 0x00, 0x00];
+    yield [SCI_SETMARGINS, SC_MARGIN_SYMBOL, 0x00];
 };
 
 function* lexer_default_margin_linenumber (){
-    yield [SCI_STYLESETFORE, STYLE_LINENUMBER, 0xE0E0E0];
+    yield [SCI_STYLESETFORE, STYLE_LINENUMBER, 0x0BFFFF];
     yield [SCI_STYLESETBACK, STYLE_LINENUMBER, 0x222827];
     yield [SCI_STYLESETFONT, STYLE_LINENUMBER, set.font.family];
+    yield [SCI_STYLESETSIZEFRACTIONAL, STYLE_LINENUMBER, 1800];
 
-    yield [SCI_SETMARGINS, 0x01, 0x00];
-    yield [SCI_SETMARGINTYPEN,  0x00, SC_MARGIN_NUMBER];
-    yield [SCI_SETMARGINWIDTHN, 0x00, 50];
+    //yield [SCI_SETMARGINS,  SC_MARGIN_NUMBER, 0x00];
+    //yield [SCI_SETMARGINTYPEN,  0x00, SC_MARGIN_NUMBER];
+    //yield [SCI_SETMARGINWIDTHN, 0x00, 50];
 };
 
 function* lexer_default_tabwidth() {
@@ -59,7 +60,6 @@ function* lexer_default_tabwidth() {
 
 function* lexer_default_eolmode () {
     yield [SCI_SETEOLMODE, SC_EOL_LF, 0x00];
-    //yield [SCI_SETVIEWEOL, 0x01, 0x00];
 };
 
 function* lexer_default_linemode() {

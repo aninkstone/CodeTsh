@@ -5,18 +5,31 @@
             editor.sync(SCI_LINESCROLL,0x00, 0x0A);
             return true;
         }
+
+        var loop = parseInt(cmd);
+        if (typeof loop == 'number' && loop) {
+            if (loop == 0) {
+                loop = 1;
+            }
+            cmd = cmd.substr(loop.toString().length);
+        }
+        else {
+            loop = 1;
+        }
+
         if (cmd == "dd") {
-            b = editor.sync(SCI_GETREADONLY, 0x00, 0x00);
-            editor.sync(SCI_SETREADONLY,   0x00, 0x00);
-            editor.sync(SCI_LINECUT,       0x00, 0x00);
-            editor.sync(SCI_SETREADONLY,   b,    0x00);
+            for (var idx = 0; idx < loop; ++idx) {
+                b = editor.sync(SCI_GETREADONLY, 0x00, 0x00);
+                editor.sync(SCI_SETREADONLY,   0x00, 0x00);
+                editor.sync(SCI_LINECUT,       0x00, 0x00);
+                editor.sync(SCI_SETREADONLY,   b,    0x00);
+            }
             return true;
         }
         if (shift) {
-            b = editor.sync(SCI_GETREADONLY, 0x00, 0x00);
             editor.sync(SCI_SETREADONLY, 0x00, 0x00);
             editor.sync(SCI_DELLINERIGHT, 0x00, 0x00);
-            editor.sync(SCI_SETREADONLY, b, 0x00);
+            editor.sync(SCI_SETREADONLY, 0x01, 0x00);
             return true;
         }
         return false;

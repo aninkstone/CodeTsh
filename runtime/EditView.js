@@ -1,58 +1,66 @@
 (function (){
     return function (parent, interact, x, y, w, h) {
-        var handle = $.api.widget.createWidget(parent);
+        var thiz = $.api.widget.createWidget(parent);
 
-        handle.setDocument = function (doc) {
-            handle.edit.document = doc;
-            handle.edit.setFocus();
+        thiz.changeDocument = function (doc) {
+            if (thiz.edit.document.savepoint == false) {
+                return -1;
+            }
+            var p = thiz.edit.sync (SCI_GETCURRENTPOS, 0x00, 0x00);
+            thiz.edit.document.caretP = p;
+
+            thiz.edit.document = doc;
+            thiz.edit.setFocus();
 
             var ext = FilePath.extname(doc.path);
             switch (ext) {
                 case ".cpp":
                 case ".c":
                 case ".h":
-                    lexerSync (handle.edit, lexer_c);
+                    lexerSync (thiz.edit, lexer_c);
                     break;
                 case ".js":
-                    lexerSync (handle.edit, lexer_javascript);
+                    lexerSync (thiz.edit, lexer_javascript);
                     break;
                 case ".html":
                 case ".htm":
-                    lexerSync (handle.edit, lexer_html);
+                    lexerSync (thiz.edit, lexer_html);
                     break;
                 case ".txt":
-                    lexerSync (handle.edit, lexer_customize);
+                    lexerSync (thiz.edit, lexer_customize);
                     break;
                 default:
-                    lexerSync (handle.edit, lexer_default);
+                    lexerSync (thiz.edit, lexer_default);
                     break;
             };
-            handle.edit.sync (SCI_SETCODEPAGE, 0, 0x00);
-            handle.edit.ro (true);
+            thiz.edit.sync(SCI_GOTOPOS, thiz.edit.document.caretP, 0x00);
+            thiz.edit.sync(SCI_SETCODEPAGE, 0, 0x00);
+            thiz.edit.ro (true);
         }
 
-        handle.setFocus = function () {
-            handle.edit.setFocus();
-        };
+        thiz.setFocus = function () {
+            thiz.edit.setFocus();
+        }
 
-        handle.setName = function (name) {
-            handle.edit.name = name.toString();
-        };
+        thiz.setName = function (name) {
+            thiz.edit.name = name.toString();
+        }
 
-        handle.locX = x;
-        handle.locY = y;
-        handle.width  = w;
-        handle.height = h;
+        thiz.locX = x;
+        thiz.locY = y;
+        thiz.width  = w;
+        thiz.height = h;
 
-        handle.stat = {};
-        handle.sept = {};
-        handle.edit = {};
+        thiz.stat = {};
+        thiz.sept = {};
+        thiz.edit = {};
 
-        handle.edit = new Edit (handle, interact);
-        handle.stat = new Stat (handle, interact);
-        handle.sept = new Sept (handle, interact);
+        thiz.edit = new Edit (thiz, interact);
+        thiz.stat = new Stat (thiz, interact);
+        thiz.sept = new Sept (thiz, interact);
+        thiz.type = "Edit";
 
-        handle.OnSizeChange = function (thiz) {
+        thiz.OnSizeChange = function (thiz) {
             thiz.sept.locX   = 0;
             thiz.sept.locY   = 0;
             thiz.sept.width  = 8;
@@ -68,9 +76,9 @@
             thiz.edit.width  = thiz.width - thiz.sept.width;
             thiz.edit.height = thiz.height - thiz.stat.height;
         }
-        handle.OnSizeChange (handle);
+        thiz.OnSizeChange (thiz);
 
-        handle.setDocument(defaultDoc);
-        return handle;
+        thiz.changeDocument(defaultDoc);
+        return thiz;
     };
 })();

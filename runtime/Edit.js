@@ -14,6 +14,10 @@
             return HandlerDefault.OnKeyU.bind(widget)(argument.key);
         }
 
+        thiz.OnUpdateUI = function (thiz) {
+            parent.stat.inval();
+        }
+
         f = (e,lex) => { 
             l = lex(); v = l.next();
             while(v.done == false) {

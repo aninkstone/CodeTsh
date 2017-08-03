@@ -1,7 +1,7 @@
 (function (){
     return function(editor, cmd, shift, alt, ctrl){
         if (cmd == "C_ws") {
-            windows.vsplit(set.window);
+            windows.vsplit();
         }
         return true;
     };

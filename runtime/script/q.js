@@ -6,7 +6,7 @@
             return f (doc, editor, fname);
         }
         else {
-            windows.closeFocusView ();
+            windows.closeCurrView ();
         }
         return true;
     }

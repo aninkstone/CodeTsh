@@ -44,7 +44,7 @@
             dir.insertChars (formatter_beg + name + "             " + path + formatter_end + "\n");
         });
 
-        editor.setDocument(dir);
+        editor.changeDocument(dir);
         editor.sync(SCI_SETREADONLY, 0x01, 0x00);
     }
 })();

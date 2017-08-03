@@ -1,5 +1,10 @@
 (function (){
-    return function (editor, ctrl, shift, k) {
+    return function (editor, cmd, shift, alt, ctrl) {
+        if (cmd == "C_w2") {
+            windows.setFocusID (2);
+            return true;
+        }
+        return false;
     }
 })();
 

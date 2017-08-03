@@ -34,30 +34,3 @@
     widget.run(function(){});
 })();
 
-function ExecuteCommand (widget, cmd, shift, alt, ctrl){
-    fs = new FileSystem();
-    script = fs.readFile(set.runtime.path + "/runtime/script/keymap/" + cmd + ".js");
-    script = eval(script);
-    if (ctrl == true) {
-        set.vim.cmd += "C_";
-    }
-    if (alt == true) {
-        set.vim.cmd += "A_";
-    }
-    if (shift == true) {
-        set.vim.cmd += "S_";
-    }
-    set.vim.cmd += cmd;
-    if (script) {
-        bConsume = script(widget, set.vim.cmd, shift, alt, ctrl);
-        if (bConsume == true) {
-            set.vim.cmd = "";
-            clearTimeOut(set.vim.timerID);
-        }
-        else {
-            set.vim.timerID = setTimeOut(function (){
-                set.vim.cmd = "";
-            }, 1000);
-        }
-    }
-}

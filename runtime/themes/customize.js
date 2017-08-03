@@ -2,7 +2,7 @@ function* lexer_customize(){
     yield* lexer_background_color();
     yield* lexer_foreground_color();
     yield* lexer_font();
-    yield* lexer_margin_zero();
+    yield* lexer_default_margin_linenumber();
     yield* lexer_tab_width();
     yield* lexer_eolmode();
     yield* lexer_caret();
@@ -10,6 +10,11 @@ function* lexer_customize(){
     yield* lexer_customize_word();
 
     yield [SCI_STYLECLEARALL, 0x00, 0x00];
+
+    //yield [SCI_STYLESETFONT, STYLE_CONTROLCHAR, set.font.family];
+    //yield [SCI_STYLESETSIZEFRACTIONAL, STYLE_CONTROLCHAR, 1000];
+    //yield [SCI_SETVIEWEOL, 0x01, 0x00];
+
     yield [SCI_SETLEXER, 0x00, 0];
 };
 
@@ -34,16 +39,6 @@ function* lexer_foreground_color () {
 function* lexer_font() {
     yield [SCI_STYLESETFONT, STYLE_DEFAULT, set.font.family];
     yield [SCI_STYLESETSIZEFRACTIONAL, STYLE_DEFAULT, set.font.size];
-};
-
-function* lexer_margin_zero (){
-    yield [SCI_SETMARGINS, 0x00, 0x00];
-};
-
-function* lexer_margin_linenumber (){
-    yield [SCI_SETMARGINS, 0x01, 0x00];
-    yield [SCI_SETMARGINTYPEN,  0x00, SC_MARGIN_NUMBER];
-    yield [SCI_SETMARGINWIDTHN, 0x00, 50];
 };
 
 function* lexer_tab_width() {

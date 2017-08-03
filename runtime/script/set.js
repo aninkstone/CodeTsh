@@ -2,7 +2,9 @@
     function showLineNumber (editor) {
         editor.sync (SCI_SETMARGINS, 0x01, 0x00);
         editor.sync (SCI_SETMARGINTYPEN, 0x00, SC_MARGIN_NUMBER);
-        editor.sync (SCI_SETMARGINWIDTHN, 0x00, 50);
+        var lineC = editor.sync(SCI_GETLINECOUNT);
+        var width = editor.sync(SCI_TEXTWIDTH, STYLE_LINENUMBER, ("_" + lineC));
+        editor.sync (SCI_SETMARGINWIDTHN, 0x00, width);
     }
     function hideLineNumber (editor) {
         editor.sync (SCI_SETMARGINWIDTHN, 0x00, 0x00);
@@ -17,6 +19,8 @@
             case "nonumber":
                 hideLineNumber(editor);
                 break;
+            case "test":
+                editor.sync(SCI_ANNOTATIONSETTEXT, 5, "aheadfadfadf");
             default:
                 break;
         }

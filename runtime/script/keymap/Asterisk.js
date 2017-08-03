@@ -6,7 +6,7 @@
 
         var chars = "";
         for (var idx = 0; idx < end - beg; ++idx) {
-            var c = editor.sync (SCI_GETCHARAT, beg + idx, 0x00);
+            var c = editor.sync(SCI_GETCHARAT, beg + idx, 0x00);
             chars += String.fromCharCode(c);
         }
         editor.searchForward (chars);

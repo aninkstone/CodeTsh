@@ -12,6 +12,7 @@
 
         thiz.nerd = new Nerd (thiz, interact);
         thiz.stat = new Stat (thiz, interact);
+        thiz.type = "Nerd";
 
         thiz.OnSizeChange = function (thiz) {
             thiz.nerd.locX = 0;

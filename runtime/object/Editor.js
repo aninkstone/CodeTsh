@@ -11,6 +11,11 @@
         OnEvent:function (thiz, evt, argument) {
             try {
                 switch (evt) {
+                    case "SYS:EDITUPDATEUI":
+                        if (typeof thiz.OnUpdateUI === 'function') {
+                            thiz.OnUpdateUI(thiz);
+                        }
+                        break;
                     case "SYS:SAVEPOINTREACHED":
                         Console.log ("SYS:SAVEPOINTREACHED");
                         break;
@@ -121,7 +126,7 @@
             set.vim.search.target = target;
             set.vim.search.beg = 0;
             set.vim.search.end = this.sync(SCI_GETLENGTH, 0x00, 0x00);
-            set.vim.search.pos = 0;
+            set.vim.search.pos = -1;
             set.vim.search.prv = set.vim.search.pos; 
         }
         else {
@@ -129,12 +134,14 @@
             set.vim.search.prv = set.vim.search.pos; 
             set.vim.search.beg = set.vim.search.pos + set.vim.search.target.length;
             set.vim.search.end = this.sync(SCI_GETLENGTH, 0x00, 0x00);
-            set.vim.search.pos = 0;
+            set.vim.search.pos = -1;
         }
 
         if (set.vim.search.target.length < 1) {
             return;
         }
+
+        var currPos = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
 
         this.sync(SCI_SETSEARCHFLAGS, SCFIND_REGEXP | SCFIND_MATCHCASE, 0x00);
         this.sync(SCI_SETTARGETSTART, set.vim.search.beg, 0x00);
@@ -145,11 +152,12 @@
             set.vim.search.pos = targetpos;
             this.sync(SCI_GOTOPOS, set.vim.search.pos, 0x00);
             this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
-            this.sync(SCI_SETSELECTION, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
+            this.sync(SCI_SETSEL, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
         } 
         else {
-            this.sync(SCI_SETSELECTION, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
+            this.sync(SCI_SETSEL, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
         }
+
     };
 
     Editor.prototype.ro = function (b) {
@@ -195,10 +203,10 @@
         if (set.vim.search.pos != -1) {
             this.sync(SCI_GOTOPOS, set.vim.search.pos, 0x00);
             this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
-            this.sync(SCI_SETSELECTION, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
+            this.sync(SCI_SETSEL, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
         } 
         else {
-            this.sync(SCI_SETSELECTION, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
+            this.sync(SCI_SETSEL, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
         }
     };
 })();

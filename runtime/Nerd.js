@@ -40,10 +40,18 @@
         try {
             var curpos = thiz.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
             var linenu = thiz.sync(SCI_LINEFROMPOSITION, curpos, 0x00); 
-            var l = thiz.sync(SCI_GETLINE, linenu, 0x00);
+
+            var beg = thiz.document.lineStart(linenu);
+            var end = thiz.document.lineEnd(linenu);
+
+            var l = "";
+            for (idx = beg; idx < end; ++idx) {
+                l += (String.fromCharCode(thiz.document.charAt(idx))); 
+            }
 
             var ul = l.indexOf('-');
             var pl = l.indexOf('+');
+
             if (ul != -1) {
                 openFile (l.substring(ul + 1));
             }
@@ -60,8 +68,9 @@
     var openFile = function (name) {
         name = name.trim('\n').trim(' ').trim('\r');
         var doc = $.api.document.createDocument(set.runtime.curr + "/" + name);
-        var edt = windows.focusHistory(1);
-        edt.setDocument(doc);
+
+        var view = windows.focusHistory(1, "Edit");
+        view.changeDocument(doc);
     }
 
     var openNode = function (name) {
@@ -77,6 +86,9 @@
         ro = this.sync(SCI_GETREADONLY, 0x00, 0x00);
         if (ro == 1) {
             switch (key) {
+                case 117: /* u */
+                    openNode ("..");
+                    break;
                 case 13:  /* enter */
                     nodeClick (this);
                     break;
@@ -91,7 +103,6 @@
                 case 108: /* l */
                 case 109: /* m */
                 case 110: /* n */
-                case 117: /* u */
                 case 118: /* v */
                 case 119: /* w */
                 case 121: /* y */

@@ -68,7 +68,7 @@
                 cmd = args[0].substr(1, args[0].length)
                 fs = new FileSystem();
 
-                args = args.filter(v=>v!='');
+                args = args.filter(v => v != '');
                 script = fs.readFile(set.runtime.path + "/runtime/script/" + cmd + ".js");
                 script = eval(script);
                 if (script) {
@@ -113,15 +113,10 @@
                                 break;
                             case 13:  /* enter  */
                                 ExecuteScriptEnter (thiz, thiz.focusView);
-                                var f = windows.focusHistory(0);
-                                f.setFocus();
+                                thiz.focusView.setFocus();
                                 return true;
                             case 27:  /* escape */
-                                var f = windows.focusHistory(0);
-                                if (f == null || typeof f == undefined) {
-                                    f = windows.focusHistory(1);
-                                }
-                                f.setFocus();
+                                thiz.focusView.setFocus();
                                 thiz.document.deleteChars(0, thiz.document.length);
                                 return true;
                             default:
