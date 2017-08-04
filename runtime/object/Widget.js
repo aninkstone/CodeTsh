@@ -7,7 +7,7 @@
             canvas.drawRect(0, 0, thiz.width, thiz.height, p);
         },
         OnEvent:function (thiz, evt, argument) {
-            Console.log (evt);
+            console.log (evt);
             try {
                 switch (evt) {
                     case "SYS:WHEEL":
@@ -55,7 +55,7 @@
                     return defaultCB.OnDraw (thiz, canvas);
                 },
                 OnEvent: function (thiz, evt, argument) {
-                    Console.log (evt);
+                    console.log (evt);
                     return defaultCB.OnEvent (thiz, evt, argument);
                 },
             };

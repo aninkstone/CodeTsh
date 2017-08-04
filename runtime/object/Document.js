@@ -21,6 +21,12 @@
         for (var idx = 0; idx < doc.length; ++idx) {
             var c = String.fromCharCode(doc.charAt(idx));
             switch (c) {
+                case "{":
+                case "}":
+                case "[":
+                case "]":
+                case "(":
+                case ")":
                 case "\r":
                 case "\n":
                 case "\t":
@@ -32,14 +38,8 @@
                 case "*":
                 case "/":
                 case "!":
-                case "(":
-                case ")":
                 case ">":
                 case "<":
-                case "[":
-                case "]":
-                case "{":
-                case "}":
                 case "&":
                 case "^":
                 case "%":
@@ -50,7 +50,7 @@
                 case "/":
                 case "~":
                 case "`":
-                case "_":
+                //case "_":
                 case ".":
                 case ",":
                 case ";":
@@ -190,7 +190,6 @@
             }
             else {
                 doc = set.documents.get(fpath);
-                Console.log (doc.caretP);
             }
 
             return doc;

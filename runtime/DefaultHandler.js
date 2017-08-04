@@ -11,6 +11,9 @@
             }
             if (ro == 1) {
                 switch (key) {
+                    case 9: /* tab */
+                        ExecuteCommand(this, "Tab", shift, alt, ctrl);
+                        break;
                     case 13:  /* enter */
                         ExecuteCommand(this, "Enter", shift, alt, ctrl);
                         break;
@@ -77,7 +80,7 @@
                         this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
                         break;
                     default:
-                        Console.log(key.toString());
+                        console.log(key.toString());
                         break;
                 }
             }

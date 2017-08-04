@@ -12,28 +12,36 @@
             try {
                 switch (evt) {
                     case "SYS:EDITUPDATEUI":
+                        var caretP = thiz.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+                        thiz.document.caretP = caretP;
                         if (typeof thiz.OnUpdateUI === 'function') {
                             thiz.OnUpdateUI(thiz);
                         }
                         break;
+                    case "SYS:MODIFIED":
+                        if (typeof thiz.OnModified === 'function') {
+                            thiz.OnModified(thiz);
+                        }
+                        break;
                     case "SYS:SAVEPOINTREACHED":
-                        Console.log ("SYS:SAVEPOINTREACHED");
+                        console.log ("SYS:SAVEPOINTREACHED");
                         break;
                     case "SYS:SAVEPOINTLEFT":
-                        Console.log ("SYS:SAVEPOINTLEFT");
+                        console.log ("SYS:SAVEPOINTLEFT");
                         break;
                     case "SYS:MODIFYATTEMPTRO":
-                        Console.log ("SYS:MODIFYATTEMPTRO");
+                        console.log ("SYS:MODIFYATTEMPTRO");
                         break;
                     case "SYS:DOUBLECLICK":
-                        Console.log ("SYS:DOUBLECLICK: line number = " + argument.lineNumber + " position = " + argument.position + " modifiers = " + argument.modifiers);
+                        console.log ("SYS:DOUBLECLICK: line number = " + argument.lineNumber + " position = " + argument.position + " modifiers = " + argument.modifiers);
                         break;
                     case "SYS:STYLENEEDED":
-                        Console.log ("SYS:STYLENEEDED : position = " + argument);
+                        console.log ("SYS:STYLENEEDED : position = " + argument);
                         break;
                     case "SYS:CHARADDED":
                         var b = thiz.sync(SCI_GETREADONLY, 0x00, 0x00);
                         if (b == 0) {
+                            Indent (thiz, String.fromCharCode(argument));
                             Complete(thiz, String.fromCharCode(argument));
                         }
                         break;
@@ -151,7 +159,7 @@
         if (targetpos != -1) {
             set.vim.search.pos = targetpos;
             this.sync(SCI_GOTOPOS, set.vim.search.pos, 0x00);
-            this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
+            //this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
             this.sync(SCI_SETSEL, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
         } 
         else {
@@ -202,7 +210,7 @@
         set.vim.search.pos = this.sync(SCI_SEARCHINTARGET, set.vim.search.target.length, set.vim.search.target);
         if (set.vim.search.pos != -1) {
             this.sync(SCI_GOTOPOS, set.vim.search.pos, 0x00);
-            this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
+            //this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
             this.sync(SCI_SETSEL, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
         } 
         else {

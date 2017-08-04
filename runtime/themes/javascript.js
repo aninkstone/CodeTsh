@@ -101,7 +101,7 @@ function* lexer_javascript_number(){
 };
 
 function* lexer_javascript_word(){
-    yield [SCI_STYLESETFORE, SCE_C_WORD, 0xEFD966];
+    yield [SCI_STYLESETFORE, SCE_C_WORD, 0x98FB98];
     yield [SCI_STYLESETBACK, SCE_C_WORD, 0x222827];
     yield [SCI_STYLESETFONT, SCE_C_WORD, set.font.family];
     yield [SCI_STYLESETSIZEFRACTIONAL, SCE_C_WORD, set.font.size];
@@ -178,7 +178,7 @@ function* lexer_javascript_commentlinedoc(){
 };
 
 function* lexer_javascript_word2(){
-    yield [SCI_STYLESETFORE, SCE_C_WORD2, 0xC05CC5];
+    yield [SCI_STYLESETFORE, SCE_C_WORD2, 0x62B7BD];
     yield [SCI_STYLESETBACK, SCE_C_WORD2, 0x222827];
     yield [SCI_STYLESETFONT, SCE_C_WORD2, set.font.family];
     yield [SCI_STYLESETSIZEFRACTIONAL, SCE_C_WORD2, set.font.size];

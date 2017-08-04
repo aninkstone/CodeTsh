@@ -17,7 +17,7 @@
             }
         }
         catch (e) {
-            Console.log (e.toString());
+            console.log (e.toString());
         }
         if (cmd == "C_wj") {
             windows.moveFocus2B();

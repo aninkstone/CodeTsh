@@ -47,7 +47,7 @@
         var pip = editor.document.completes;
 
         if (pip == undefined || pip.length == 0) {
-            Console.log ("AC: Key words list is empty");
+            console.log ("AC: Key words list is empty");
             return false;
         }
 
@@ -57,7 +57,6 @@
                 match.push (v);
             }
         });
-        Console.log (match.toString());
 
         if (match.length == 0) {
             return false;

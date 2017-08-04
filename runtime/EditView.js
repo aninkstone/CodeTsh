@@ -6,9 +6,6 @@
             if (thiz.edit.document.savepoint == false) {
                 return -1;
             }
-            var p = thiz.edit.sync (SCI_GETCURRENTPOS, 0x00, 0x00);
-            thiz.edit.document.caretP = p;
-
             thiz.edit.document = doc;
             thiz.edit.setFocus();
 

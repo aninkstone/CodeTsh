@@ -61,7 +61,7 @@
             }
         }
         catch (e) {
-            Console.log (e.toString());
+            console.log (e.toString());
         }
     }
 
@@ -86,8 +86,13 @@
         ro = this.sync(SCI_GETREADONLY, 0x00, 0x00);
         if (ro == 1) {
             switch (key) {
-                case 117: /* u */
-                    openNode ("..");
+                case 117: /* o */
+                    if (ctrl) {
+                        ExecuteCommand(this, String.fromCharCode(key), shift, alt, ctrl);
+                    }
+                    else {
+                        openNode ("..");
+                    }
                     break;
                 case 13:  /* enter */
                     nodeClick (this);
@@ -121,7 +126,7 @@
                     this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
                     break;
                 default:
-                    Console.log(key.toString());
+                    console.log(key.toString());
                     break;
             }
         }
@@ -159,6 +164,10 @@
         }
 
         thiz.OnSizeChange = function (thiz) {
+            //var pos = thiz.locY + thiz.height;
+
+            //interact.locY = pos;
+            //interact.height = parent.height - interact.pos;
         }
 
         thiz.ro = function(b) {
@@ -235,9 +244,6 @@
                 thiz.sync(SCI_SETREADONLY,   0x00, 0x00);
                 thiz.sync(SCI_SETCARETSTYLE, 0x01, 0x00);
             }
-        }
-
-        thiz.OnSizeChange = function(thiz) {
         }
 
         thiz.OnKeyDown = function (thiz, argument) {

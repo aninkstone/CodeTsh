@@ -77,4 +77,3 @@ function* lexer_default_indentguide () {
     yield [SCI_STYLESETFORE, STYLE_INDENTGUIDE, 0xE500FF];
     yield [SCI_STYLESETBACK, STYLE_INDENTGUIDE, 0x0000FF];
 };
-

@@ -123,7 +123,7 @@
         var id = setTimeOut(function(){ 
             windows.hideWindowID(); 
         }, 3000);
-        Console.log (id);
+        console.log (id);
     }
 
     Windows.prototype.hideWindowID = function () {
@@ -157,10 +157,14 @@
             }
         }
         catch (e) {
-            Console.log (e.toString());
+            console.log (e.toString());
         }
 
         return null;
+    }
+
+    Windows.prototype.focusNerd = function () {
+        this.nerdtree.setFocus();
     }
 
     Windows.prototype.setFocusID  = function (index) {
@@ -248,6 +252,10 @@
 
     Windows.prototype.viewsCount = function () {
         return this.views.size;
+    }
+
+    Windows.prototype.copenView = function () {
+        this.focusView.changeDocument (consoleDoc);
     }
 
     Windows.prototype.septClick = function (widget, pos, stat) {
@@ -372,7 +380,7 @@
             return match;
         }
         var lvg = flvg (merge);
-        Console.log ("Has left view count = " + lvg.length);
+        console.log ("Has left view count = " + lvg.length);
 
         var frvg = (resizeWidget)=>{ /* find right views group */
             var match = [];
@@ -385,7 +393,7 @@
             return match;
         }
         var rvg = frvg (merge);
-        Console.log ("Has right view count = " + rvg.length);
+        console.log ("Has right view count = " + rvg.length);
 
         var ftvg = (resizeWidget)=>{ /* find top views group */
             var match = [];
@@ -398,7 +406,7 @@
             return match;
         }
         var tvg = ftvg (merge);
-        Console.log ("Has top view count = " + tvg.length);
+        console.log ("Has top view count = " + tvg.length);
 
         var fbvg = (resizeWidget)=>{ /* find bottom views group */
             var match = [];
@@ -411,7 +419,7 @@
             return match;
         }
         var bvg = fbvg (merge);
-        Console.log ("Has bottom view count = " + bvg.length);
+        console.log ("Has bottom view count = " + bvg.length);
 
         if (tvg.length != 0) {
             tvg.forEach ((v)=>{
@@ -483,7 +491,7 @@
             focus.setFocus();
         }
         catch (e) {
-            Console.log(e.toString());
+            console.log(e.toString());
         }
     }
 
@@ -554,7 +562,7 @@
             });
         }
         catch (e) {
-            Console.log (e.toString());
+            console.log (e.toString());
         }
     }
     return Windows;

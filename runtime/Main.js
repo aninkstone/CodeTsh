@@ -35,6 +35,19 @@ require(set.runtime.path + "/runtime/object/Document.js");
 require(set.runtime.path + "/runtime/object/Widget.js");
 require(set.runtime.path + "/runtime/object/Editor.js");
 
+var FilePath = require(set.runtime.path + "/runtime/Path.js");
+var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
+var consoleDoc = $.api.document.createDocument("./tmp/copen.txt");
+
+console.log = function (l) {
+    debug (l);
+    consoleDoc.insertChars(l.toString() + "\n");
+}
+
+console.debug = function (l) {
+    debug (l);
+};
+
 var Sept = require(set.runtime.path + "/runtime/Sept.js");
 var Stat = require(set.runtime.path + "/runtime/Stat.js");
 var Edit = require(set.runtime.path + "/runtime/Edit.js");
@@ -42,9 +55,7 @@ var Nerd = require(set.runtime.path + "/runtime/Nerd.js");
 
 var Complete = require(set.runtime.path + "/runtime/DefaultAC.js");
 var HandlerDefault = require(set.runtime.path + "/runtime/DefaultHandler.js");
-var FilePath = require(set.runtime.path + "/runtime/Path.js");
-
-var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
+var Indent   = require(set.runtime.path + "/runtime/DefaultIndent.js");
 
 require(set.runtime.path + "/runtime/themes/default.js");
 require(set.runtime.path + "/runtime/themes/c.js");
@@ -64,7 +75,7 @@ Windows =  require(set.runtime.path + "/runtime/Windows.js");
 //var t = new Thread ();
 //t.run (function (){
 //    for (i = 0;i < 1000; ++i) {
-//        Console.log ("hey " + i);
+//        console.log ("hey " + i);
 //    }
 //});
 
@@ -119,9 +130,8 @@ function ExecuteCommand (widget, cmd, shift, alt, ctrl){
         }
     }
     catch (e) {
-        Console.log ("[Error][ExecuteCommand]: " + e.toString());
+        console.log ("[Error][ExecuteCommand]: " + e.toString());
     }
 }
 
 require(set.runtime.path + "/runtime/MainWnd.js");
-
