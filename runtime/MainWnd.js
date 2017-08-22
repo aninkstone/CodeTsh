@@ -33,4 +33,3 @@
 
     widget.run(function(){});
 })();
-

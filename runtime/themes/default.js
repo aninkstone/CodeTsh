@@ -6,7 +6,7 @@ function* lexer_default (){
     yield* lexer_font();
 
     yield* lexer_default_margin_zero();
-    yield* lexer_default_margin_linenumber();
+    //yield* lexer_default_margin_linenumber();
     yield* lexer_default_caret();
     yield* lexer_default_tabwidth();
     yield* lexer_default_eolmode();
@@ -40,7 +40,7 @@ function* lexer_font() {
 };
 
 function* lexer_default_margin_zero (){
-    yield [SCI_SETMARGINS, SC_MARGIN_SYMBOL, 0x00];
+    yield [SCI_SETMARGINS, 0x00, 0x00];
 };
 
 function* lexer_default_margin_linenumber (){
@@ -49,9 +49,8 @@ function* lexer_default_margin_linenumber (){
     yield [SCI_STYLESETFONT, STYLE_LINENUMBER, set.font.family];
     yield [SCI_STYLESETSIZEFRACTIONAL, STYLE_LINENUMBER, 1800];
 
-    //yield [SCI_SETMARGINS,  SC_MARGIN_NUMBER, 0x00];
-    //yield [SCI_SETMARGINTYPEN,  0x00, SC_MARGIN_NUMBER];
-    //yield [SCI_SETMARGINWIDTHN, 0x00, 50];
+    //yield [SCI_SETMARGINTYPEN, 0x01, SC_MARGIN_NUMBER];
+    //yield [SCI_SETMARGINWIDTHN, 0x01, 20];
 };
 
 function* lexer_default_tabwidth() {
@@ -76,4 +75,12 @@ function* lexer_default_selection() {
 function* lexer_default_indentguide () {
     yield [SCI_STYLESETFORE, STYLE_INDENTGUIDE, 0xE500FF];
     yield [SCI_STYLESETBACK, STYLE_INDENTGUIDE, 0x0000FF];
+    yield [SCI_SETINDENTATIONGUIDES, SC_IV_LOOKBOTH, 0x00];
+};
+
+function* lexer_default_whitespace() {
+    //yield [SCI_SETVIEWWS, SCWS_INVISIBLE]; /* disable */
+    yield [SCI_SETVIEWWS, SCWS_VISIBLEONLYININDENT];
+    //yield [SCI_SETVIEWWS, SCWS_VISIBLEALWAYS];
+    //yield [SCI_SETVIEWWS, SCWS_VISIBLEAFTERINDENT, 0x00];
 };

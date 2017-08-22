@@ -105,6 +105,7 @@
         if (this.fHistory.length >= 20) {
             this.fHistory.pop();
         }
+        widget.setFocus();
     }
 
     Windows.prototype.showWindowID = function () {
@@ -137,21 +138,13 @@
         });
     }
 
-    Windows.prototype.focusHistory = function (history, type) {
-        if (history >= 6) {
-            history = 6;
-        }
-
+    Windows.prototype.preFocusView = function (type) {
         try {
-            for (var idx = history; idx >= 0; --idx) {
+            for (var idx = 0; idx < this.fHistory.length; ++idx) {
+                console.log(this.fHistory.length + ": " + "[" + idx + "]"+ this.fHistory[idx] + ":" + this.fHistory[idx].type);
                 if (typeof this.fHistory[idx] == 'object') {
-                    if (typeof type == 'undefined'){
+                    if (this.fHistory[idx].type == type) {
                         return this.fHistory[idx];
-                    }
-                    else {
-                        if (this.fHistory[idx].type == type) {
-                            return this.fHistory[idx];
-                        }
                     }
                 }
             }
@@ -159,7 +152,6 @@
         catch (e) {
             console.log (e.toString());
         }
-
         return null;
     }
 
@@ -478,21 +470,20 @@
         }
 
         this.focusView.visiable = false;
-
         this.mergeView(this.focusView);
-
         this.focusView.width  = 0;
         this.focusView.height = 0;
 
-        delete this.focusView;
+        console.log (this.fHistory.length);
+        var index = this.fHistory.indexOf (this.focusView);
+        if (index > -1) {
+            this.fHistory.splice(index, 1);
+        }
         this.focusView = null;
-        try {
-            var focus = this.focusHistory(1);
-            focus.setFocus();
-        }
-        catch (e) {
-            console.log(e.toString());
-        }
+        console.log (this.fHistory.length);
+
+        var focus = this.preFocusView("Edit");
+        focus.setFocus();
     }
 
     Windows.prototype.vsplit = function (doc) {

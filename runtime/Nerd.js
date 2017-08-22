@@ -69,7 +69,7 @@
         name = name.trim('\n').trim(' ').trim('\r');
         var doc = $.api.document.createDocument(set.runtime.curr + "/" + name);
 
-        var view = windows.focusHistory(1, "Edit");
+        var view = windows.preFocusView("Edit");
         view.changeDocument(doc);
     }
 
@@ -86,6 +86,9 @@
         ro = this.sync(SCI_GETREADONLY, 0x00, 0x00);
         if (ro == 1) {
             switch (key) {
+                case 114: /* r */
+                    windows.chdir(set.runtime.curr);
+                    break;
                 case 117: /* o */
                     if (ctrl) {
                         ExecuteCommand(this, String.fromCharCode(key), shift, alt, ctrl);
@@ -165,9 +168,11 @@
 
         thiz.OnSizeChange = function (thiz) {
             //var pos = thiz.locY + thiz.height;
-
             //interact.locY = pos;
             //interact.height = parent.height - interact.pos;
+        }
+
+        thiz.OnFocusIn = function (thiz) {
         }
 
         thiz.ro = function(b) {

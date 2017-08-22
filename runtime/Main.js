@@ -31,6 +31,7 @@ var windows = {};
 set.runtime.path = (new FileSystem()).getcwd();
 set.runtime.curr = (new FileSystem()).getcwd();
 
+require(set.runtime.path + "/runtime/Language.js");
 require(set.runtime.path + "/runtime/object/Document.js");
 require(set.runtime.path + "/runtime/object/Widget.js");
 require(set.runtime.path + "/runtime/object/Editor.js");
@@ -41,7 +42,9 @@ var consoleDoc = $.api.document.createDocument("./tmp/copen.txt");
 
 console.log = function (l) {
     debug (l);
+    consoleDoc.readonly = false;
     consoleDoc.insertChars(l.toString() + "\n");
+    consoleDoc.readonly = true;
 }
 
 console.debug = function (l) {
@@ -71,6 +74,7 @@ Interact = require(set.runtime.path + "/runtime/Interact.js");
 NerdTree = require(set.runtime.path + "/runtime/NerdTree.js");
 EditView = require(set.runtime.path + "/runtime/EditView.js");
 Windows =  require(set.runtime.path + "/runtime/Windows.js");
+
 
 //var t = new Thread ();
 //t.run (function (){

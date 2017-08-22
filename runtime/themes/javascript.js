@@ -5,15 +5,14 @@ function* lexer_javascript (){
     yield* lexer_foreground_color();
     yield [SCI_STYLECLEARALL, 0x00, 0x00];
 
-    yield* lexer_default_margin_zero ();
+    //yield* lexer_default_margin_zero ();
     yield* lexer_default_tabwidth();
     yield* lexer_default_caret();
     yield* lexer_default_eolmode();
     yield* lexer_default_linemode();
-    yield* lexer_default_margin_linenumber();
+    //yield* lexer_default_margin_linenumber();
     yield* lexer_default_selection();
     yield* lexer_default_indentguide();
-
 
     yield* lexer_javascript_keywords();
     yield* lexer_javascript_font();
@@ -48,6 +47,8 @@ function* lexer_javascript (){
     yield* lexer_wordchars();
     yield* lexer_usingtab();
     yield* lexer_setindent();
+
+    yield* lexer_javascript_fold ();
 };
 
 function* lexer_margin_zero (){
@@ -129,7 +130,7 @@ function* lexer_javascript_uuid(){
 };
 
 function* lexer_javascript_preprocessor(){
-    yield [SCI_STYLESETFORE, SCE_C_PREPROCESSOR, 0x007F7F];
+    yield [SCI_STYLESETFORE, SCE_C_PREPROCESSOR, 0xAADCDC];
     yield [SCI_STYLESETBACK, SCE_C_PREPROCESSOR, 0x222827];
     yield [SCI_STYLESETFONT, SCE_C_PREPROCESSOR, set.font.family];
     yield [SCI_STYLESETSIZEFRACTIONAL, SCE_C_PREPROCESSOR, set.font.size];
@@ -283,3 +284,66 @@ function* lexer_javascript_keywords() {
     yield [SCI_SETKEYWORDS, 0x01, "yield switch case default break continue return if else true false this typeof new delete"];
     yield [SCI_SETKEYWORDS, 0x00, "var function undefined string object array map Map Array String Object Document Widget Window Editor"];
 };
+
+function* lexer_javascript_fold () {
+    yield [SCI_SETPROPERTY, "fold", "1"];
+    yield [SCI_SETPROPERTY, "fold.compact", "1"];
+    yield [SCI_SETPROPERTY, "fold.comment", "1"];
+    yield [SCI_SETPROPERTY, "fold.at.else", "1"];
+    yield [SCI_SETPROPERTY, "fold.preprocessor", "1"];
+    yield [SCI_SETPROPERTY, "fold.cpp.comment", "1"];
+    yield [SCI_SETPROPERTY, "fold.cpp.syntax.based", "1"];
+    yield [SCI_SETPROPERTY, "fold.cpp.comment.multiline", "1"]; 
+    yield [SCI_SETPROPERTY, "fold.cpp.comment.explicit", "1"];
+    yield [SCI_SETPROPERTY, "fold.cpp.explicit.start", "1"];
+    yield [SCI_SETPROPERTY, "fold.cpp.explicit.end", "1"];
+    yield [SCI_SETPROPERTY, "fold.cpp.explicit.anywhere", "1"];
+    yield [SCI_SETPROPERTY, "fold.cpp.preprocessor.at.else", "1"];
+
+    yield [SCI_SETFOLDMARGINCOLOUR, 0x01, 0x222827];
+    yield [SCI_SETFOLDMARGINHICOLOUR, 0x01, 0x0B00FF];
+
+    //yield [SCI_SETMARGINTYPEN,  0x02, SC_MARGIN_SYMBOL];
+    yield [SCI_SETMARGINTYPEN,  0x02, SC_MARGIN_SYMBOL];
+    yield [SCI_SETMARGINWIDTHN, 0x02, 16];
+    yield [SCI_SETMARGINMASKN,  0x02, SC_MASK_FOLDERS];
+	yield [SCI_SETMARGINSENSITIVEN, 0x02, 1];
+
+    yield [SCI_MARKERDEFINE, SC_MARKNUM_FOLDEROPEN, SC_MARK_MINUS];
+    yield [SCI_MARKERSETFORE, SC_MARKNUM_FOLDEROPEN, 0xFF222827];
+    yield [SCI_MARKERSETBACK, SC_MARKNUM_FOLDEROPEN, 0xFFE0E0E0];
+    yield [SCI_MARKERSETBACKSELECTED, SC_MARKNUM_FOLDEROPEN, 0xFF];
+
+    yield [SCI_MARKERDEFINE, SC_MARKNUM_FOLDER, SC_MARK_PLUS];
+    yield [SCI_MARKERSETFORE, SC_MARKNUM_FOLDER, 0x222827];
+    yield [SCI_MARKERSETBACK, SC_MARKNUM_FOLDER, 0xE0E0E0];
+    yield [SCI_MARKERSETBACKSELECTED, SC_MARKNUM_FOLDER, 0xFF];
+
+    yield [SCI_MARKERDEFINE, SC_MARKNUM_FOLDERSUB, SC_MARK_EMPTY];
+    yield [SCI_MARKERSETFORE, SC_MARKNUM_FOLDERSUB, 0x222827];
+    yield [SCI_MARKERSETBACK, SC_MARKNUM_FOLDERSUB, 0xE0E0E0];
+    yield [SCI_MARKERSETBACKSELECTED, SC_MARKNUM_FOLDERSUB, 0xFF];
+
+    yield [SCI_MARKERDEFINE, SC_MARKNUM_FOLDERTAIL, SC_MARK_EMPTY];
+    yield [SCI_MARKERSETFORE, SC_MARKNUM_FOLDERTAIL, 0x222827];
+    yield [SCI_MARKERSETBACK, SC_MARKNUM_FOLDERTAIL, 0xE0E0E0];
+    yield [SCI_MARKERSETBACKSELECTED, SC_MARKNUM_FOLDERTAIL, 0xFF];
+
+    yield [SCI_MARKERDEFINE, SC_MARKNUM_FOLDEREND, SC_MARK_EMPTY];
+    yield [SCI_MARKERSETFORE, SC_MARKNUM_FOLDEREND, 0x222827];
+    yield [SCI_MARKERSETBACK, SC_MARKNUM_FOLDEREND, 0xE0E0E0];
+    yield [SCI_MARKERSETBACKSELECTED, SC_MARKNUM_FOLDEREND, 0xFF];
+
+    yield [SCI_MARKERDEFINE, SC_MARKNUM_FOLDEROPENMID, SC_MARK_EMPTY];
+    yield [SCI_MARKERSETFORE, SC_MARKNUM_FOLDEROPENMID, 0x222827];
+    yield [SCI_MARKERSETBACK, SC_MARKNUM_FOLDEROPENMID, 0xE0E0E0];
+    yield [SCI_MARKERSETBACKSELECTED, SC_MARKNUM_FOLDEROPENMID, 0xFF];
+
+    yield [SCI_MARKERDEFINE, SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_EMPTY];
+    yield [SCI_MARKERSETFORE, SC_MARKNUM_FOLDERMIDTAIL, 0x222827];
+    yield [SCI_MARKERSETBACK, SC_MARKNUM_FOLDERMIDTAIL, 0xE0E0E0];
+    yield [SCI_MARKERSETBACKSELECTED, SC_MARKNUM_FOLDERMIDTAIL, 0xFF];
+
+    // The highlight is disabled for plus/minus.
+    yield [SCI_MARKERENABLEHIGHLIGHT, 0x00, 0x00];
+}

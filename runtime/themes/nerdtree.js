@@ -1,14 +1,17 @@
 function* lexer_nerdtree(){
+    yield [SCI_SETLEXER, 0x00, 0];
     yield [SCI_STYLERESETDEFAULT, 0x00, 0x00];
 
     yield* lexer_background_color();
     yield* lexer_foreground_color();
+
     yield* lexer_font();
     yield* lexer_margin_zero ();
     yield* lexer_tab_width();
     yield* lexer_eolmode ();
     yield* lexer_caret();
     yield* lexer_linemode();
+
     yield [SCI_STYLECLEARALL, 0x00, 0x00];
 
     yield* lexer_nerdtree_vline();
@@ -18,8 +21,6 @@ function* lexer_nerdtree(){
 
     yield* lexer_default_caret();
     yield* lexer_default_selection();
-
-    yield [SCI_SETLEXER, 0x00, 0];
 };
 
 function* lexer_caret() {
@@ -33,11 +34,13 @@ function* lexer_caret() {
 };
 
 function* lexer_background_color () {
-    yield [SCI_STYLESETBACK, STYLE_DEFAULT, 0x222827];
+    //yield [SCI_STYLESETBACK, STYLE_DEFAULT, 0x222827];
+    yield [SCI_STYLESETBACK, STYLE_DEFAULT, 0xA0A0A0];
 };
 
 function* lexer_foreground_color () {
-    yield [SCI_STYLESETFORE, STYLE_DEFAULT, 0xE0E0E0];
+    //yield [SCI_STYLESETFORE, STYLE_DEFAULT, 0xE0E0E0];
+    yield [SCI_STYLESETFORE, STYLE_DEFAULT, 0x0D0D0D];
 };
 
 function* lexer_font() {

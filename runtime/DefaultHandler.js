@@ -11,6 +11,9 @@
             }
             if (ro == 1) {
                 switch (key) {
+                    case 61:  /* = */
+                        ExecuteCommand(this, "ESign", shift, alt, ctrl);
+                        break;
                     case 9: /* tab */
                         ExecuteCommand(this, "Tab", shift, alt, ctrl);
                         break;
@@ -24,7 +27,15 @@
                         ExecuteCommand(this, "Semi", shift, alt, ctrl);
                         break;
                     case 46:  /* . */
-                        ExecuteCommand(this, "Dot", shift, alt, ctrl);
+                        if (shift) {
+                            this.interact.setFocus();
+                            this.interact.document.deleteChars(0, this.interact.document.length);
+                            this.interact.document.insertChars(">");
+                            this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
+                        }
+                        else {
+                            ExecuteCommand(this, "Dot", shift, alt, ctrl);
+                        }
                         break;
                     case 48:  /* 0 */
                     case 49:  /* 1 */

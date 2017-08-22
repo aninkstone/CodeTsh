@@ -54,9 +54,13 @@
         }
         console.debug (doc.indentmks.toString()); 
     }
+
+    function doIndentLine (editor, doc, beg, end) {
+        console.log ("Warning: Not implement.");
+    }
+
     function doIndent (editor, doc, ch) {
         if (ch == '\n') {
-            console.debug ("bbbbbbbbbbbbbbbbbbbbbbbb");
             if (doc.indentmks != 'undefined') {
                 var cp = editor.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
                 var ln = editor.sync(SCI_LINEFROMPOSITION, cp, 0x00); 
@@ -102,17 +106,22 @@
             }
         }
     }
-    return function indent (editor, ch) {
-        console.debug (ch.charCodeAt(0));
+    return function indent (editor, ch, beg, end) {
         var doc = editor.document;
-        CodeAnalyze(doc);
-        switch (ch) {
-            case '}':
+        if (ch.length >= 1) {
+            CodeAnalyze(doc);
+            switch (ch) {
+                case '}':
             case '\n':
                 doIndent(editor, doc, ch);
                 break;
             default:
                 return;
+            }
+        }
+        if (ch.length == 0) {
+            CodeAnalyze(doc);
+            doIndentLine(editor, doc, beg, end);
         }
     }
 })();

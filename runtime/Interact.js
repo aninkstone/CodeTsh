@@ -1,5 +1,5 @@
 (function(){
-    function ExecuteScriptSlash (thiz, editor) {
+    function ExecuteScript (thiz, editor) {
         copen = thiz.document;
         try {
             var content = "";
@@ -13,16 +13,45 @@
 
             caller = function (copen, editor, arg) {
                 copen.deleteChars(0, copen.length);
-                copen.insertChars("不是编辑器的命令: " + arg);
+                copen.insertChars(LANGUAGE.interact.Error01 + ": " + arg);
+            };
+
+            opeRunner = function (t, editor, content) {
+                eval(content);
+            }
+            content = content.substr(1, content.length)
+            opeRunner (copen, editor, content);
+        }
+        catch (e) {
+            copen.deleteChars(0, copen.length);
+            copen.insertChars(e.toString());
+        }
+    }
+
+    function ExecuteSlash (thiz, editor) {
+        var copen = thiz.document;
+        try {
+            var content = "";
+            for (idx = 0; idx < copen.length; ++idx) {
+                content += (String.fromCharCode(copen.charAt(idx))); 
+            }
+
+            if (content.length <= 0) {
+                return;
+            }
+
+            caller = function (copen, editor, arg) {
+                copen.deleteChars(0, copen.length);
+                copen.insertChars(LANGUAGE.interact.Error01 + ": " + arg);
             };
 
             opeRunner = function (t, editor, content, cmd) {
-                args = content.split(" ");
+                var args = content.split(" ");
                 args[0] = args[0].substr(1, args[0].length);
                 fs = new FileSystem();
 
                 args = args.filter(v=>v!='');
-                script = fs.readFile(set.runtime.path + "/runtime/script/" + cmd+ ".js");
+                script = fs.readFile(set.runtime.path + "/runtime/script/command/" + cmd+ ".js");
                 script = eval(script);
                 if (script) {
                     script(t, editor, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
@@ -31,7 +60,7 @@
                     caller(t, editor, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
                 }
             }
-            firstChar = content.charAt(0);
+            var firstChar = content.charAt(0);
             switch (firstChar) {
                 case "/":
                     opeRunner (copen, editor, content, "slash");
@@ -47,7 +76,7 @@
         }
     }
 
-    function ExecuteScriptEnter (thiz, editor){
+    function ExecuteCommand (thiz, editor){
         copen = thiz.document;
         try {
             var content = "";
@@ -69,7 +98,7 @@
                 fs = new FileSystem();
 
                 args = args.filter(v => v != '');
-                script = fs.readFile(set.runtime.path + "/runtime/script/" + cmd + ".js");
+                script = fs.readFile(set.runtime.path + "/runtime/script/command/" + cmd + ".js");
                 script = eval(script);
                 if (script) {
                     script(t, e, args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
@@ -79,7 +108,7 @@
                 }
             }
 
-            firstChar = content.charAt(0);
+            var firstChar = content.charAt(0);
             switch (firstChar) {
                 case ":":
                     opeRunner (copen, editor, content);
@@ -95,6 +124,37 @@
         }
     };
 
+    function Execute (evt, key, thiz, editor) {
+        var copen = thiz.document;
+
+        var content = "";
+        for (idx = 0; idx < copen.length && idx < 5; ++idx) {
+            content += (String.fromCharCode(copen.charAt(idx))); 
+        }
+        if (content.length <= 0) {
+            return;
+        }
+
+        var firstChar = content.charAt(0);
+        switch (firstChar) {
+            case ":":
+                if (evt == "SYS:KEY" && key == 13) {
+                    ExecuteCommand(thiz, thiz.focusView);
+                }
+                break;
+            case ">":
+                if (evt == "SYS:KEY" && key == 13) {
+                    ExecuteScript(thiz, thiz.focusView);
+                }
+                break;
+            case "/":
+                ExecuteSlash(thiz, thiz.focusView);
+                break;
+            default:
+                break;
+        }
+    };
+
     return function (parent, x, y, w, h) {
         var thiz = $.api.editor.createEditor(parent);
         var CB = {
@@ -103,7 +163,7 @@
             OnEvent: function (thiz, evt, argument) {
                 switch (evt) {
                     case "SYS:INPUTTEXT":
-                        ExecuteScriptSlash(thiz, thiz.focusView);
+                        Execute(evt, argument.key, thiz, thiz.focusView);
                         break;
                     case "SYS:KEY":
                         switch (argument.key) {
@@ -112,7 +172,7 @@
                             case 9:   /* tab */
                                 break;
                             case 13:  /* enter  */
-                                ExecuteScriptEnter (thiz, thiz.focusView);
+                                Execute(evt, argument.key, thiz, thiz.focusView);
                                 thiz.focusView.setFocus();
                                 return true;
                             case 27:  /* escape */
