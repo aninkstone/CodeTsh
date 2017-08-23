@@ -83,6 +83,9 @@ Windows =  require(set.runtime.path + "/runtime/Windows.js");
 //    }
 //});
 
+var pip = execute("grep.exe", "-in CTEditComplete ./*");
+console.log (pip);
+
 function lexerSync (e, lex) {
     l = lex(); v = l.next();
     while(v.done == false) {
