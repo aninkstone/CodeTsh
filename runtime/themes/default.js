@@ -63,6 +63,8 @@ function* lexer_default_eolmode () {
 
 function* lexer_default_linemode() {
     yield [SCI_SETEDGEMODE, EDGE_LINE, 0x00];
+    yield [SCI_SETEDGEMODE, 3, 0x00];
+
     yield [SCI_SETEDGECOLUMN, 80, 0x00];
 };
 

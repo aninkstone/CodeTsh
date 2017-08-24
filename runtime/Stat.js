@@ -48,15 +48,23 @@
         thiz.draw_00 = function (canvas, paint, offset) {
             paint.fontSize = 18;
             paint.fontFamily = set.font.family;
+            
+            var doc = parent.edit.document;
+            if (doc.readonly == true) {
+                text = "NORMAL";
+                paint.color = 0xFF002B2B;
+            }
+            else {
+                text = "INSERT";
+                paint.color = 0xFFF00000;
+            }
 
-            text = "CodeTor";
             measure = paint.measureText(text);
             measure.bounds.x = Math.abs(measure.bounds.x);
             measure.bounds.y = Math.abs(measure.bounds.y);
             measure.bounds.w = Math.abs(measure.bounds.w);
             measure.bounds.h = Math.abs(measure.bounds.h);
-
-            paint.color = 0xFF002B2B;
+            
             path = new Path();
             path.moveTo(0.0, 0.0);
             path.lineTo(measure.length + MARGIN * 2, 0.0);
@@ -65,7 +73,7 @@
             path.lineTo(0.0, thiz.height);
             path.close();
             canvas.drawPath(path, paint);
-
+            
             paint.color = 0xFFF0F0F0;
             offset = (thiz.height - measure.bounds.y) / 2 + measure.bounds.y;
             canvas.drawText(text, MARGIN, offset, paint);
@@ -74,7 +82,11 @@
         }
         thiz.draw_01 = function (canvas, paint, offset) {
             paint.color = 0xFFF0F0F0;
-            var p = FilePath.basename (parent.edit.document.path);
+            var doc = parent.edit.document;
+            var p = FilePath.basename (doc.path);
+            if (doc.savepoint == false) {
+                p += " [Unsaved]"
+            }
             canvas.drawText(p, offset + MARGIN, thiz.height / 2 + 5, paint) ;
             return 0;
         }

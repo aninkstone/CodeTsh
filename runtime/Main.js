@@ -83,8 +83,8 @@ Windows =  require(set.runtime.path + "/runtime/Windows.js");
 //    }
 //});
 
-var pip = execute("grep.exe", "-in CTEditComplete ./*");
-console.log (pip);
+//var pip = execute("grep.exe", "-in CTEditComplete ./*");
+//console.log (pip);
 
 function lexerSync (e, lex) {
     l = lex(); v = l.next();
@@ -126,6 +126,7 @@ function ExecuteCommand (widget, cmd, shift, alt, ctrl){
         if (script) {
             bConsume = script(widget, set.vim.cmd, shift, alt, ctrl);
             if (bConsume == true) {
+                set.vim.pre = set.vim.cmd;
                 set.vim.cmd = "";
                 clearTimeOut(set.vim.timerID);
             }

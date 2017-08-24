@@ -14,7 +14,7 @@ function* lexer_c (){
     yield* lexer_default_linemode();
     //yield* lexer_default_margin_linenumber();
     yield* lexer_default_selection();
-    yield* lexer_default_indentguide();
+    //yield* lexer_default_indentguide();
     yield* lexer_default_whitespace();
 
     yield* lexer_c_keywords();

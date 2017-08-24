@@ -17,7 +17,34 @@
             return true;
         }
         if (cmd == "yy") {
-            editor.sync(SCI_COPYALLOWLINE, 0x00, 0x00);
+            var pos = editor.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+            var lnu = editor.sync(SCI_LINEFROMPOSITION, pos, 0x00);
+            var doc = editor.document;
+            var beg = doc.lineStart(lnu);
+            var end = doc.lineEnd(lnu);
+            var eol = editor.sync(SCI_GETEOLMODE, 0x00, 0x00);
+            var ech = "";
+            switch (eol) {
+                case SC_EOL_CRLF:
+                    ech = "\r\n";
+                    break;
+                case SC_EOL_CR:
+                    ech = "\r";
+                    break;
+                case SC_EOL_LF:
+                    ech = "\n";
+                    break;
+                default:
+                    break;
+            }
+
+            var chars = "";
+            for (var idx = beg; idx < end; ++idx) {
+                chars += String.fromCharCode(doc.charAt(idx));
+            }
+            chars += ech;
+
+            editor.sync(SCI_COPYTEXT, chars.length, chars);
             return true;
         }
         return false;
