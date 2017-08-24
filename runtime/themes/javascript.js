@@ -5,7 +5,7 @@ function* lexer_javascript (){
     yield* lexer_foreground_color();
     yield [SCI_STYLECLEARALL, 0x00, 0x00];
 
-    //yield* lexer_default_margin_zero ();
+    yield* lexer_default_margin_zero ();
     yield* lexer_default_tabwidth();
     yield* lexer_default_caret();
     yield* lexer_default_eolmode();
@@ -48,7 +48,7 @@ function* lexer_javascript (){
     yield* lexer_usingtab();
     yield* lexer_setindent();
 
-    yield* lexer_javascript_fold ();
+    //yield* lexer_javascript_fold ();
 };
 
 function* lexer_margin_zero (){

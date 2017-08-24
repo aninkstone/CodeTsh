@@ -173,6 +173,7 @@
         }
 
         thiz.OnFocusIn = function (thiz) {
+            thiz.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
         }
 
         thiz.ro = function(b) {

@@ -7,12 +7,11 @@ function* lexer_c (){
 
     yield* lexer_c_setindent();
 
-    //yield* lexer_default_margin_zero ();
+    yield* lexer_default_margin_zero ();
     yield* lexer_default_tabwidth();
     yield* lexer_default_caret();
     yield* lexer_default_eolmode();
     yield* lexer_default_linemode();
-    //yield* lexer_default_margin_linenumber();
     yield* lexer_default_selection();
     //yield* lexer_default_indentguide();
     yield* lexer_default_whitespace();
@@ -50,7 +49,7 @@ function* lexer_c (){
     yield* lexer_c_wordchars();
     yield* lexer_c_usingtab();
 
-    yield* lexer_c_fold();
+    //yield* lexer_c_fold();
 };
 
 function* lexer_c_fold () {

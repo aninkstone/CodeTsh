@@ -9,6 +9,15 @@
             thiz.edit.document = doc;
             thiz.edit.setFocus();
 
+            if (thiz.edit.document.path == "./tmp/copen.txt") {
+                thiz.edit.OnModified = function (thiz) {
+                    thiz.sync(SCI_DOCUMENTEND);
+                }
+            }
+            else {
+                thiz.edit.OnModified = null;
+            }
+
             var ext = FilePath.extname(doc.path);
             switch (ext) {
                 case ".cpp":

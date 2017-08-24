@@ -41,7 +41,7 @@
                     case "SYS:CHARADDED":
                         var b = thiz.sync(SCI_GETREADONLY, 0x00, 0x00);
                         if (b == 0) {
-                            Indent (thiz, String.fromCharCode(argument));
+                            Indent(thiz, String.fromCharCode(argument));
                             Complete(thiz, String.fromCharCode(argument));
                         }
                         break;
@@ -172,10 +172,12 @@
         if (b) {
             this.sync(SCI_SETREADONLY,   0x01, 0x00);
             this.sync(SCI_SETCARETSTYLE, 0x02, 0x00);
+            this.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
         }
         else {
             this.sync(SCI_SETREADONLY,   0x00, 0x00);
             this.sync(SCI_SETCARETSTYLE, 0x01, 0x00);
+            this.sync(SCI_SETCURSOR, SC_CURSORNORMAL, 0x00);
         }
     }
 

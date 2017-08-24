@@ -52,12 +52,6 @@ function* lexer_margin_zero (){
     yield [SCI_SETMARGINS, 0x00, 0x00];
 };
 
-function* lexer_margin_linenumber (){
-    yield [SCI_SETMARGINS, 0x01, 0x00];
-    yield [SCI_SETMARGINTYPEN,  0x00, SC_MARGIN_NUMBER];
-    yield [SCI_SETMARGINWIDTHN, 0x00, 50];
-};
-
 function* lexer_tab_width() {
     yield [SCI_SETTABWIDTH, 0x04, 0x00];
 };

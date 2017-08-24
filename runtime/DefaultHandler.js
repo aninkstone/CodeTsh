@@ -28,10 +28,10 @@
                         break;
                     case 46:  /* . */
                         if (shift) {
-                            this.interact.setFocus();
-                            this.interact.document.deleteChars(0, this.interact.document.length);
-                            this.interact.document.insertChars(">");
-                            this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
+                            //this.interact.setFocus();
+                            //this.interact.document.deleteChars(0, this.interact.document.length);
+                            //this.interact.document.insertChars(">");
+                            //this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
                         }
                         else {
                             ExecuteCommand(this, "Dot", shift, alt, ctrl);
