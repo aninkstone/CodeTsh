@@ -12,9 +12,9 @@
                     doc.setStyleFor(1, 130);
                     break;
                 case "+":
-                    var nu = doc.lineFromPosition(idx);
-                    var s = doc.lineStart(nu);
-                    var e = doc.lineStart(nu + 1);
+                    var n = doc.lineFromPosition(idx);
+                    var s = doc.lineStart(n);
+                    var e = doc.lineStart(n + 1);
                     doc.startStyling(idx, 0xFF);
                     doc.setStyleFor(1, 129);
                     doc.startStyling(idx + 1, 0xFF);

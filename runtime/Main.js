@@ -110,11 +110,6 @@ console.debug = function (l) {
     debug (l);
 };
 
-var o = new Object();
-console.log (o.extend);
-console.log (Array.extend);
-console.log (Map.copy);
-
 var Sept = require(set.runtime.path + "/runtime/Sept.js");
 var Stat = require(set.runtime.path + "/runtime/Stat.js");
 var Edit = require(set.runtime.path + "/runtime/Edit.js");
@@ -122,7 +117,7 @@ var Nerd = require(set.runtime.path + "/runtime/Nerd.js");
 
 var Complete = require(set.runtime.path + "/runtime/DefaultAC.js");
 var HandlerDefault = require(set.runtime.path + "/runtime/DefaultHandler.js");
-var Indent   = require(set.runtime.path + "/runtime/DefaultIndent.js");
+var Indent = require(set.runtime.path + "/runtime/DefaultIndent.js");
 
 require(set.runtime.path + "/runtime/themes/default.js");
 require(set.runtime.path + "/runtime/themes/c.js");
@@ -138,7 +133,6 @@ Interact = require(set.runtime.path + "/runtime/Interact.js");
 NerdTree = require(set.runtime.path + "/runtime/NerdTree.js");
 EditView = require(set.runtime.path + "/runtime/EditView.js");
 Windows =  require(set.runtime.path + "/runtime/Windows.js");
-
 
 //var t = new Thread ();
 //t.run (function (){

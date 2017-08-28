@@ -5,8 +5,8 @@ function* lexer_default (){
     yield* lexer_foreground_color();
     yield* lexer_font();
 
-    yield* lexer_default_margin_zero();
-    yield* lexer_default_margin_linenumber();
+    //yield* lexer_default_margin_zero();
+    //yield* lexer_default_margin_linenumber();
     yield* lexer_default_caret();
     yield* lexer_default_tabwidth();
     yield* lexer_default_eolmode();

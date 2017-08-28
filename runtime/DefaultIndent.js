@@ -2,7 +2,6 @@
     function CodeAnalyze (editor, doc) {
         doc.indentmks = [];
         doc.indentSize = 0;
-
         function IndentMark (charc) {
             function arrayLastChar () {
                 if (doc.indentmks.length == 0) {
@@ -44,14 +43,12 @@
         }
 
         var ln = doc.lineFromPosition (doc.caretP);
-        console.log ("Indent Line Number = " + ln);
         for (var idx = ln; idx > 0; --idx) {
             var leng = editor.sync(SCI_LINELENGTH, ln, 0x00);
             if (leng == 0) {
                 continue;
             }
 
-            console.log ("Indent Check Line = " + idx);
             var lnbeg = doc.lineStart(idx);
             var lnend = doc.lineEnd(idx);
 
@@ -70,10 +67,6 @@
             break;
         }
 
-        console.log ("Indent Beg Pos = " + beg);
-        console.log ("Indent End Pos = " + end);
-        console.log ("Indent Length = " + doc.indent.length);
-
         for (var idx = beg; idx < end; ++idx) {
             var c = String.fromCharCode(doc.charAt(idx));
             switch (c) {
@@ -82,20 +75,15 @@
                     var ln = doc.lineFromPosition (doc.caretP);
                     var le = doc.lineEnd(ln);
                     if (le >= idx) {
-                        console.log (1);
                         IndentMark (c);
-                        console.log (2);
                     }
                 default:
                     break;
             };
         }
-
-        console.debug (doc.indentmks.toString()); 
     }
 
     function doIndentLine (editor, doc, beg, end) {
-        console.log ("Warning: Not implement.");
     }
 
     function doIndent (editor, doc, ch) {
@@ -106,8 +94,6 @@
                 var id = editor.sync(SCI_GETLINEINDENTATION, ln, 0x00);
                 var sz = editor.sync(SCI_GETINDENT, 0x00, 0x00);
                 var le = editor.sync(SCI_GETLINEENDPOSITION);
-                console.log ("SCI_GETLINEINDENTATION:" + id);
-                console.log ("SCI_GETINDENT:" + sz);
 
                 var block = 0;
                 var space = "";
@@ -122,7 +108,6 @@
                 if (doc.indent != undefined) {
                     space += doc.indent;
                 }
-                console.debug ("SCI_SETLINEINDENTATION, " + ln + ", " + block * sz);
                 editor.sync(SCI_INSERTTEXT, -1, space);
                 editor.sync(SCI_GOTOPOS, cp + space.length);
             }
@@ -142,11 +127,19 @@
                     }
                 });
                 var space = "";
+                if (doc.indent != undefined) {
+                    space += doc.indent;
+                }
                 for (var i = 0; i < sz * block; ++i) {
                     space += ' ';
                 }
-                console.debug ("indent size = " + (sz * block) + " sz: " + sz + " block:" + block);
-                editor.sync(SCI_SETLINEINDENTATION, ln, sz * block); 
+                if (space.length > sz) {
+                    space = space.substring(0, space.length - sz);
+                }
+                else {
+                    space = "";
+                }
+                editor.sync(SCI_SETLINEINDENTATION, ln, id - sz); 
             }
         }
     }
