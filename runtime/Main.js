@@ -1,3 +1,25 @@
+Object.prototype.extend = function (c, p) {
+    var f = function(){};
+    f.prototype = p.prototype;
+    c.prototype = new f();
+    c.prototype.constructor = c;
+    c.uber = p.prototype;
+}
+
+Object.prototype.copy = function (c, p) {
+    var c = c || {};
+    for (var i in p) {
+        if (typeof p[i] === 'object') {
+            c[i] = (p[i].constructor === Array) ? [] : {};
+            deepCopy(p[i], c[i]);
+        } 
+        else {
+            c[i] = p[i];
+        }
+    }
+    return c;
+}
+
 require("runtime/object/InnerDef.js");
 
 var set = {
@@ -50,6 +72,11 @@ console.log = function (l) {
 console.debug = function (l) {
     debug (l);
 };
+
+var o = new Object();
+console.log (o.extend);
+console.log (Array.extend);
+console.log (Map.copy);
 
 var Sept = require(set.runtime.path + "/runtime/Sept.js");
 var Stat = require(set.runtime.path + "/runtime/Stat.js");
