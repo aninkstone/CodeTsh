@@ -14,6 +14,9 @@
             }
         }
         if (cmd == "yw") {
+            set.vim.reg_X = {};
+            set.vim.reg_X.cmd = 'yw';
+            set.vim.reg_X.type = 'word';
             return true;
         }
         if (cmd == "yy") {
@@ -45,6 +48,9 @@
             chars += ech;
 
             editor.sync(SCI_COPYTEXT, chars.length, chars);
+            set.vim.reg_X = {};
+            set.vim.reg_X.cmd = 'yy';
+            set.vim.reg_X.type = 'line';
             return true;
         }
         return false;

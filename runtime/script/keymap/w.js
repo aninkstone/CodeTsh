@@ -16,6 +16,9 @@
             editor.sync(SCI_SETREADONLY,  0x00, 0x00);
             editor.sync(SCI_DELWORDRIGHT, 0x00, 0x00);
             editor.sync(SCI_SETREADONLY,  0x01, 0x00);
+            set.vim.reg_X = {};
+            set.vim.reg_X.cmd = 'dw';
+            set.vim.reg_X.type = 'word';
         }
         if (cmd == "w") {
             editor.sync(SCI_WORDRIGHT, 0, 0);

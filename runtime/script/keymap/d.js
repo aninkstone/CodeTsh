@@ -19,11 +19,14 @@
 
         if (cmd == "dd") {
             for (var idx = 0; idx < loop; ++idx) {
-                b = editor.sync(SCI_GETREADONLY, 0x00, 0x00);
-                editor.sync(SCI_SETREADONLY,   0x00, 0x00);
-                editor.sync(SCI_LINECUT,       0x00, 0x00);
-                editor.sync(SCI_SETREADONLY,   b,    0x00);
+                editor.sync(SCI_GETREADONLY, 0x00, 0x00);
+                editor.sync(SCI_SETREADONLY, 0x00, 0x00);
+                editor.sync(SCI_LINECUT,     0x00, 0x00);
+                editor.sync(SCI_SETREADONLY, 0x01, 0x00);
             }
+            set.vim.reg_X = {};
+            set.vim.reg_X.cmd = 'dd';
+            set.vim.reg_X.type = 'line';
             return true;
         }
         if (shift) {
