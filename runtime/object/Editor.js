@@ -71,21 +71,22 @@
                         if (typeof thiz.OnKeyDown === 'function') {
                             return thiz.OnKeyDown (thiz, argument);
                         }
+                        thiz.keyDown(argument);
                         break;
                     case "SYS:KEYUP":
                         if (typeof thiz.OnKeyUp === 'function') {
                             return thiz.OnKeyUp (thiz, argument);
                         }
+                        thiz.keyUp(argument);
                         break;
                     case "SYS:DROPFILE":
-                        if (typeof thiz.OnDropFile === 'function') {
-                            thiz.OnDropFile (thiz, argument);
-                        }
-                        //var path = argument.replace(/\\/g,"/");
-                        //b = thiz.sync(SCI_GETREADONLY, 0x00, 0x00);
-                        //thiz.sync(SCI_SETREADONLY, 0x00, 0x00);
-                        //thiz.document.direct = path;
-                        //thiz.sync(SCI_SETREADONLY, b, 0x00);
+                        thiz.dropFile(argument);
+                        break;
+                    case "SYS:MARGINRIGHTCLICK":
+                        thiz.marginRightClick(argument.position, argument.margin, argument.modifiers);
+                        break;
+                    case "SYS:MARGINCLICK":
+                        thiz.marginClick(argument.position, argument.margin, argument.modifiers);
                         break;
                     default:
                         break;
@@ -128,6 +129,33 @@
             delete object;
         },
     };
+
+    Editor.prototype.marginClick = function (position, margin, modifiers) {
+        var l = this.sync(SCI_LINEFROMPOSITION, position, 0x00); 
+        console.log("SYS:MARGINCLICK-> lineNu:" + (l + 1) + " margin:" + margin );
+    }
+
+    Editor.prototype.marginRightClick = function (position, margin, modifiers) {
+        var l = this.sync(SCI_LINEFROMPOSITION, position, 0x00); 
+        console.log("SYS:MARGINCLICK-> lineNu:" + (l + 1) + " margin:" + margin );
+    }
+
+    Editor.prototype.keyUp = function (args) {
+        console.log("Editor.prototype.keyUp");
+    }
+
+    Editor.prototype.keyDown = function (args) {
+        console.log("Editor.prototype.keyDown");
+    }
+
+    Editor.prototype.dropFile = function (path) {
+        console.log ("On drop file [" + path + "]");
+        //var path = path.replace(/\\/g,"/");
+        //b = thiz.sync(SCI_GETREADONLY, 0x00, 0x00);
+        //thiz.sync(SCI_SETREADONLY, 0x00, 0x00);
+        //thiz.document.direct = path;
+        //thiz.sync(SCI_SETREADONLY, b, 0x00);
+    }
 
     Editor.prototype.searchForward = function (target) {
         if (typeof (target) === 'string'){
