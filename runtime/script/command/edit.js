@@ -22,22 +22,9 @@
 
         if (fs.isRegularFile (fpath)) {
             content = fs.readFile(fpath);
-            newDoc = new Document ();
-            newDoc.direct = fpath;
-            editor.document = newDoc;
-            editor.ro(true);
-
-            ext = FilePath.extname(fpath);
-            switch (ext) {
-                case ".cpp":
-                case ".c":
-                case ".h":
-                    lexerSync (widget, lexer_c);
-                    break;
-                default:
-                    lexerSync (widget, lexer_default);
-                    break;
-            };
+            open = new Document ();
+            open.direct = fpath;
+            editor.parent.changeDocument(open);
         }
     };
 })();

@@ -10,6 +10,7 @@
         this.interact = new Interact (parent, 0, parent.height - 24, parent.width, 24);
         this.nerdtree = new NerdTree (parent, this.interact, 0, 0, 300, parent.height - this.interact.height)
         this.focusView = new EditView (parent, this.interact, 300, 0, parent.width - 300, parent.height - this.interact.height);
+        //this.focusView = new EditView (parent, this.interact, 0, 0, parent.width, parent.height - this.interact.height);
 
         this.interact.click = {};
         this.nerdtree.click = {};
@@ -545,6 +546,8 @@
         try {
             this.views.forEach ((v, k, map)=>{
                 if (v == widget.parent) {
+                    console.log ("widget.width = " + widget.width);
+                    console.log ("widget.height = " + widget.height);
                     this.setFocus(widget.parent);
                     this.focusView = widget.parent;
                     this.interact.focusView = widget;

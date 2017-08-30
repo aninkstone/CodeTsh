@@ -2,7 +2,7 @@ function* lexer_customize(){
     yield* lexer_background_color();
     yield* lexer_foreground_color();
     yield* lexer_font();
-    yield* lexer_default_margin_linenumber();
+    //yield* lexer_default_margin_linenumber();
     yield* lexer_tab_width();
     yield* lexer_eolmode();
     yield* lexer_caret();
