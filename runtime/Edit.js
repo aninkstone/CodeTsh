@@ -18,8 +18,8 @@
             parent.stat.inval();
         }
 
-        f = (e,lex) => { 
-            l = lex(); v = l.next();
+        var f = (e,lex) => { 
+            var l = lex(); var v = l.next();
             while(v.done == false) {
                 e.sync(v.value[0], v.value[1], v.value[2]);
                 v = l.next();

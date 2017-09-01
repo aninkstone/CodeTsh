@@ -26,7 +26,7 @@
         }
     };
 
-    var nerdTreeCB= {
+    var NerdTreeCB= {
         OnModifyAttempt: function(){ }, 
         OnLexerChanged:  function(){ }, 
         OnSavePoint:     function(){ }, 
@@ -227,7 +227,7 @@
                 comment += ele[0] + ele[1] + "\n";
             });
 
-            var doc = $.api.document.createDocument("nerdtree", nerdTreeCB);
+            var doc = $.api.document.createDocument("nerdtree", NerdTreeCB);
             doc.readonly = false;
             doc.deleteChars (0, doc.length);
             doc.insertChars (comment);

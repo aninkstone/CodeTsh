@@ -11,12 +11,12 @@
                 return;
             }
 
-            caller = function (copen, editor, arg) {
+            var caller = function (copen, editor, arg) {
                 copen.deleteChars(0, copen.length);
                 copen.insertChars(LANGUAGE.interact.Error01 + ": " + arg);
             };
 
-            opeRunner = function (t, editor, content) {
+            var opeRunner = function (t, editor, content) {
                 eval(content);
             }
             content = content.substr(1, content.length)
@@ -40,12 +40,12 @@
                 return;
             }
 
-            caller = function (copen, editor, arg) {
+            var caller = function (copen, editor, arg) {
                 copen.deleteChars(0, copen.length);
                 copen.insertChars(LANGUAGE.interact.Error01 + ": " + arg);
             };
 
-            opeRunner = function (t, editor, content, cmd) {
+            var opeRunner = function (t, editor, content, cmd) {
                 var args = content.split(" ");
                 args[0] = args[0].substr(1, args[0].length);
                 fs = new FileSystem();
@@ -87,12 +87,12 @@
                 return;
             }
 
-            caller = function (copen, editor, arg) {
+            var caller = function (copen, editor, arg) {
                 copen.deleteChars(0, copen.length);
                 copen.insertChars("Not command: " + arg);
             };
 
-            opeRunner = function (t, e, content) {
+            var opeRunner = function (t, e, content) {
                 args = content.split(" ");
                 cmd = args[0].substr(1, args[0].length)
                 fs = new FileSystem();

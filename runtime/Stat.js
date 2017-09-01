@@ -3,21 +3,22 @@
         var thiz = $.api.widget.createWidget (parent);
         var MARGIN = 10;
 
+        var painter = new Paint();
         var CB = {
             OnDraw: function (thiz, canvas) {
                 try {
-                    p = new Paint();
+                    var p = painter;
                     p.style = 0x00;
                     p.color = 0xFF005252;
                     canvas.drawRect(0, 0, thiz.width, thiz.height, p);
 
-                    l = 0;
+                    var l = 0;
                     l = thiz.draw_00 (canvas, p, l);
                     l = thiz.draw_01 (canvas, p, l);
                     l = thiz.draw_02 (canvas, p, l);
                     l = thiz.draw_03 (canvas, p, l);
 
-                    r = 0;
+                    var r = 0;
                     r = thiz.draw_99 (canvas, p, r);
                     r = thiz.draw_98 (canvas, p, r);
                     r = thiz.draw_97 (canvas, p, r);
@@ -59,13 +60,13 @@
                 paint.color = 0xFFF00000;
             }
 
-            measure = paint.measureText(text);
+            var measure = paint.measureText(text);
             measure.bounds.x = Math.abs(measure.bounds.x);
             measure.bounds.y = Math.abs(measure.bounds.y);
             measure.bounds.w = Math.abs(measure.bounds.w);
             measure.bounds.h = Math.abs(measure.bounds.h);
             
-            path = new Path();
+            var path = new Path();
             path.moveTo(0.0, 0.0);
             path.lineTo(measure.length + MARGIN * 2, 0.0);
             path.lineTo(measure.length + MARGIN * 2 + thiz.height / 2, thiz.height / 2 - 1);
@@ -124,15 +125,15 @@
 
             lp = lp.toString();
 
-            text = ps + "%  " + ln + ":" + lp;
-            measure = paint.measureText(text);
+            var text = ps + "%  " + ln + ":" + lp;
+            var measure = paint.measureText(text);
             measure.bounds.x = Math.abs(measure.bounds.x);
             measure.bounds.y = Math.abs(measure.bounds.y);
             measure.bounds.w = Math.abs(measure.bounds.w);
             measure.bounds.h = Math.abs(measure.bounds.h);
 
             paint.color = 0xFFF00000;
-            path = new Path();
+            var path = new Path();
             path.moveTo(thiz.width, 0.0);
             path.lineTo(thiz.width - (measure.length + MARGIN * 2), 0.0);
             path.lineTo(thiz.width - (measure.length + MARGIN * 2 + thiz.height / 2), thiz.height / 2 - 1);

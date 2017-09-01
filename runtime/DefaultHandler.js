@@ -1,7 +1,7 @@
 (function (){
     return {
         OnKeyD: function (key, shift, alt, ctrl) {
-            ro = this.sync(SCI_GETREADONLY, 0x00, 0x00);
+            var ro = this.sync(SCI_GETREADONLY, 0x00, 0x00);
             switch (key) {
                 case 27:  /* escape */
                     this.ro(true);
