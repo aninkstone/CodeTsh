@@ -1,4 +1,4 @@
-Object.prototype.extend = function (c, p) {
+function Inherite (c, p) {
     var f = function(){};
     f.prototype = p.prototype;
     c.prototype = new f();
@@ -92,8 +92,9 @@ set.runtime.curr = (new FileSystem()).getcwd();
 
 require(set.runtime.path + "/runtime/Language.js");
 require(set.runtime.path + "/runtime/object/Document.js");
-require(set.runtime.path + "/runtime/object/Widget.js");
-require(set.runtime.path + "/runtime/object/Editor.js");
+
+var NewWidget = require(set.runtime.path + "/runtime/object/Widget.js");
+var NewEditor = require(set.runtime.path + "/runtime/object/Editor.js");
 
 var FilePath = require(set.runtime.path + "/runtime/Path.js");
 //var defaultDoc = $.api.document.createDocument("./CodeTor.txt");

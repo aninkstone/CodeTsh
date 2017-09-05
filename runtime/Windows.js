@@ -106,7 +106,6 @@
         if (this.fHistory.length >= 20) {
             this.fHistory.pop();
         }
-        widget.setFocus();
     }
 
     Windows.prototype.showWindowID = function () {
@@ -546,12 +545,13 @@
         try {
             this.views.forEach ((v, k, map)=>{
                 if (v == widget.parent) {
-                    console.log ("widget.width = " + widget.width);
-                    console.log ("widget.height = " + widget.height);
                     this.setFocus(widget.parent);
                     this.focusView = widget.parent;
                     this.interact.focusView = widget;
                     widget.inval ();
+                    //var stack = new Error().stack;
+                    //console.log("PRINTING CALL STACK");
+                    //console.log( stack );
                 }
             });
         }

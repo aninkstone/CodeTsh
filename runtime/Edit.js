@@ -1,22 +1,20 @@
 (function (){
     function Edit (parent, interact) {
-        var thiz = $.api.editor.createEditor (parent);
+        var thiz = NewEditor (parent, function(evt, argument) {
+            switch (evt) {
+                case "SYS:EDITUPDATEUI":
+                    this.parent.stat.inval();
+                    break;
+                case "SYS:KEYUP":
+                    return HandlerDefault.OnKeyU.bind(this)(argument.key);
+                case "SYS:KEY":
+                    return HandlerDefault.OnKeyD.bind(this)(argument.key, argument.shift, argument.alt, argument.ctrl);
+                default:
+                    break;
+            }
+        });
+
         thiz.interact = interact;
-
-        thiz.OnSizeChange = function(widget) {
-        }
-
-        thiz.OnKeyDown = function (widget, argument) {
-            return HandlerDefault.OnKeyD.bind(widget)(argument.key, argument.shift, argument.alt, argument.ctrl);
-        }
-
-        thiz.OnKeyUp = function (widget, argument) {
-            return HandlerDefault.OnKeyU.bind(widget)(argument.key);
-        }
-
-        thiz.OnUpdateUI = function (thiz) {
-            parent.stat.inval();
-        }
 
         var f = (e,lex) => { 
             var l = lex(); var v = l.next();

@@ -1,6 +1,29 @@
 (function (){
     return function (parent, interact, x, y, w, h) {
-        var thiz = $.api.widget.createWidget(parent);
+        function OnEvt (evt, argument) {
+            switch (evt) {
+                case "SYS:SIZECHANGE":
+                    this.sept.locX   = 0;
+                    this.sept.locY   = 0;
+                    this.sept.width  = 8;
+                    this.sept.height = this.height;
+
+                    this.stat.locX   = this.sept.width;
+                    this.stat.height = 23;
+                    this.stat.locY   = this.height - this.stat.height;
+                    this.stat.width  = this.width - this.sept.width;
+
+                    this.edit.locX   = this.sept.width;
+                    this.edit.locY   = 0;
+                    this.edit.width  = this.width - this.sept.width;
+                    this.edit.height = this.height - this.stat.height;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        var thiz = NewWidget(parent, OnEvt);
 
         thiz.changeDocument = function (doc) {
             if (thiz.edit.document.savepoint == false) {
@@ -66,23 +89,21 @@
         thiz.sept = new Sept (thiz, interact);
         thiz.type = "Edit";
 
-        thiz.OnSizeChange = function (thiz) {
-            thiz.sept.locX   = 0;
-            thiz.sept.locY   = 0;
-            thiz.sept.width  = 8;
-            thiz.sept.height = thiz.height;
+        //default size
+        thiz.sept.locX   = 0;
+        thiz.sept.locY   = 0;
+        thiz.sept.width  = 8;
+        thiz.sept.height = thiz.height;
 
-            thiz.stat.locX   = thiz.sept.width;
-            thiz.stat.height = 23;
-            thiz.stat.locY   = thiz.height - thiz.stat.height;
-            thiz.stat.width  = thiz.width - thiz.sept.width;
+        thiz.stat.locX   = thiz.sept.width;
+        thiz.stat.height = 23;
+        thiz.stat.locY   = thiz.height - thiz.stat.height;
+        thiz.stat.width  = thiz.width - thiz.sept.width;
 
-            thiz.edit.locX   = thiz.sept.width;
-            thiz.edit.locY   = 0;
-            thiz.edit.width  = thiz.width - thiz.sept.width;
-            thiz.edit.height = thiz.height - thiz.stat.height;
-        }
-        thiz.OnSizeChange (thiz);
+        thiz.edit.locX   = thiz.sept.width;
+        thiz.edit.locY   = 0;
+        thiz.edit.width  = thiz.width - thiz.sept.width;
+        thiz.edit.height = thiz.height - thiz.stat.height;
 
         thiz.changeDocument(defaultDoc);
         return thiz;

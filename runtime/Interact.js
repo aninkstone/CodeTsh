@@ -156,61 +156,44 @@
     };
 
     return function (parent, x, y, w, h) {
-        var thiz = $.api.editor.createEditor(parent);
-        var CB = {
-            OnDraw: function (thiz, canvas) {
-            },
-            OnEvent: function (thiz, evt, argument) {
-                switch (evt) {
-                    case "SYS:INPUTTEXT":
-                        Execute(evt, argument.key, thiz, thiz.focusView);
-                        break;
-                    case "SYS:KEY":
-                        switch (argument.key) {
-                            case 47:  /* / */
-                                break;
-                            case 9:   /* tab */
-                                break;
-                            case 13:  /* enter  */
-                                Execute(evt, argument.key, thiz, thiz.focusView);
-                                thiz.focusView.setFocus();
-                                return true;
-                            case 27:  /* escape */
-                                thiz.focusView.setFocus();
-                                thiz.document.deleteChars(0, thiz.document.length);
-                                return true;
-                            default:
-                                break;
-                        }
-                        break;
-                    case "SYS:SIZECHANGE":
-                        thiz.OnSizeChange();
-                        break;
-                    case "SYS:CLICK":
-                        thiz.OnClick (argument)
-                        break;
-                    case "SYS:FOCUSIN":
-                        SDL.setCursor(SDL_SYSTEM_CURSOR_IBEAM);
-                        break;
-                    case "SYS:FOCUSOUT":
-                        break;
-                    default:
-                        break;
-                }
-                return false;
-            },
+        function OnEvt (evt, argument) {
+            switch (evt) {
+                case "SYS:INPUTTEXT":
+                    Execute(evt, argument.key, this, this.focusView);
+                    break;
+                case "SYS:KEY":
+                    switch (argument.key) {
+                        case 13:  /* enter  */
+                            Execute(evt, argument.key, this, this.focusView);
+                            this.focusView.setFocus();
+                            return true;
+                        case 27:  /* escape */
+                            this.focusView.setFocus();
+                            this.document.deleteChars(0, this.document.length);
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case "SYS:SIZECHANGE":
+                    this.width = this.parent.width;
+                    this.locY  = this.parent.height - this.height;
+                    break;
+                case "SYS:FOCUSIN":
+                    //SDL.setCursor(SDL_SYSTEM_CURSOR_IBEAM);
+                    break;
+                default:
+                    break;
+            }
+            return false;
         };
-        thiz.setCB (CB);
+
+        var thiz = NewEditor (parent, OnEvt);
 
         thiz.locX = x;
         thiz.locY = y;
         thiz.width  = w;
         thiz.height = h;
-
-        thiz.OnSizeChange = function () {
-            thiz.width = parent.width;
-            thiz.locY  = parent.height - thiz.height;
-        }
 
         lexerSync(thiz, lexer_commander);
         return thiz;

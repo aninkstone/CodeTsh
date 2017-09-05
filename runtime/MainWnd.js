@@ -1,10 +1,9 @@
 (function namespace_none () {
     var widget = {};
-    var painter = new Paint();
-    widget = new Window(null, {"OnDraw":function(thiz, canvas){
-        var p = painter;
+    widget = new Window(null, { OnDrw:function(context, canvas){
+        var p = new Paint();
         p.color = 0xFFE0E0E0;
-        canvas.drawRect (0, 0, thiz.width, thiz.height, p);
+        canvas.drawRect (0, 0, context.width, context.height, p);
 
         p.color = 0xFF00E000;
         var path = new Path();
@@ -15,10 +14,10 @@
         path.lineTo(40.0, 0.0);
         path.close();
         canvas.drawPath(path, p);
-    },"OnEvent":function(thiz, event, argument){
+    }, OnEvt:function(context, event, argument){
         switch (event) {
             case "SYS:SIZECHANGE":
-                thiz.OnSizeChange(thiz);
+                windows.resize (context);
                 break;
             default:
                 break;
@@ -28,9 +27,5 @@
 
     set.window = widget;
     windows = new Windows (widget);
-    widget.OnSizeChange = function (thiz) {
-        windows.resize (thiz);
-    }
-
     widget.run(function(){});
 })();

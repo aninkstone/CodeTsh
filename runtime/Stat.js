@@ -1,51 +1,57 @@
 (function (){
     function Stat (parent, interact) {
-        var thiz = $.api.widget.createWidget (parent);
-        var MARGIN = 10;
+        function OnDrw (canvas) {
+            try {
+                var p = new Paint();
+                p.style = 0x00;
+                p.color = 0xFF005252;
+                canvas.drawRect(0, 0, this.width, this.height, p);
 
-        var painter = new Paint();
-        var CB = {
-            OnDraw: function (thiz, canvas) {
-                try {
-                    var p = painter;
-                    p.style = 0x00;
-                    p.color = 0xFF005252;
-                    canvas.drawRect(0, 0, thiz.width, thiz.height, p);
+                var l = 0;
+                l = this.draw_00 (canvas, p, l);
+                l = this.draw_01 (canvas, p, l);
+                l = this.draw_02 (canvas, p, l);
+                l = this.draw_03 (canvas, p, l);
 
-                    var l = 0;
-                    l = thiz.draw_00 (canvas, p, l);
-                    l = thiz.draw_01 (canvas, p, l);
-                    l = thiz.draw_02 (canvas, p, l);
-                    l = thiz.draw_03 (canvas, p, l);
+                var r = 0;
+                r = this.draw_99 (canvas, p, r);
+                r = this.draw_98 (canvas, p, r);
+                r = this.draw_97 (canvas, p, r);
+                r = this.draw_96 (canvas, p, r);
+            }
+            catch (e) {
+            }
+        }
 
-                    var r = 0;
-                    r = thiz.draw_99 (canvas, p, r);
-                    r = thiz.draw_98 (canvas, p, r);
-                    r = thiz.draw_97 (canvas, p, r);
-                    r = thiz.draw_96 (canvas, p, r);
+        function OnEvt (evt, argument) {
+            function click (argument){
+                switch (argument.state) {
+                    case 0: /* mouse down */
+                        windows.statClick (this.parent, argument, 0);
+                        break;
+                    case 1: /* mouse move */
+                        windows.statClick (this.parent, argument, 1);
+                        break;
+                    case 2: /* mouse up */
+                        windows.statClick (this.parent, argument, 2);
+                        break;
+                    default:
+                        break;
                 }
-                catch (e) {
-                }
-            },
-        };
+            }
 
-        thiz.setCB (CB);
-
-        thiz.OnClick = function (thiz, argument){
-            switch (argument.state) {
-                case 0: /* mouse down */
-                    windows.statClick (parent, argument, 0);
-                    break;
-                case 1: /* mouse move */
-                    windows.statClick (parent, argument, 1);
-                    break;
-                case 2: /* mouse up */
-                    windows.statClick (parent, argument, 2);
+            switch (evt) {
+                case "SYS:CLICK":
+                    click (argument);
                     break;
                 default:
                     break;
             }
         }
+
+        var thiz = NewWidget (parent, OnEvt, OnDrw);
+        var MARGIN = 10;
+
         thiz.draw_00 = function (canvas, paint, offset) {
             paint.fontSize = 18;
             paint.fontFamily = set.font.family;

@@ -62,6 +62,7 @@
         }
         catch (e) {
             console.log (e.toString());
+            console.log(new Error().stack);
         }
     }
 
@@ -134,6 +135,7 @@
             }
         }
         else {
+            //do nothing
         }
         return false;
     };
@@ -149,43 +151,40 @@
     };
 
     function Nerd (parent, interact) {
-        var thiz = $.api.editor.createEditor (parent);
-        thiz.interact = interact;
-
-        thiz.OnClick = function (thiz, arg) {
-            switch (arg.state) {
-                case 0:
+        var thiz = NewEditor(parent, function(evt, argument){
+            function click (context, arg) {
+                switch (arg.state) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        console.log (typeof nodeClick);
+                        nodeClick (context);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            switch (evt) {
+                case "SYS:SIZECHANGE":
                     break;
-                case 1:
+                case "SYS:CLICK":
+                    click (this, argument);
                     break;
-                case 2:
-                    nodeClick (this);
+                case "SYS:FOCUSIN":
+                    this.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
                     break;
+                case "SYS:KEY":
+                    return OnKeyD.bind(this)(argument.key, argument.shift, argument.alt, argument.ctrl);
+                case "SYS:KEYUP":
+                    return OnKeyU.bind(this)(argument.key);
                 default:
                     break;
             }
-        }
+        });
 
-        thiz.OnSizeChange = function (thiz) {
-            //var pos = thiz.locY + thiz.height;
-            //interact.locY = pos;
-            //interact.height = parent.height - interact.pos;
-        }
-
-        thiz.OnFocusIn = function (thiz) {
-            thiz.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
-        }
-
-        thiz.ro = function(b) {
-            if (b) {
-                thiz.sync(SCI_SETREADONLY,   0x01, 0x00);
-                thiz.sync(SCI_SETCARETSTYLE, 0x02, 0x00);
-            }
-            else {
-                thiz.sync(SCI_SETREADONLY,   0x00, 0x00);
-                thiz.sync(SCI_SETCARETSTYLE, 0x01, 0x00);
-            }
-        }
+        thiz.interact = interact;
 
         thiz.update = function (fp) {
             array = new Array ();
@@ -239,26 +238,8 @@
         thiz.chdir = function (p) {
             thiz.update (p);
         }
+
         thiz.update (set.runtime.curr);
-
-        thiz.ro = function(b) {
-            if (b) {
-                thiz.sync(SCI_SETREADONLY,   0x01, 0x00);
-                thiz.sync(SCI_SETCARETSTYLE, 0x02, 0x00);
-            }
-            else {
-                thiz.sync(SCI_SETREADONLY,   0x00, 0x00);
-                thiz.sync(SCI_SETCARETSTYLE, 0x01, 0x00);
-            }
-        }
-
-        thiz.OnKeyDown = function (thiz, argument) {
-            return OnKeyD.bind(thiz)(argument.key, argument.shift, argument.alt, argument.ctrl);
-        }
-
-        thiz.OnKeyUp = function (thiz, argument) {
-            return OnKeyU.bind(thiz)(argument.key);
-        }
 
         f = (e,lex) => { 
             l = lex(); v = l.next();
