@@ -4,13 +4,13 @@
             function click (argument){
                 switch (argument.state) {
                     case 0: /* mouse down */
-                        windows.septClick (this.parent, argument, 0);
+                        windows.septClick (this.handle.parent, argument, 0);
                         break;
                     case 1: /* mouse move */
-                        windows.septClick (this.parent, argument, 1);
+                        windows.septClick (this.handle.parent, argument, 1);
                         break;
                     case 2: /* mouse up */
-                        windows.septClick (this.parent, argument, 2);
+                        windows.septClick (this.handle.parent, argument, 2);
                         break;
                     default:
                         break;
@@ -25,9 +25,9 @@
                     this.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
                     break;
                 case "SYS:KEY":
-                    return OnKeyD.bind(this)(argument.key, argument.shift, argument.alt, argument.ctrl);
+                    return OnKeyD.bind(this.handle)(argument.key, argument.shift, argument.alt, argument.ctrl);
                 case "SYS:KEYUP":
-                    return OnKeyU.bind(this)(argument.key);
+                    return OnKeyU.bind(this.handle)(argument.key);
                 default:
                     break;
             }
@@ -36,9 +36,9 @@
             var p = new Paint ();
             p.style = 0x00;
             p.color = 0xFFC2BFA5;
-            canvas.drawRect(0, 0, this.width, this.height, p);
+            canvas.drawRect(0, 0, this.handle.width, this.handle.height, p);
         }
-        return NewWidget(parent, OnEvt, OnDrw);
+        this.handle = NewWidget(parent, OnEvt.bind(this), OnDrw.bind(this));
     };
-    return Sept;
+    return Inherite(Sept, BaseObj);
 })();

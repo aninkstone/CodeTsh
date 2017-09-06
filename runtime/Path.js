@@ -1,7 +1,8 @@
 (function (){
     function ASSERT (path) {
         if (typeof path !== 'string') {
-            throw String("[Path.js] Invalidate arguments");
+            console.log(new Error().stack);
+            throw String("[Path.js] Invalidate arguments : " + path.toString());
         }
     }
 

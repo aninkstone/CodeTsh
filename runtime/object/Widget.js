@@ -31,6 +31,7 @@
             default:
                 break;
         }
+        return false;
     }
 
     Widget.prototype.focusIn = function () {
@@ -60,22 +61,22 @@
     };
 
     return function (parent, evntH, drawH) {
-        var thiz = new Widget (parent, { OnDrw: function (context, canvas) {
-                //context.binder.OnDrw.bind(context)(canvas);
-                return context.handle.OnDrw.bind(context)(canvas);
+        var widget = new Widget (parent, { OnDrw: function (context, canvas) {
+                context.binder.OnDrw.bind(context)(canvas);
+                return context.handle.OnDrw(canvas);
             },
             OnEvt: function (context, evt, argument) {
-                //context.binder.OnEvt.bind(context)(evt, argument);
-                return context.handle.OnEvt.bind(context)(evt, argument);
+                context.binder.OnEvt.bind(context)(evt, argument);
+                return context.handle.OnEvt(evt, argument);
             },
         });
 
-        thiz.handle = {};
-        thiz.handle.OnDrw = ((typeof drawH == 'undefined' || drawH == null) ? defaultCB.OnDrw : drawH);
-        thiz.handle.OnEvt = ((typeof evntH == 'undefined' || evntH == null) ? defaultCB.OnEvt : evntH);
-        thiz.binder = binder;
+        widget.handle = {};
+        widget.handle.OnDrw = ((typeof drawH == 'undefined' || drawH == null) ? defaultCB.OnDrw : drawH);
+        widget.handle.OnEvt = ((typeof evntH == 'undefined' || evntH == null) ? defaultCB.OnEvt : evntH);
+        widget.binder = binder;
 
-        thiz.parent = parent;
-        return thiz;
+        widget.parent = parent;
+        return widget;
     };
 })();

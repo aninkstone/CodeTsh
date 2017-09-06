@@ -159,25 +159,25 @@
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:INPUTTEXT":
-                    Execute(evt, argument.key, this, this.focusView);
+                    Execute(evt, argument.key, this.handle, this.handle.focusView);
                     break;
                 case "SYS:KEY":
                     switch (argument.key) {
                         case 13:  /* enter  */
-                            Execute(evt, argument.key, this, this.focusView);
-                            this.focusView.setFocus();
+                            Execute(evt, argument.key, this.handle, this.handle.focusView);
+                            this.handle.focusView.setFocus();
                             return true;
                         case 27:  /* escape */
-                            this.focusView.setFocus();
-                            this.document.deleteChars(0, this.document.length);
+                            this.handle.focusView.setFocus();
+                            this.handle.document.deleteChars(0, this.handle.document.length);
                             return true;
                         default:
                             break;
                     }
                     break;
                 case "SYS:SIZECHANGE":
-                    this.width = this.parent.width;
-                    this.locY  = this.parent.height - this.height;
+                    this.handle.width = this.handle.parent.width;
+                    this.handle.locY  = this.handle.parent.height - this.handle.height;
                     break;
                 case "SYS:FOCUSIN":
                     //SDL.setCursor(SDL_SYSTEM_CURSOR_IBEAM);
@@ -188,14 +188,13 @@
             return false;
         };
 
-        var thiz = NewEditor (parent, OnEvt);
+        this.handle = NewEditor (parent, OnEvt.bind(this));
 
-        thiz.locX = x;
-        thiz.locY = y;
-        thiz.width  = w;
-        thiz.height = h;
+        this.handle.locX = x;
+        this.handle.locY = y;
+        this.handle.width  = w;
+        this.handle.height = h;
 
-        lexerSync(thiz, lexer_commander);
-        return thiz;
+        this.handle.lexerSync(lexer_commander);
     };
 })();

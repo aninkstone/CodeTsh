@@ -1,16 +1,16 @@
 (function(){
-    return function (parent, interact, x, y, w, h){
+    return function (parent, x, y, w, h){
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:SIZECHANGE":
                     this.nerd.locX = 0;
                     this.nerd.locY = 0;
-                    this.nerd.width  = this.width;
-                    this.nerd.height = this.height - 23;
+                    this.nerd.width  = this.handle.width;
+                    this.nerd.height = this.handle.height - 23;
 
                     this.stat.locX = 0;
-                    this.stat.locY = this.height - 23;
-                    this.stat.width  = this.width;
+                    this.stat.locY = this.handle.height - 23;
+                    this.stat.width  = this.handle.width;
                     this.stat.height = 23;
                     break;
                 case "SYS:FOCUSIN":
@@ -21,31 +21,29 @@
             }
         }
 
-        var thiz = NewWidget (parent, OnEvt);
+        this.handle = NewWidget (parent, OnEvt.bind(this));
 
-        thiz.locX = x;
-        thiz.locY = y;
-        thiz.width  = w;
-        thiz.height = h;
+        this.handle.locX = x;
+        this.handle.locY = y;
+        this.handle.width  = w;
+        this.handle.height = h;
 
-        thiz.stat = {};
-        thiz.nerd = {};
+        this.handle.stat = {};
+        this.handle.nerd = {};
 
-        thiz.nerd = new Nerd (thiz, interact);
-        thiz.stat = new Stat (thiz, interact);
-        thiz.type = "Nerd";
+        this.handle.nerd = new Nerd (this.handle, this);
+        this.handle.stat = new Stat (this.handle, this);
+        this.type = "Nerd";
 
-        //default size
-        thiz.nerd.locX = 0;
-        thiz.nerd.locY = 0;
-        thiz.nerd.width  = thiz.width;
-        thiz.nerd.height = thiz.height - 23;
+        ////default size
+        this.handle.nerd.handle.locX = 0;
+        this.handle.nerd.handle.locY = 0;
+        this.handle.nerd.handle.width  = this.handle.width;
+        this.handle.nerd.handle.height = this.handle.height - 23;
 
-        thiz.stat.locX = 0;
-        thiz.stat.locY = thiz.height - 23;
-        thiz.stat.width  = thiz.width;
-        thiz.stat.height = 23;
-
-        return thiz;
+        this.handle.stat.handle.locX = 0;
+        this.handle.stat.handle.locY = this.handle.height - 23;
+        this.handle.stat.handle.width  = this.handle.width;
+        this.handle.stat.handle.height = 23;
     };
 })();

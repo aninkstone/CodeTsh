@@ -1,111 +1,86 @@
 (function (){
-    return function (parent, interact, x, y, w, h) {
+    EditView.prototype.setFocus = function () {
+        this.edit.setFocus();
+    }
+
+    EditView.prototype.setName = function (name) {
+        this.edit.setName (name);
+    }
+
+    EditView.prototype.changeDocument = function (doc) {
+        var handle = this.edit.handle;
+        if (handle.document.savepoint == false) {
+            return -1;
+        }
+        handle.document = doc;
+        handle.setFocus();
+
+        if (handle.document.path == "./tmp/copen.txt") {
+            this.edit.OnModified = function () {
+                this.sync(SCI_DOCUMENTEND);
+            }
+        }
+        else {
+            handle.OnModified = null;
+        }
+
+        var ext = FilePath.extname(doc.path);
+        switch (ext) {
+            case ".cpp":
+            case ".c":
+            case ".h":
+                lexerSync (handle, lexer_c);
+                break;
+            case ".js":
+                lexerSync (handle, lexer_javascript);
+                break;
+            case ".html":
+            case ".htm":
+                lexerSync (handle, lexer_html);
+                break;
+            case ".txt":
+                lexerSync (handle, lexer_customize);
+                break;
+            default:
+                lexerSync (handle, lexer_default);
+                break;
+        };
+        handle.sync(SCI_GOTOPOS, handle.document.caretP, 0x00);
+        handle.sync(SCI_SETCODEPAGE, 0, 0x00);
+        handle.ro (true);
+    }
+    function EditView (parent, x, y, w, h) {
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:SIZECHANGE":
-                    this.sept.locX   = 0;
-                    this.sept.locY   = 0;
-                    this.sept.width  = 8;
-                    this.sept.height = this.height;
+                    this.sept.setLocation(0, 0);
+                    this.sept.setSize (8, this.handle.height);
 
-                    this.stat.locX   = this.sept.width;
-                    this.stat.height = 23;
-                    this.stat.locY   = this.height - this.stat.height;
-                    this.stat.width  = this.width - this.sept.width;
+                    this.stat.setSize (this.handle.width - this.sept.handle.width, 23);
+                    this.stat.setLocation(this.sept.handle.width, this.handle.height - this.stat.handle.height);
 
-                    this.edit.locX   = this.sept.width;
-                    this.edit.locY   = 0;
-                    this.edit.width  = this.width - this.sept.width;
-                    this.edit.height = this.height - this.stat.height;
+                    this.edit.setLocation(this.sept.handle.width, 0);
+                    this.edit.setSize(this.handle.width - this.sept.handle.width, this.handle.height - this.stat.handle.height);
                     break;
                 default:
                     break;
             }
         }
 
-        var thiz = NewWidget(parent, OnEvt);
+        this.handle = NewWidget(parent, OnEvt.bind(this));
+        this.handle.locX = x;
+        this.handle.locY = y;
+        this.handle.width  = w;
+        this.handle.height = h;
 
-        thiz.changeDocument = function (doc) {
-            if (thiz.edit.document.savepoint == false) {
-                return -1;
-            }
-            thiz.edit.document = doc;
-            thiz.edit.setFocus();
+        this.edit = new Edit (this.handle, this);
+        this.stat = new Stat (this.handle, this);
+        this.sept = new Sept (this.handle, this);
+        this.type = "Edit";
 
-            if (thiz.edit.document.path == "./tmp/copen.txt") {
-                thiz.edit.OnModified = function (thiz) {
-                    thiz.sync(SCI_DOCUMENTEND);
-                }
-            }
-            else {
-                thiz.edit.OnModified = null;
-            }
-
-            var ext = FilePath.extname(doc.path);
-            switch (ext) {
-                case ".cpp":
-                case ".c":
-                case ".h":
-                    lexerSync (thiz.edit, lexer_c);
-                    break;
-                case ".js":
-                    lexerSync (thiz.edit, lexer_javascript);
-                    break;
-                case ".html":
-                case ".htm":
-                    lexerSync (thiz.edit, lexer_html);
-                    break;
-                case ".txt":
-                    lexerSync (thiz.edit, lexer_customize);
-                    break;
-                default:
-                    lexerSync (thiz.edit, lexer_default);
-                    break;
-            };
-            thiz.edit.sync(SCI_GOTOPOS, thiz.edit.document.caretP, 0x00);
-            thiz.edit.sync(SCI_SETCODEPAGE, 0, 0x00);
-            thiz.edit.ro (true);
-        }
-
-        thiz.setFocus = function () {
-            thiz.edit.setFocus();
-        }
-
-        thiz.setName = function (name) {
-            thiz.edit.name = name.toString();
-        }
-
-        thiz.locX = x;
-        thiz.locY = y;
-        thiz.width  = w;
-        thiz.height = h;
-
-        thiz.stat = {};
-        thiz.sept = {};
-        thiz.edit = {};
-
-        thiz.edit = new Edit (thiz, interact);
-        thiz.stat = new Stat (thiz, interact);
-        thiz.sept = new Sept (thiz, interact);
-        thiz.type = "Edit";
-
-        //default size
-        thiz.sept.locX   = 0;
-        thiz.sept.locY   = 0;
-        thiz.sept.width  = 8;
-        thiz.sept.height = thiz.height;
-
-        thiz.stat.locX   = thiz.sept.width;
-        thiz.stat.height = 23;
-        thiz.stat.locY   = thiz.height - thiz.stat.height;
-        thiz.stat.width  = thiz.width - thiz.sept.width;
-
-        thiz.edit.locX   = thiz.sept.width;
-        thiz.edit.locY   = 0;
-        thiz.edit.width  = thiz.width - thiz.sept.width;
-        thiz.edit.height = thiz.height - thiz.stat.height;
-
-        thiz.changeDocument(defaultDoc);
-        return thiz;
+        OnEvt.bind(this)("SYS:SIZECHANGE");
+        this.changeDocument(defaultDoc);
     };
+
+    return EditView;
 })();

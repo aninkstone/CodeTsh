@@ -17,7 +17,7 @@
     }, OnEvt:function(context, event, argument){
         switch (event) {
             case "SYS:SIZECHANGE":
-                windows.resize (context);
+                //windows.resize (context);
                 break;
             default:
                 break;

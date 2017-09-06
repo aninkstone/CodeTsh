@@ -1,4 +1,12 @@
 (function(){
+    Editor.prototype.lexerSync = function (lex) {
+        var l = lex(); var v = l.next();
+        while(v.done == false) {
+            this.sync(v.value[0], v.value[1], v.value[2]);
+            v = l.next();
+        }
+    }
+
     Editor.prototype.onDrw = function (canvas) {
         var p = new Paint ();
         p.color = 0xFFEEEEEE;
@@ -219,26 +227,28 @@
 
     var defaultCB = {
         OnDrw: function (canvas) {},
-        OnEvt: function (evt, argument) { return true; },
+        OnEvt: function (evt, argument) { return false; },
     };
 
     return function (parent, evntH, drawH) {
-        var thiz = new Editor (parent, { OnDrw: function (context, canvas) {
+        var edit = new Editor (parent, { OnDrw: function (context, canvas) {
                 context.binder.OnDrw.bind(context)(canvas);
-                return context.handle.OnDrw.bind(context)(canvas);
+                return context.handle.OnDrw (canvas);
             },
             OnEvt: function (context, evt, argument) {
                 context.binder.OnEvt.bind(context)(evt, argument);
-                return context.handle.OnEvt.bind(context)(evt, argument);
+                return context.handle.OnEvt (evt, argument);
             },
         });
-        thiz.handle = {};
-        thiz.handle.OnDrw = (typeof drawH == 'undefined' ? defaultCB.OnDrw : drawH);
-        thiz.handle.OnEvt = (typeof evntH == 'undefined' ? defaultCB.OnEvt : evntH);
-        thiz.binder = binder;
 
-        thiz.parent = parent;
-        thiz.name = "";
-        return thiz;
+        edit.handle = {};
+        edit.handle.OnDrw = (typeof drawH == 'undefined' ? defaultCB.OnDrw : drawH);
+        edit.handle.OnEvt = (typeof evntH == 'undefined' ? defaultCB.OnEvt : evntH);
+        edit.binder = binder;
+
+        edit.parent = parent;
+        edit.name = "";
+
+        return edit;
     };
 })();

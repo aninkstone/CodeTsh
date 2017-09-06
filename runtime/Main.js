@@ -4,6 +4,7 @@ function Inherite (c, p) {
     c.prototype = new f();
     c.prototype.constructor = c;
     c.uber = p.prototype;
+    return c;
 }
 
 Object.prototype.copy = function (c, p) {
@@ -90,6 +91,7 @@ var windows = {};
 set.runtime.path = (new FileSystem()).getcwd();
 set.runtime.curr = (new FileSystem()).getcwd();
 
+require(set.runtime.path + "/runtime/object/BaseObj.js");
 require(set.runtime.path + "/runtime/Language.js");
 require(set.runtime.path + "/runtime/object/Document.js");
 
@@ -147,10 +149,10 @@ Windows =  require(set.runtime.path + "/runtime/Windows.js");
 //var pip = execute("grep.exe", "-in CTEditComplete ./*");
 //console.log (pip);
 
-function lexerSync (e, lex) {
+function lexerSync (handle, lex) {
     l = lex(); v = l.next();
     while(v.done == false) {
-        e.sync(v.value[0], v.value[1], v.value[2]);
+        handle.sync(v.value[0], v.value[1], v.value[2]);
         v = l.next();
     }
 };
@@ -204,3 +206,4 @@ function ExecuteCommand (widget, cmd, shift, alt, ctrl){
 }
 
 require(set.runtime.path + "/runtime/MainWnd.js");
+

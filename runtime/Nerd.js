@@ -36,17 +36,17 @@
         OnModified:      function(){ },
     };
 
-    var nodeClick = function (thiz) {
+    var nodeClick = function (edit) {
         try {
-            var curpos = thiz.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
-            var linenu = thiz.sync(SCI_LINEFROMPOSITION, curpos, 0x00); 
+            var curpos = edit.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+            var linenu = edit.sync(SCI_LINEFROMPOSITION, curpos, 0x00); 
 
-            var beg = thiz.document.lineStart(linenu);
-            var end = thiz.document.lineEnd(linenu);
+            var beg = edit.document.lineStart(linenu);
+            var end = edit.document.lineEnd(linenu);
 
             var l = "";
             for (idx = beg; idx < end; ++idx) {
-                l += (String.fromCharCode(thiz.document.charAt(idx))); 
+                l += (String.fromCharCode(edit.document.charAt(idx))); 
             }
 
             var ul = l.indexOf('-');
@@ -99,7 +99,7 @@
                     }
                     break;
                 case 13:  /* enter */
-                    nodeClick (this);
+                    nodeClick (this.handle);
                     break;
                 case 98:  /* b */
                 case 100: /* d */
@@ -118,16 +118,16 @@
                     ExecuteCommand(this, String.fromCharCode(key), shift, alt, ctrl);
                     break;
                 case 47:  /* / */
-                    this.interact.setFocus();
-                    this.interact.document.deleteChars(0, this.interact.document.length);
-                    this.interact.document.insertChars("/");
-                    this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
+                    //this.interact.setFocus();
+                    //this.interact.document.deleteChars(0, this.interact.document.length);
+                    //this.interact.document.insertChars("/");
+                    //this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
                     break;
                 case 59:  /* : */
-                    this.interact.setFocus();
-                    this.interact.document.deleteChars(0, this.interact.document.length);
-                    this.interact.document.insertChars(":");
-                    this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
+                    //this.interact.setFocus();
+                    //this.interact.document.deleteChars(0, this.interact.document.length);
+                    //this.interact.document.insertChars(":");
+                    //this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
                     break;
                 default:
                     console.log(key.toString());
@@ -139,6 +139,7 @@
         }
         return false;
     };
+
     var OnKeyU = function (key) {
         switch (key) {
             case 111: /* o */
@@ -150,8 +151,8 @@
         return false;
     };
 
-    function Nerd (parent, interact) {
-        var thiz = NewEditor(parent, function(evt, argument){
+    function Nerd (parent) {
+        function OnEvt (evt, argument) {
             function click (context, arg) {
                 switch (arg.state) {
                     case 0:
@@ -159,7 +160,6 @@
                     case 1:
                         break;
                     case 2:
-                        console.log (typeof nodeClick);
                         nodeClick (context);
                         break;
                     default:
@@ -170,88 +170,76 @@
                 case "SYS:SIZECHANGE":
                     break;
                 case "SYS:CLICK":
-                    click (this, argument);
+                    click (this.handle, argument);
                     break;
                 case "SYS:FOCUSIN":
                     this.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
                     break;
                 case "SYS:KEY":
-                    return OnKeyD.bind(this)(argument.key, argument.shift, argument.alt, argument.ctrl);
+                    return OnKeyD.bind(this.handle)(argument.key, argument.shift, argument.alt, argument.ctrl);
                 case "SYS:KEYUP":
-                    return OnKeyU.bind(this)(argument.key);
+                    return OnKeyU.bind(this.handle)(argument.key);
+                default:
+                    break;
+            }
+        }
+
+        this.handle = NewEditor(parent, OnEvt.bind(this));
+        this.update (set.runtime.curr);
+        this.handle.lexerSync(lexer_nerdtree); 
+        this.handle.ro(true);
+    };
+
+    Nerd.prototype.chdir = function (fp) {
+        this.update (fp);
+    }
+
+    Nerd.prototype.update = function (fp) {
+        var array = new Array ();
+        var fs = new FileSystem();
+        fs.listDir(fp, function(type, name){
+            switch (type) {
+                case 0: /* DT_UNKNOWN */
+                    obj = ["|-", name, fp];
+                    array.push (obj);
+                    break;
+                case 1: /* DT_REG */
+                    if (name.charAt(0) == ".") {
+                        break;
+                    }
+                    obj = ["|-", name, fp];
+                    array.push (obj);
+                    break;
+                case 2: /* DT_DIR */
+                    if (name.charAt(0) == ".") {
+                        break;
+                    }
+                    obj = ["|+", name, fp];
+                    array.push (obj);
+                    break;
+                    obj = ["|-", name, fp];
+                    array.push (obj);
+                case 3: /* DT_LNK */
+                    obj = ["|-", name, fp];
+                    array.push (obj);
+                    break;
                 default:
                     break;
             }
         });
 
-        thiz.interact = interact;
+        var comment = fp + '\n';
+        comment += '|+..\n';
+        array.forEach((ele)=>{
+            comment += ele[0] + ele[1] + "\n";
+        });
 
-        thiz.update = function (fp) {
-            array = new Array ();
-            fs = new FileSystem();
-            fs.listDir(fp, function(type, name){
-                switch (type) {
-                    case 0: /* DT_UNKNOWN */
-                        obj = ["|-", name, fp];
-                        array.push (obj);
-                        break;
-                    case 1: /* DT_REG */
-                        if (name.charAt(0) == ".") {
-                            break;
-                        }
-                        obj = ["|-", name, fp];
-                        array.push (obj);
-                        break;
-                    case 2: /* DT_DIR */
-                        if (name.charAt(0) == ".") {
-                            break;
-                        }
-                        obj = ["|+", name, fp];
-                        array.push (obj);
-                        break;
-                        obj = ["|-", name, fp];
-                        array.push (obj);
-                    case 3: /* DT_LNK */
-                        obj = ["|-", name, fp];
-                        array.push (obj);
-                        break;
-                    default:
-                        break;
-                }
-            });
-
-            var comment = fp + '\n';
-            comment += '|+..\n';
-            array.forEach((ele)=>{
-                comment += ele[0] + ele[1] + "\n";
-            });
-
-            var doc = $.api.document.createDocument("nerdtree", NerdTreeCB);
-            doc.readonly = false;
-            doc.deleteChars (0, doc.length);
-            doc.insertChars (comment);
-            doc.readonly = true;
-
-            thiz.document = doc;
-        }
-
-        thiz.chdir = function (p) {
-            thiz.update (p);
-        }
-
-        thiz.update (set.runtime.curr);
-
-        f = (e,lex) => { 
-            l = lex(); v = l.next();
-            while(v.done == false) {
-                e.sync(v.value[0], v.value[1], v.value[2]);
-                v = l.next();
-            }
-        };
-
-        f(thiz, lexer_nerdtree); 
-        thiz.ro(true);
-        return thiz;
-    };
-    return Nerd;
+        var doc = $.api.document.createDocument("nerdtree", NerdTreeCB);
+        doc.readonly = false;
+        doc.deleteChars (0, doc.length);
+        doc.insertChars (comment);
+        doc.readonly = true;
+        this.handle.document = doc;
+    }
+    return Inherite(Nerd, BaseObj);
 })();
