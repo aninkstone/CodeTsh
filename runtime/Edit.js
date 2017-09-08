@@ -1,5 +1,7 @@
 (function (){
     function Edit (parent, view) {
+        this.view = view;
+
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:EDITUPDATEUI":
@@ -18,7 +20,6 @@
         this.handle = NewEditor (parent, OnEvt.bind(this));
         this.handle.lexerSync(lexer_c);
         this.handle.ro(true);
-        this.view = view;
     }
     return Inherite(Edit, BaseObj);
 })();

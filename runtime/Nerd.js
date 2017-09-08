@@ -61,8 +61,7 @@
             }
         }
         catch (e) {
-            console.log (e.toString());
-            console.log(new Error().stack);
+            console.log (e + " " + (new Error().stack));
         }
     }
 
@@ -71,7 +70,7 @@
         var doc = $.api.document.createDocument(set.runtime.curr + "/" + name);
 
         var view = windows.preFocusView("Edit");
-        view.changeDocument(doc);
+        view.setDocument(doc);
     }
 
     var openNode = function (name) {
@@ -173,7 +172,7 @@
                     click (this.handle, argument);
                     break;
                 case "SYS:FOCUSIN":
-                    this.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
+                    this.handle.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
                     break;
                 case "SYS:KEY":
                     return OnKeyD.bind(this.handle)(argument.key, argument.shift, argument.alt, argument.ctrl);
@@ -185,13 +184,15 @@
         }
 
         this.handle = NewEditor(parent, OnEvt.bind(this));
-        this.update (set.runtime.curr);
         this.handle.lexerSync(lexer_nerdtree); 
         this.handle.ro(true);
-    };
+
+        this.update(set.runtime.curr);
+    }
+
+    Inherite(Nerd, BaseObj);
 
     Nerd.prototype.chdir = function (fp) {
-        this.update (fp);
     }
 
     Nerd.prototype.update = function (fp) {
@@ -241,5 +242,6 @@
         doc.readonly = true;
         this.handle.document = doc;
     }
-    return Inherite(Nerd, BaseObj);
+
+    return Nerd;
 })();

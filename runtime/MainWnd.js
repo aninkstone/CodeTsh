@@ -17,7 +17,7 @@
     }, OnEvt:function(context, event, argument){
         switch (event) {
             case "SYS:SIZECHANGE":
-                //windows.resize (context);
+                windows.onSizeChange(context);
                 break;
             default:
                 break;
@@ -26,6 +26,11 @@
     }});
 
     set.window = widget;
-    windows = new Windows (widget);
+    try {
+        windows = new Windows (widget);
+    }
+    catch (e) {
+        console.log (e + " " + (new Error().stack));
+    }
     widget.run(function(){});
 })();

@@ -18,8 +18,6 @@
     Editor.prototype.onEvt = function (evt, argument) {
         switch (evt) {
             case "SYS:EDITUPDATEUI":
-                var caretP = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
-                this.document.caretP = caretP;
                 this.updateUI ();
                 break;
             case "SYS:MODIFIED":
@@ -32,10 +30,10 @@
             case "SYS:MODIFYATTEMPTRO":
                 break;
             case "SYS:DOUBLECLICK":
-                //console.log ("SYS:DOUBLECLICK: line number = " + argument.lineNumber + " position = " + argument.position + " modifiers = " + argument.modifiers);
+                this.doubleClick ();
                 break;
             case "SYS:STYLENEEDED":
-                //console.log ("SYS:STYLENEEDED : position = " + argument);
+                this.styleNeeded ();
                 break;
             case "SYS:CHARADDED":
                 this.charAdded (argument);
@@ -47,8 +45,6 @@
                 this.click ();
                 break;
             case "SYS:FOCUSIN":
-                //SDL.setCursor(SDL_SYSTEM_CURSOR_IBEAM);
-                windows.focusChange (this);
                 this.focusIn ();
                 break;
             case "SYS:FOCUSOUT":
@@ -75,11 +71,11 @@
     }
 
     Editor.prototype.charAdded = function (argument) {
-        var b = this.sync(SCI_GETREADONLY, 0x00, 0x00);
-        if (b == 0) {
-            Indent(this, String.fromCharCode(argument));
-            Complete(this, String.fromCharCode(argument));
-        }
+        //var b = this.sync(SCI_GETREADONLY, 0x00, 0x00);
+        //if (b == 0) {
+        //    Indent(this, String.fromCharCode(argument));
+        //    Complete(this, String.fromCharCode(argument));
+        //}
     }
 
     Editor.prototype.modified = function () {
@@ -88,25 +84,36 @@
     Editor.prototype.sizeChange = function () {
     }
 
+    Editor.prototype.styleNeeded = function () {
+        //console.log ("SYS:STYLENEEDED : position = " + argument);
+    }
+
+    Editor.prototype.doubleClick = function () {
+        //console.log ("SYS:DOUBLECLICK: line number = " + argument.lineNumber + " position = " + argument.position + " modifiers = " + argument.modifiers);
+    }
+
     Editor.prototype.click = function () {
     }
 
     Editor.prototype.focusIn = function () {
+        windows.focusChange (this);
     }
 
     Editor.prototype.focusOut = function () {
     }
 
     Editor.prototype.updateUI = function () {
+        var caretP = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+        this.document.caretP = caretP;
     }
 
     Editor.prototype.marginClick = function (position, margin, modifiers) {
-        var l = this.sync(SCI_LINEFROMPOSITION, position, 0x00); 
+        //var l = this.sync(SCI_LINEFROMPOSITION, position, 0x00); 
         console.log("SYS:MARGINCLICK-> lineNu:" + (l + 1) + " margin:" + margin );
     }
 
     Editor.prototype.marginRightClick = function (position, margin, modifiers) {
-        var l = this.sync(SCI_LINEFROMPOSITION, position, 0x00); 
+        //var l = this.sync(SCI_LINEFROMPOSITION, position, 0x00); 
         console.log("SYS:MARGINCLICK-> lineNu:" + (l + 1) + " margin:" + margin );
     }
 
@@ -126,41 +133,41 @@
     }
 
     Editor.prototype.searchForward = function (target) {
-        if (typeof (target) === 'string'){
-            set.vim.search.target = target;
-            set.vim.search.beg = 0;
-            set.vim.search.end = this.sync(SCI_GETLENGTH, 0x00, 0x00);
-            set.vim.search.pos = -1;
-            set.vim.search.prv = set.vim.search.pos; 
-        }
-        else {
-            this.sync(SCI_CLEARSELECTIONS, 0x00, 0x00);
-            set.vim.search.prv = set.vim.search.pos; 
-            set.vim.search.beg = set.vim.search.pos + set.vim.search.target.length;
-            set.vim.search.end = this.sync(SCI_GETLENGTH, 0x00, 0x00);
-            set.vim.search.pos = -1;
-        }
+        //if (typeof (target) === 'string'){
+        //    set.vim.search.target = target;
+        //    set.vim.search.beg = 0;
+        //    set.vim.search.end = this.sync(SCI_GETLENGTH, 0x00, 0x00);
+        //    set.vim.search.pos = -1;
+        //    set.vim.search.prv = set.vim.search.pos; 
+        //}
+        //else {
+        //    this.sync(SCI_CLEARSELECTIONS, 0x00, 0x00);
+        //    set.vim.search.prv = set.vim.search.pos; 
+        //    set.vim.search.beg = set.vim.search.pos + set.vim.search.target.length;
+        //    set.vim.search.end = this.sync(SCI_GETLENGTH, 0x00, 0x00);
+        //    set.vim.search.pos = -1;
+        //}
 
-        if (set.vim.search.target.length < 1) {
-            return;
-        }
+        //if (set.vim.search.target.length < 1) {
+        //    return;
+        //}
 
-        var currPos = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+        //var currPos = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
 
-        this.sync(SCI_SETSEARCHFLAGS, SCFIND_REGEXP | SCFIND_MATCHCASE, 0x00);
-        this.sync(SCI_SETTARGETSTART, set.vim.search.beg, 0x00);
-        this.sync(SCI_SETTARGETEND, set.vim.search.end, 0x00);
+        //this.sync(SCI_SETSEARCHFLAGS, SCFIND_REGEXP | SCFIND_MATCHCASE, 0x00);
+        //this.sync(SCI_SETTARGETSTART, set.vim.search.beg, 0x00);
+        //this.sync(SCI_SETTARGETEND, set.vim.search.end, 0x00);
 
-        var targetpos = this.sync(SCI_SEARCHINTARGET, set.vim.search.target.length, set.vim.search.target);
-        if (targetpos != -1) {
-            set.vim.search.pos = targetpos;
-            this.sync(SCI_GOTOPOS, set.vim.search.pos, 0x00);
-            //this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
-            this.sync(SCI_SETSEL, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
-        } 
-        else {
-            this.sync(SCI_SETSEL, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
-        }
+        //var targetpos = this.sync(SCI_SEARCHINTARGET, set.vim.search.target.length, set.vim.search.target);
+        //if (targetpos != -1) {
+        //    set.vim.search.pos = targetpos;
+        //    this.sync(SCI_GOTOPOS, set.vim.search.pos, 0x00);
+        //    //this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
+        //    this.sync(SCI_SETSEL, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
+        //} 
+        //else {
+        //    this.sync(SCI_SETSEL, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
+        //}
 
     };
 
@@ -182,38 +189,38 @@
     }
 
     Editor.prototype.searchBackward = function (target) {
-        if (typeof (target) === 'string'){
-            set.vim.search.target = target;
-            set.vim.search.beg = this.sync(SCI_GETLENGTH, 0x00, 0x00);
-            set.vim.search.end = 0;
-            set.vim.search.pos = 0;
-            set.vim.search.prv = set.vim.search.pos; 
-        }
-        else {
-            this.sync(SCI_CLEARSELECTIONS, 0x00, 0x00);
-            set.vim.search.prv = set.vim.search.pos; 
-            set.vim.search.beg = this.sync(SCI_GETLENGTH, 0x00, 0x00);
-            set.vim.search.end = set.vim.search.pos + set.vim.search.target.length;
-            set.vim.search.pos = 0;
-        }
+        //if (typeof (target) === 'string'){
+        //    set.vim.search.target = target;
+        //    set.vim.search.beg = this.sync(SCI_GETLENGTH, 0x00, 0x00);
+        //    set.vim.search.end = 0;
+        //    set.vim.search.pos = 0;
+        //    set.vim.search.prv = set.vim.search.pos; 
+        //}
+        //else {
+        //    this.sync(SCI_CLEARSELECTIONS, 0x00, 0x00);
+        //    set.vim.search.prv = set.vim.search.pos; 
+        //    set.vim.search.beg = this.sync(SCI_GETLENGTH, 0x00, 0x00);
+        //    set.vim.search.end = set.vim.search.pos + set.vim.search.target.length;
+        //    set.vim.search.pos = 0;
+        //}
 
-        if (set.vim.search.target.length < 1) {
-            return;
-        }
+        //if (set.vim.search.target.length < 1) {
+        //    return;
+        //}
 
-        this.sync(SCI_SETSEARCHFLAGS, SCFIND_REGEXP | SCFIND_MATCHCASE, 0x00);
-        this.sync(SCI_SETTARGETSTART, set.vim.search.beg, 0x00);
-        this.sync(SCI_SETTARGETEND, set.vim.search.end, 0x00);
+        //this.sync(SCI_SETSEARCHFLAGS, SCFIND_REGEXP | SCFIND_MATCHCASE, 0x00);
+        //this.sync(SCI_SETTARGETSTART, set.vim.search.beg, 0x00);
+        //this.sync(SCI_SETTARGETEND, set.vim.search.end, 0x00);
 
-        set.vim.search.pos = this.sync(SCI_SEARCHINTARGET, set.vim.search.target.length, set.vim.search.target);
-        if (set.vim.search.pos != -1) {
-            this.sync(SCI_GOTOPOS, set.vim.search.pos, 0x00);
-            //this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
-            this.sync(SCI_SETSEL, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
-        } 
-        else {
-            this.sync(SCI_SETSEL, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
-        }
+        //set.vim.search.pos = this.sync(SCI_SEARCHINTARGET, set.vim.search.target.length, set.vim.search.target);
+        //if (set.vim.search.pos != -1) {
+        //    this.sync(SCI_GOTOPOS, set.vim.search.pos, 0x00);
+        //    //this.sync(SCI_VERTICALCENTRECARET, 0x00, 0x00);
+        //    this.sync(SCI_SETSEL, set.vim.search.pos, set.vim.search.pos + set.vim.search.target.length);
+        //} 
+        //else {
+        //    this.sync(SCI_SETSEL, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
+        //}
     };
 
     var binder = {
@@ -232,12 +239,23 @@
 
     return function (parent, evntH, drawH) {
         var edit = new Editor (parent, { OnDrw: function (context, canvas) {
-                context.binder.OnDrw.bind(context)(canvas);
-                return context.handle.OnDrw (canvas);
+                try {
+                    context.binder.OnDrw.bind(context)(canvas);
+                    return context.handle.OnDrw (canvas);
+                }
+                catch (e) {
+                    console.log (e + " " + (new Error().stack));
+                }
             },
             OnEvt: function (context, evt, argument) {
-                context.binder.OnEvt.bind(context)(evt, argument);
-                return context.handle.OnEvt (evt, argument);
+                try {
+                    context.binder.OnEvt.bind(context)(evt, argument);
+                    return context.handle.OnEvt (evt, argument);
+                }
+                catch (e) {
+                    console.log (e + " " + (new Error().stack));
+                }
+                return false;
             },
         });
 

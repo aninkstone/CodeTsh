@@ -2,7 +2,7 @@
     Widget.prototype.onDrw = function (canvas) {
         var p = new Paint();
         p.style = 0x00;
-        p.color = 0xFF0352FF;
+        p.color = 0xFF035200;
         canvas.drawRect(0, 0, this.width, this.height, p);
     }
 
@@ -62,12 +62,23 @@
 
     return function (parent, evntH, drawH) {
         var widget = new Widget (parent, { OnDrw: function (context, canvas) {
-                context.binder.OnDrw.bind(context)(canvas);
-                return context.handle.OnDrw(canvas);
+                try {
+                    context.binder.OnDrw.bind(context)(canvas);
+                    return context.handle.OnDrw(canvas);
+                }
+                catch (e) {
+                    console.log (e + " " + (new Error().stack));
+                }
             },
             OnEvt: function (context, evt, argument) {
-                context.binder.OnEvt.bind(context)(evt, argument);
-                return context.handle.OnEvt(evt, argument);
+                try {
+                    context.binder.OnEvt.bind(context)(evt, argument);
+                    return context.handle.OnEvt(evt, argument);
+                }
+                catch (e) {
+                    console.log (e + " " + (new Error().stack));
+                }
+                return false;
             },
         });
 

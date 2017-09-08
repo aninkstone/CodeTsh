@@ -1,6 +1,6 @@
 (function(){
     function ExecuteScript (thiz, editor) {
-        copen = thiz.document;
+        var copen = thiz.document;
         try {
             var content = "";
             for (idx = 0; idx < copen.length; ++idx) {
@@ -19,6 +19,7 @@
             var opeRunner = function (t, editor, content) {
                 eval(content);
             }
+
             content = content.substr(1, content.length)
             opeRunner (copen, editor, content);
         }
@@ -155,7 +156,7 @@
         }
     };
 
-    return function (parent, x, y, w, h) {
+    function Interact (parent) {
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:INPUTTEXT":
@@ -189,12 +190,22 @@
         };
 
         this.handle = NewEditor (parent, OnEvt.bind(this));
+        this.parent = parent;
 
-        this.handle.locX = x;
-        this.handle.locY = y;
-        this.handle.width  = w;
-        this.handle.height = h;
+        this.x = 0;
+        this.y = parent.height - 24;
+        this.h = 24;
+        this.w = parent.width;
+
+        this.handle.locX = this.x;
+        this.handle.locY = this.y;
+        this.handle.width  = this.w;
+        this.handle.height = this.h;
+
+        this.type = "Inet";
 
         this.handle.lexerSync(lexer_commander);
     };
+
+    return Inherite(Interact, BaseObj);
 })();

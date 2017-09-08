@@ -1,14 +1,226 @@
 (function(){
+    function FocusManager (views) {
+        this.views = views;
+        this.edits = [];
+        this.ctrls = [];
+    }
+
+    FocusManager.prototype.focusTo = function (view) {
+    }
+
+    FocusManager.prototype.focusTo = function (view) {
+        this.views.forEach ((v,k,m)=>{
+            if (v.handle === view || (typeof v.edit === 'object' ? v.edit.handle === view : false)) {
+                switch (v.type) {
+                    case "Nerd":
+                        this.ctrls.push(v);
+                        break;
+                    case "Inet":
+                        break;
+                    case "Edit":
+                        break;
+                    case "Sanp":
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
 
     function Windows (parent) {
-        this.focusView = new EditView (parent, 300, 0, parent.width, parent.height - 24);
+        try {
+            this.views = new Map ();
+            this.ids = 0;
+            this.focusMgr = new FocusManager (this.views);
+
+            this.addWidget(new NerdTree(parent));
+            this.addWidget(new Interact(parent));
+            this.addWidget(new EditView(parent));
+        }
+        catch (e) {
+            console.log (e + " " + (new Error().stack));
+        }
+    }
+
+    Windows.prototype.focusChange = function (focusView) {
+        this.focusMgr.focusTo(focusView);
+    }
+
+    Windows.prototype.onSizeChange = function (changingView) {
+        try {
+            this.update (this.curView);
+        }
+        catch (e) {
+            console.log (e + " " + (new Error().stack));
+        }
+    }
+
+    Windows.prototype.update = function (focusView) {
+        var views = new Map ();
+
+        var nerd = null;
+        var inet = null;
+        var snap = null;
+
+        this.views.forEach((v, k, m) => {
+            switch (v.type) {
+                case "Nerd":
+                    nerd = v;
+                    break;
+                case "Inet":
+                    inet = v;
+                    break;
+                case "Edit":
+                    views.set(k, v);
+                    break;
+                case "Sanp":
+                    snap = v;
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        if (inet != null) {
+            var ipos = inet.position();
+            ipos.width = inet.parent.width;
+            ipos.y = inet.parent.height - ipos.h
+            inet.setLocation(ipos.x, ipos.y);
+            inet.setSize(ipos.width, ipos.height);
+        }
+
+        if (nerd != null) {
+            var npos = nerd.position();
+            if (inet != null) {
+                var ipos = inet.position();
+                npos.h = nerd.parent.height - ipos.h;
+            }
+            else {
+                npos.h = nerd.parent.height;
+            }
+            nerd.setSize(npos.w, npos.h);
+        }
+
+        if (views.size == 0) {
+            return;
+        }
+
+        if (views.size == 1) {
+            var v = views.values().next().value;
+            var vpos = v.position();
+            if (nerd != null) {
+                vpos.x = nerd.w;
+                vpos.w = v.parent.width - nerd.w;
+            }
+            if (inet != null) {
+                vpos.h = v.parent.height - inet.h
+            }
+            v.setLocation(vpos.x, vpos.y); v.setSize(vpos.w, vpos.h);
+        }
+        else {
+            views.forEach((v, k, m) => {
+            });
+        }
     };
 
     Windows.prototype.addWidget = function (widget) {
+        if (typeof widget == 'undefined') {
+            return;
+        }
+        if (typeof widget.type == 'undefined') {
+            return;
+        }
+
+        var nerd = null;
+        var inet = null;
+        var edit = null;
+        var snap = null;
+
+        this.views.forEach((v, k, m) => {
+            if (v.type == "Nerd") {
+                nerd = v;
+            }
+            if (v.type == "Inet") {
+                inet = v;
+            }
+            if (v.type == "Edit") {
+                edit = v;
+            }
+            if (v.type == "Snap") {
+                snap = v;
+            }
+        });
+
+        if (nerd != null && widget.type == "Nerd") {
+            console.log ("Error: Multi singleton object");
+            return;
+        }
+
+        if (inet != null && widget.type == "Inet") {
+            console.log ("Error: Multi singleton object");
+            return;
+        }
+
+        if (snap != null && widget.type == "Snap") {
+            console.log ("Error: Multi singleton object");
+            return;
+        }
+
+        switch (widget.type) {
+            case "Nerd":
+                if (inet != null) {
+                    var ipos = inet.position ();
+                    var npos = widget.position ();
+                    try {
+                        widget.setSize(npos.w, npos.h - ipos.h);
+                    }
+                    catch (e) {
+                        console.log (e);
+                    }
+                }
+                console.log ("Add Wdiget:" + widget.type);
+                break;
+            case "Inet":
+                if (nerd != null) {
+                    var npos = nerd.position ();
+                    var wpos = widget.position ();
+                    try {
+                        nerd.setSize(npos.w, npos.h - wpos.h);
+                    }
+                    catch (e) {
+                        console.log (e);
+                    }
+                }
+                console.log ("Add Wdiget:" + widget.type);
+                break;
+            case "Edit":
+                console.log ("Add Wdiget:" + widget.type);
+                break;
+            case "Sanp":
+                console.log ("Add Wdiget:" + widget.type);
+                break;
+            default:
+                break;
+        }
+        var focus = this.curView;
+
+        this.curView = widget;
+        this.views.set(++this.ids, this.curView);
+
+        if (edit == null) {
+            this.update (null);
+        }
+        else {
+            //this.update (null);
+        }
+    };
+
+    Windows.prototype.delWidget = function (widget) {
+        //TODO: remove from map
     };
 
     return Windows;
-
 
     //var INDEXOFVIEW = 0;
     //function Windows (parent) {

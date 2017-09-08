@@ -1,49 +1,54 @@
 (function(){
-    return function (parent, x, y, w, h){
+    function NerdTree (parent, x, y, w, h){
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:SIZECHANGE":
-                    this.nerd.locX = 0;
-                    this.nerd.locY = 0;
-                    this.nerd.width  = this.handle.width;
-                    this.nerd.height = this.handle.height - 23;
+                    this.edit.setLocation(0, 0);
+                    this.edit.setSize(this.handle.width, this.handle.height - 23);
 
-                    this.stat.locX = 0;
-                    this.stat.locY = this.handle.height - 23;
-                    this.stat.width  = this.handle.width;
-                    this.stat.height = 23;
+                    this.stat.setLocation(0, this.handle.height - 23);
+                    this.stat.setSize(this.handle.width, 23);
                     break;
                 case "SYS:FOCUSIN":
-                    this.nerd.setFocus();
+                    this.edit.setFocus();
                     break;
                 default:
                     break;
             }
         }
 
-        this.handle = NewWidget (parent, OnEvt.bind(this));
+        function OnDrw (canvas) {
+            var p = new Paint();
+            p.style = 0x00;
+            p.color = 0xFF0000FF;
+            canvas.drawRect(0, 0, this.width, this.height, p);
+        }
 
-        this.handle.locX = x;
-        this.handle.locY = y;
-        this.handle.width  = w;
-        this.handle.height = h;
+        this.handle = NewWidget (parent, OnEvt.bind(this), OnDrw.bind(this));
+        this.parent = parent;
 
-        this.handle.stat = {};
-        this.handle.nerd = {};
+        this.x = 0;
+        this.y = 0;
+        this.w = 300;
+        this.h = parent.height;
 
-        this.handle.nerd = new Nerd (this.handle, this);
-        this.handle.stat = new Stat (this.handle, this);
+        this.handle.locX = this.x;
+        this.handle.locY = this.y;
+        this.handle.width  = this.w;
+        this.handle.height = this.h;
+
+        this.edit = new Nerd (this.handle, this);
+        this.stat = new Stat (this.handle, this);
         this.type = "Nerd";
 
-        ////default size
-        this.handle.nerd.handle.locX = 0;
-        this.handle.nerd.handle.locY = 0;
-        this.handle.nerd.handle.width  = this.handle.width;
-        this.handle.nerd.handle.height = this.handle.height - 23;
+        this.edit.setLocation(0, 0);
+        this.edit.setSize(this.handle.width, this.handle.height - 23);
 
-        this.handle.stat.handle.locX = 0;
-        this.handle.stat.handle.locY = this.handle.height - 23;
-        this.handle.stat.handle.width  = this.handle.width;
-        this.handle.stat.handle.height = 23;
+        this.stat.setLocation(0, this.handle.height - 23);
+        this.stat.setSize(this.handle.width, 23);
     };
+
+    Inherite(NerdTree, BaseObj);
+
+    return NerdTree;
 })();

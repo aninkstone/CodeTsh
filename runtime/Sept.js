@@ -22,7 +22,7 @@
                     click (argument);
                     break;
                 case "SYS:FOCUSIN":
-                    this.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
+                    SDL.setCursor(SDL_SYSTEM_CURSOR_ARROW);
                     break;
                 case "SYS:KEY":
                     return OnKeyD.bind(this.handle)(argument.key, argument.shift, argument.alt, argument.ctrl);

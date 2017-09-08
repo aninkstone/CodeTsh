@@ -139,6 +139,7 @@ NerdTree = require(set.runtime.path + "/runtime/NerdTree.js");
 EditView = require(set.runtime.path + "/runtime/EditView.js");
 Windows =  require(set.runtime.path + "/runtime/Windows.js");
 
+
 //var t = new Thread ();
 //t.run (function (){
 //    for (i = 0;i < 1000; ++i) {
@@ -206,4 +207,3 @@ function ExecuteCommand (widget, cmd, shift, alt, ctrl){
 }
 
 require(set.runtime.path + "/runtime/MainWnd.js");
-
