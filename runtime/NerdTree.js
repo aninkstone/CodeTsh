@@ -50,5 +50,9 @@
 
     Inherite(NerdTree, BaseObj);
 
+    NerdTree.prototype.chdir = function(p) {
+        this.edit.chdir(p);
+    }
+
     return NerdTree;
 })();

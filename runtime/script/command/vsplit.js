@@ -1,6 +1,6 @@
 (function(){
     return function(doc, editor, text){
-        windows.vsplit(set.window);
+        windows.split("vert");
         return true;
     }
 })();

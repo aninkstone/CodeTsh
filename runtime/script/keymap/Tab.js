@@ -1,6 +1,13 @@
 (function (){  
     return function (editor, cmd, shift, alt, ctrl) {
-        windows.focusNerd();
+        var nerd = windows.instanceOfTypeName ("Nerd");
+        if (nerd != null) {
+            windows.delWidget(nerd);
+        }
+        else {
+            windows.addWidget(new NerdTree(windows.parent));
+        }
+        //windows.focusNerd();
         return true;
     }
 })();

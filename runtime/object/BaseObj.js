@@ -1,6 +1,24 @@
 function BaseObj () {
 };
 
+BaseObj.prototype.setVisiable = function (b) {
+    try {
+        this.handle.visiable = b;
+    }
+    catch (e) {
+        console.log (e + " " + (new Error().stack));
+    }
+}
+
+BaseObj.prototype.inval = function () {
+    try {
+        this.handle.inval();
+    }
+    catch (e) {
+        console.log (e + " " + (new Error().stack));
+    }
+}
+
 BaseObj.prototype.setLocation = function (x, y) {
     try {
         this.handle.locX = x;

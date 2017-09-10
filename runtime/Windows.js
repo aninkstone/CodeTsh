@@ -1,26 +1,65 @@
 (function(){
-    function FocusManager (views) {
-        this.views = views;
-        this.edits = [];
-        this.ctrls = [];
+    function Stack() { 
+        this.items = []; 
+    }
+    Stack.prototype.print = function () {
+        this.items.forEach ((v)=>{
+            console.log (v.type);
+        });
+    }
+    Stack.prototype.push = function (ele) {
+        this.items.push (ele);
+
+        if (this.size() >= 32) {
+            this.pop ();
+        }
+    }
+    Stack.prototype.peek = function () {
+        return this.items[this.items.length - 1];
+    }
+    Stack.prototype.pop = function () {
+        return this.items.pop();
+    }
+    Stack.prototype.isEmpty = function () {
+        return this.items.length == 0;
+    }
+    Stack.prototype.size = function () {
+        return this.items.length;
+    }
+    Stack.prototype.clear = function () {
+        return this.items = [];
     }
 
-    FocusManager.prototype.focusTo = function (view) {
+    function FocusManager (views) {
+        this.views = views;
+        this.edits = new Stack();
+        this.ctrls = new Stack();
+    }
+
+    FocusManager.prototype.focusCtrl = function () {
+        return this.ctrls.peek();
+    }
+
+    FocusManager.prototype.focusEdit = function () {
+        return this.edits.peek();
+    }
+
+    FocusManager.prototype.focusEditPOP = function () {
+        return this.edits.pop();
     }
 
     FocusManager.prototype.focusTo = function (view) {
         this.views.forEach ((v,k,m)=>{
-            if (v.handle === view || (typeof v.edit === 'object' ? v.edit.handle === view : false)) {
+            if (v.handle === view || view == v || (typeof v.edit === 'object' ? v.edit.handle === view : false)) {
                 switch (v.type) {
+                    case "Inet":
                     case "Nerd":
                         this.ctrls.push(v);
                         break;
-                    case "Inet":
-                        break;
                     case "Edit":
+                        this.edits.push(v);
                         break;
                     case "Sanp":
-                        break;
                     default:
                         break;
                 }
@@ -30,9 +69,12 @@
 
     function Windows (parent) {
         try {
+            this.parent = parent;
             this.views = new Map ();
             this.ids = 0;
             this.focusMgr = new FocusManager (this.views);
+
+            this.direction = "vert";
 
             this.addWidget(new NerdTree(parent));
             this.addWidget(new Interact(parent));
@@ -43,13 +85,107 @@
         }
     }
 
+    Windows.prototype.autoViewID = function () {
+        this.views.forEach((v, k)=>{ 
+            if (v.type == "Edit") {
+                v.edit.setName(k.toString()); v.edit.inval();
+            }
+        });
+        setTimeOut(()=>{
+            this.views.forEach((v, k)=>{ 
+                if (v.type == "Edit") {
+                    v.edit.setName(""); v.edit.inval();
+                }
+            });
+        }, 500);
+    }
+
+    Windows.prototype.namedCtrl = function (name) {
+        if (typeof name != 'string') {
+            return null;
+        }
+        var object = null;
+        this.views.forEach((v, k, m) => {
+            console.log ("Name: " + name + " -> " + v.type);
+            if (v.type == name) {
+                console.log ("Found: " + typeof v);
+                object = v;
+            }
+        });
+        return object;
+    }
+
     Windows.prototype.focusChange = function (focusView) {
         this.focusMgr.focusTo(focusView);
     }
 
     Windows.prototype.onSizeChange = function (changingView) {
         try {
-            this.update (this.curView);
+            this.update (this.focusMgr.focusEdit());
+        }
+        catch (e) {
+            console.log (e + " " + (new Error().stack));
+        }
+    }
+
+    Windows.prototype.close = function () {
+        var v = this.focusMgr.focusEditPOP();
+        var d = v.edit.document;
+
+        if (d.savepoint == false) {
+            //this.interact.document.deleteChars(0, this.interact.document.length);
+            //this.interact.document.insertChars("File is not saved.");
+            return;
+        }
+
+        this.v.visiable(false);
+        delWidget (v);
+        var v = this.focusMgr.focusEdit();
+        v.setFocus();
+
+        //var allSaved = true;
+        //var matched = [];
+        //this.views.forEach((v, k)=>{
+        //    try {
+        //        if (v.edit.document.savepoint == false) {
+        //            allSaved = false;
+        //            matched.push (v.edit.document.path);
+        //        }
+        //    }
+        //    catch (e) {
+        //    }
+        //});
+
+        //if (allSaved == true) {
+        //    SDL.postEvent(0x100); /* quit */
+        //}
+        //else {
+        //    this.interact.document.deleteChars(0, this.interact.document.length);
+        //    this.interact.document.insertChars(matched[0] + " is not saved.");
+        //}
+    }
+
+    Windows.prototype.split = function (direction) {
+        try {
+            if (typeof direction == 'string') {
+                switch (direction) {
+                    case "hori":
+                    case "vert":
+                        this.direction = direction;
+                        break;
+                    default:
+                        this.direction = "vert";
+                        break;
+                }
+            }
+            var f = this.focusMgr.focusEdit ();
+            if (typeof f == 'undefined') {
+                return;
+            }
+            var d = f.edit.handle.document;
+
+            var v = new EditView (this.parent);
+            this.addWidget(v); v.setDocument(d);
         }
         catch (e) {
             console.log (e + " " + (new Error().stack));
@@ -106,684 +242,650 @@
             return;
         }
 
-        if (views.size == 1) {
-            var v = views.values().next().value;
+        var maxLeft = ()=>{
+            var leftMax = 0;
+            views.forEach((v, k) => {
+                var p = v.position();
+                var x = p.x + p.w;
+                if (leftMax <= x) {
+                    leftMax = x;
+                }
+            });
+            return leftMax;
+        };
+        var maxBotm = ()=>{
+            var botmMax = 0;
+            views.forEach((v, k) => {
+                var p = v.position();
+                var y = p.y + p.h;
+                if (botmMax <= y) {
+                    botmMax = y;
+                }
+            });
+            return botmMax;
+        };
+
+        var nearL = ()=>{
+            var leftMax = maxLeft();
+            console.log ("leftMax: " + leftMax);
+            var match = [];
+            views.forEach((v, k) => {
+                var p = v.position();
+                var x = p.x + p.w;
+                if (Math.abs(leftMax - x) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
+
+        var nearB = ()=>{
+            var botmMax = maxBotm();
+            console.log ("botmMax: " + botmMax);
+            var match = [];
+            views.forEach((v, k) => {
+                var p = v.position();
+                var y = p.y + p.h;
+                if (Math.abs(botmMax - y) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
+
+        var l = nearL();
+        var b = nearB();
+
+        console.log ("NearL widgets count:" + l.length);
+        console.log ("NearB widgets count:" + b.length);
+
+        l.forEach((v)=>{
             var vpos = v.position();
             if (nerd != null) {
-                vpos.x = nerd.w;
-                vpos.w = v.parent.width - nerd.w;
+                vpos.w = v.parent.width - vpos.x;
             }
-            if (inet != null) {
-                vpos.h = v.parent.height - inet.h
+            else {
+                vpos.w = v.parent.width - vpos.x;
             }
-            v.setLocation(vpos.x, vpos.y); v.setSize(vpos.w, vpos.h);
-        }
-        else {
-            views.forEach((v, k, m) => {
-            });
-        }
-    };
-
-    Windows.prototype.addWidget = function (widget) {
-        if (typeof widget == 'undefined') {
-            return;
-        }
-        if (typeof widget.type == 'undefined') {
-            return;
-        }
-
-        var nerd = null;
-        var inet = null;
-        var edit = null;
-        var snap = null;
-
-        this.views.forEach((v, k, m) => {
-            if (v.type == "Nerd") {
-                nerd = v;
-            }
-            if (v.type == "Inet") {
-                inet = v;
-            }
-            if (v.type == "Edit") {
-                edit = v;
-            }
-            if (v.type == "Snap") {
-                snap = v;
-            }
+            v.setLocation (vpos.x, vpos.y);
+            v.setSize(vpos.w, vpos.h);
         });
 
-        if (nerd != null && widget.type == "Nerd") {
-            console.log ("Error: Multi singleton object");
-            return;
-        }
+        b.forEach((v)=>{
+            var vpos = v.position();
+            if (inet != null) {
+                vpos.h = v.parent.height - vpos.y - inet.h;
+            }
+            else {
+                vpos.h = v.parent.height - vpos.y;
+            }
+            v.setSize(vpos.w, vpos.h);
+        });
 
-        if (inet != null && widget.type == "Inet") {
-            console.log ("Error: Multi singleton object");
-            return;
-        }
+        this.views.forEach((v, k, m) => {
+            var p = v.position();
+            console.log (v.type + ":");
+            console.log ("v.x :" + p.x);
+            console.log ("v.y :" + p.y);
+            console.log ("v.w :" + p.w);
+            console.log ("v.h :" + p.h);
+        });
+    };
 
-        if (snap != null && widget.type == "Snap") {
-            console.log ("Error: Multi singleton object");
-            return;
-        }
+    Windows.prototype.instanceOfTypeName = function (typeName) {
+        var instance = null;
+        this.views.forEach((v, k, m) => {
+            if (v.type == typeName) {
+                instance = v;
+            }
+        });
+        return instance;
+    }
+
+    Windows.prototype.delWidget = function (widget) {
+        widget.handle.visiable = false;
+
+        var nearL = (w)=>{
+            var s = w.position();
+            var leftEdge = s.x + s.w;
+            var match = [];
+            this.views.forEach((v, k) => {
+                var p = v.position();
+                var x = p.x;
+                if (Math.abs(leftEdge - x) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
 
         switch (widget.type) {
-            case "Nerd":
-                if (inet != null) {
-                    var ipos = inet.position ();
-                    var npos = widget.position ();
-                    try {
-                        widget.setSize(npos.w, npos.h - ipos.h);
-                    }
-                    catch (e) {
-                        console.log (e);
-                    }
-                }
-                console.log ("Add Wdiget:" + widget.type);
+            case "Edit":
                 break;
             case "Inet":
-                if (nerd != null) {
-                    var npos = nerd.position ();
-                    var wpos = widget.position ();
-                    try {
-                        nerd.setSize(npos.w, npos.h - wpos.h);
-                    }
-                    catch (e) {
-                        console.log (e);
-                    }
-                }
-                console.log ("Add Wdiget:" + widget.type);
                 break;
-            case "Edit":
-                console.log ("Add Wdiget:" + widget.type);
-                break;
-            case "Sanp":
-                console.log ("Add Wdiget:" + widget.type);
+            case "Nerd":
+                var l = nearL(widget);
+                l.forEach((v)=>{
+                    var vpos = v.position();
+                    var wpos = widget.position();
+                    v.setLocation(0, vpos.y);
+                    v.setSize(vpos.w + wpos.w, vpos.h);
+                });
                 break;
             default:
                 break;
         }
-        var focus = this.curView;
 
-        this.curView = widget;
-        this.views.set(++this.ids, this.curView);
+        this.views.forEach((v, k, m) => {
+            if (widget === v) {
+                this.views.delete(k);
+            }
+        });
 
-        if (edit == null) {
-            this.update (null);
+        this.update (null);
+    }
+
+    Windows.prototype.addWidget = function (widget) {
+        try {
+            if (typeof widget == 'undefined') {
+                return;
+            }
+            if (typeof widget.type == 'undefined') {
+                return;
+            }
+
+            var nerd = null;
+            var inet = null;
+            var edit = null;
+            var snap = null;
+
+            this.views.forEach((v, k, m) => {
+                if (v.type == "Nerd") {
+                    nerd = v;
+                }
+                if (v.type == "Inet") {
+                    inet = v;
+                }
+                if (v.type == "Edit") {
+                    edit = v;
+                }
+                if (v.type == "Snap") {
+                    snap = v;
+                }
+            });
+
+            if (nerd != null && widget.type == "Nerd") {
+                console.log ("Error: Multi singleton object");
+                return;
+            }
+
+            if (inet != null && widget.type == "Inet") {
+                console.log ("Error: Multi singleton object");
+                return;
+            }
+
+            if (snap != null && widget.type == "Snap") {
+                console.log ("Error: Multi singleton object");
+                return;
+            }
+
+            var views = new Map ();
+
+            this.views.forEach((v, k, m) => {
+                switch (v.type) {
+                    case "Nerd":
+                        nerd = v;
+                        break;
+                    case "Inet":
+                        inet = v;
+                        break;
+                    case "Edit":
+                        views.set(k, v);
+                        break;
+                    case "Sanp":
+                        snap = v;
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            var addNerd = ()=>{
+                try {
+                    var ipos = inet.position ();
+                    var npos = widget.position ();
+                    widget.setSize(npos.w, npos.h - ipos.h);
+
+                    var nearL = ()=>{
+                        var leftEdge = 0;
+                        var match = [];
+                        views.forEach((v, k) => {
+                            var p = v.position();
+                            var x = p.x;
+                            if (Math.abs(leftEdge - x) <= 5) {
+                                match.push(v);
+                            }
+                        });
+                        return match;
+                    };
+
+                    var l = nearL ();
+                    l.forEach((v)=>{
+                        var vpos = v.position();
+                        var wpos = widget.position();
+                        v.setLocation(npos.w, vpos.y);
+                        v.setSize(vpos.w - npos.w, vpos.h);
+                    });
+                }
+                catch (e) {
+                    console.log (e);
+                }
+            };
+
+            var addInet = ()=>{
+                try {
+                    var npos = nerd.position ();
+                    var wpos = widget.position ();
+                    nerd.setSize(npos.w, npos.h - wpos.h);
+                }
+                catch (e) {
+                    console.log (e);
+                }
+            }
+
+            var addEdit = (widget)=>{
+                var focus = this.focusMgr.focusEdit();
+                var p = focus.position();
+                var n = p;
+
+                switch (this.direction) {
+                    case "vert":
+                        p.w = p.w / 2;
+                        widget.setLocation (p.x + p.w, p.y);
+                        widget.setSize(p.w, p.h);
+                        break;
+                    case "hori":
+                        p.h = p.h / 2;
+                        widget.setLocation (p.x, p.y + p.h);
+                        widget.setSize(p.w, p.h);
+                        break;
+                    default:
+                        break;
+                }
+
+                focus.setSize (p.w, p.h);
+
+
+                focus.inval();
+            }
+
+            var addFirstEdit = ()=>{
+                var ctrl = widget;
+                var vpos = ctrl.position();
+                if (nerd != null) {
+                    vpos.x = nerd.w;
+                    vpos.w = ctrl.parent.width - nerd.w;
+                }
+                else {
+                    vpos.x = 0;
+                    vpos.w = ctrl.parent.width;
+                }
+                if (inet != null) {
+                    vpos.h = ctrl.parent.height - inet.h
+                }
+                else {
+                    vpos.h = ctrl.parent.height;
+                }
+                ctrl.setLocation(vpos.x, vpos.y); ctrl.setSize(vpos.w, vpos.h);
+            }
+
+            switch (widget.type) {
+                case "Nerd":
+                    if (inet != null) {
+                        addNerd();
+                    }
+                    break;
+                case "Inet":
+                    if (nerd != null) {
+                        addInet();
+                    }
+                    break;
+                case "Edit":
+                    if (edit == null){
+                        addFirstEdit();
+                    }
+                    else {
+                        addEdit(widget);
+                    }
+                    break;
+                case "Sanp":
+                    break;
+                default:
+                    break;
+            }
+            var focus = this.curView;
+            this.views.set(++this.ids, widget);
+
+            this.curView = widget;
+
+            if (edit != null) {
+                this.update(this.focusMgr.focusEdit());
+            }
+            else {
+                this.update(null);
+            }
+            this.focusChange(widget);
         }
-        else {
-            //this.update (null);
+        catch (e) {
+            console.log (e + " " + (new Error().stack));
         }
-    };
-
-    Windows.prototype.delWidget = function (widget) {
-        //TODO: remove from map
     };
 
     return Windows;
 
-    //var INDEXOFVIEW = 0;
-    //function Windows (parent) {
-    //    this.interact = new Interact (parent, 0, parent.height - 24, parent.width, 24);
-    //    this.nerdtree = new NerdTree (parent, 0, 0, 300, parent.height - 24)
-    //    this.focusView = new EditView (parent, 300, 0, parent.width, parent.height - 24);
-
-    //    //this.parent = parent;
-    //    //this.fHistory = [];
-
-    //    //this.near = {};
-    //    //this.same = {};
-
-    //    //this.views = new Map ();
-
-    //    //this.interact = new Interact (parent, 0, parent.height - 24, parent.width, 24);
-    //    //this.nerdtree = new NerdTree (parent, this.interact, 0, 0, 300, parent.height - this.interact.height)
-    //    //this.focusView = new EditView (parent, this.interact, 300, 0, parent.width - 300, parent.height - this.interact.height);
-    //    ////this.focusView = new EditView (parent, this.interact, 0, 0, parent.width, parent.height - this.interact.height);
-
-    //    //this.interact.click = {};
-    //    ////this.nerdtree.click = {};
-    //    //this.focusView.click = {};
-
-    //    ////this.views.set (INDEXOFVIEW++, this.nerdtree);
-    //    //this.views.set (INDEXOFVIEW++, this.focusView);
-
-    //    ////this.focusChange (this.focusView);
-    //    ////this.setFocus(this.focusView);
-    //    ////this.interact.focusView = this.focusView.edit;
-
-    //    //this.chdir = function (p) {
-    //    //    //this.nerdtree.nerd.chdir (p);
-    //    //}
-
-    //    //this.viewID = function (view) {
-    //    //    var key = null;
-    //    //    this.views.forEach((v, k) => {
-    //    //        if (view == v) {
-    //    //            key = k;
-    //    //        }
-    //    //    });
-    //    //    return key;
-    //    //}
-
-    //    //this.resize = function (widget) {
-    //    //    this.interact.locY  = widget.height - this.interact.height;
-    //    //    this.interact.width = widget.width;
-
-    //    //    var maxLeft = (resizeWidget)=>{
-    //    //        var leftMax = 0;
-    //    //        this.views.forEach((v, k) => {
-    //    //            var x = v.locX + v.width;
-    //    //            if (leftMax <= x) {
-    //    //                leftMax = x;
-    //    //            }
-    //    //        });
-    //    //        return leftMax;
-    //    //    };
-    //    //    var maxBotm = (resizeWidget)=>{
-    //    //        var botmMax = 0;
-    //    //        this.views.forEach((v, k) => {
-    //    //            var y = v.locY + v.height;
-    //    //            if (botmMax <= y) {
-    //    //                botmMax = y;
-    //    //            }
-    //    //        });
-    //    //        return botmMax;
-    //    //    };
-
-    //    //    var nearL = (resizeWidget)=>{
-    //    //        var leftMax = maxLeft(resizeWidget);
-    //    //        var match = [];
-    //    //        this.views.forEach((v, k) => {
-    //    //            var x = v.locX + v.width;
-    //    //            if (Math.abs(leftMax - x) <= 2) {
-    //    //                match.push(v);
-    //    //            }
-    //    //        });
-    //    //        return match;
-    //    //    };
-
-    //    //    var nearB = (resizeWidget)=>{
-    //    //        var botmMax = maxBotm(resizeWidget);
-    //    //        var match = [];
-    //    //        this.views.forEach((v, k) => {
-    //    //            var y = v.locY + v.height;
-    //    //            if (Math.abs(botmMax - y) <= 2) {
-    //    //                match.push(v);
-    //    //            }
-    //    //        });
-    //    //        return match;
-    //    //    };
-
-    //    //    var l = nearL(widget);
-    //    //    var b = nearB(widget);
-
-    //    //    l.forEach((v)=>{
-    //    //        v.width  = widget.width - v.locX;
-    //    //    });
-    //    //    b.forEach((v)=>{
-    //    //        v.height = widget.height - v.locY - this.interact.height;
-    //    //    });
-
-    //    //};
-    //    //this.autoWindowID();
+    //Windows.prototype.focusNerd = function () {
+    //    //this.nerdtree.setFocus();
     //}
 
-    ////Windows.prototype.setFocus = function (widget) {
-    ////    this.fHistory.unshift(widget);
+    //Windows.prototype.setFocusID  = function (index) {
+    //    var obj = this.views.get (index);
+    //    if (obj) {
+    //        obj.setFocus();
+    //    }
+    //}
 
-    ////    if (this.fHistory.length >= 20) {
-    ////        this.fHistory.pop();
-    ////    }
-    ////}
+    //Windows.prototype.moveFocus2L = function () {
+    //    var findLeft = (resizeWidget)=>{
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var x = v.locX + v.width;
+    //            if (Math.abs(x - resizeWidget.locX) <= 2) {
+    //                match.push (v);
+    //            }
+    //        });
+    //        return match;
+    //    };
 
-    ////Windows.prototype.showWindowID = function () {
-    ////    this.views.forEach((v, k)=>{ 
-    ////        try {
-    ////            v.setName(k); 
-    ////            v.inval();
-    ////        }
-    ////        catch (e){
-    ////        }
-    ////    });
-    ////}
+    //    var match = findLeft(this.focusView);
+    //    if (match.length > 0) {
+    //        match [0].setFocus();
+    //    }
+    //}
 
-    ////Windows.prototype.autoWindowID = function () {
-    ////    this.showWindowID();
-    ////    var id = setTimeOut(function(){ 
-    ////        windows.hideWindowID(); 
-    ////    }, 3000);
-    ////    console.log (id);
-    ////}
+    //Windows.prototype.moveFocus2R = function () {
+    //    var findRight = (resizeWidget)=>{
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var x = v.locX;
+    //            if (Math.abs(x - (resizeWidget.locX + resizeWidget.width)) <= 2) {
+    //                match.push (v);
+    //            }
+    //        });
+    //        return match;
+    //    };
 
-    ////Windows.prototype.hideWindowID = function () {
-    ////    this.views.forEach((v, k)=>{ 
-    ////        try {
-    ////            v.setName(""); 
-    ////            v.inval();
-    ////        }
-    ////        catch (e){
-    ////        }
-    ////    });
-    ////}
+    //    var match = findRight(this.focusView);
+    //    if (match.length > 0) {
+    //        match [0].setFocus();
+    //    }
+    //}
 
-    ////Windows.prototype.preFocusView = function (type) {
-    ////    try {
-    ////        for (var idx = 0; idx < this.fHistory.length; ++idx) {
-    ////            console.log(this.fHistory.length + ": " + "[" + idx + "]"+ this.fHistory[idx] + ":" + this.fHistory[idx].type);
-    ////            if (typeof this.fHistory[idx] == 'object') {
-    ////                if (this.fHistory[idx].type == type) {
-    ////                    return this.fHistory[idx];
-    ////                }
-    ////            }
-    ////        }
-    ////    }
-    ////    catch (e) {
-    ////        console.log (e.toString());
-    ////    }
-    ////    return null;
-    ////}
+    //Windows.prototype.moveFocus2T = function () {
+    //    var findTop = (resizeWidget)=>{
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var y = v.locY + v.height;
+    //            if (Math.abs(y - resizeWidget.locY) <= 2) {
+    //                match.push (v);
+    //            }
+    //        });
+    //        return match;
+    //    };
 
-    ////Windows.prototype.focusNerd = function () {
-    ////    //this.nerdtree.setFocus();
-    ////}
+    //    var match = findTop (this.focusView);
+    //    if (match.length > 0) {
+    //        match [0].setFocus();
+    //    }
+    //}
 
-    ////Windows.prototype.setFocusID  = function (index) {
-    ////    var obj = this.views.get (index);
-    ////    if (obj) {
-    ////        obj.setFocus();
-    ////    }
-    ////}
+    //Windows.prototype.moveFocus2B = function () {
+    //    var findBottom = (resizeWidget)=>{
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var y = v.locY;
+    //            if (Math.abs(y - (resizeWidget.height + resizeWidget.locY)) <= 2) {
+    //                match.push (v);
+    //            }
+    //        });
+    //        return match;
+    //    };
 
-    ////Windows.prototype.moveFocus2L = function () {
-    ////    var findLeft = (resizeWidget)=>{
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var x = v.locX + v.width;
-    ////            if (Math.abs(x - resizeWidget.locX) <= 2) {
-    ////                match.push (v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    };
+    //    var match = findBottom (this.focusView);
+    //    if (match.length > 0) {
+    //        match [0].setFocus();
+    //    }
+    //}
 
-    ////    var match = findLeft(this.focusView);
-    ////    if (match.length > 0) {
-    ////        match [0].setFocus();
-    ////    }
-    ////}
+    //Windows.prototype.focusViewID = function () {
+    //    return this.viewID(this.focusView);
+    //}
 
-    ////Windows.prototype.moveFocus2R = function () {
-    ////    var findRight = (resizeWidget)=>{
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var x = v.locX;
-    ////            if (Math.abs(x - (resizeWidget.locX + resizeWidget.width)) <= 2) {
-    ////                match.push (v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    };
+    //Windows.prototype.viewsCount = function () {
+    //    return this.views.size;
+    //}
 
-    ////    var match = findRight(this.focusView);
-    ////    if (match.length > 0) {
-    ////        match [0].setFocus();
-    ////    }
-    ////}
+    //Windows.prototype.copenView = function () {
+    //    this.focusView.changeDocument (consoleDoc);
+    //}
 
-    ////Windows.prototype.moveFocus2T = function () {
-    ////    var findTop = (resizeWidget)=>{
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var y = v.locY + v.height;
-    ////            if (Math.abs(y - resizeWidget.locY) <= 2) {
-    ////                match.push (v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    };
+    //Windows.prototype.septClick = function (widget, pos, stat) {
+    //    if (stat == 0) {
+    //        this.views.forEach((v, k) => {
+    //            v.click.x = v.locX;
+    //            v.click.y = v.locY;
+    //            v.click.w = v.width;
+    //            v.click.h = v.height;
+    //        });
+    //    }
 
-    ////    var match = findTop (this.focusView);
-    ////    if (match.length > 0) {
-    ////        match [0].setFocus();
-    ////    }
-    ////}
+    //    var near = (resizeWidget)=>{
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var x = v.locX + v.width;
+    //            if (Math.abs(x - resizeWidget.locX) <= 2) {
+    //                match.push(v);
+    //            }
+    //        });
+    //        return match;
+    //    }
 
-    ////Windows.prototype.moveFocus2B = function () {
-    ////    var findBottom = (resizeWidget)=>{
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var y = v.locY;
-    ////            if (Math.abs(y - (resizeWidget.height + resizeWidget.locY)) <= 2) {
-    ////                match.push (v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    };
+    //    var same = (resizeWidget)=>{
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            if (v.locX == resizeWidget.locX) {
+    //                if (this.viewID(v) != this.viewID(resizeWidget)) {
+    //                    match.push (v);
+    //                }
+    //            }
+    //        });
+    //        return match;
+    //    }
 
-    ////    var match = findBottom (this.focusView);
-    ////    if (match.length > 0) {
-    ////        match [0].setFocus();
-    ////    }
-    ////}
+    //    if (stat == 1) {
+    //        this.near = near(widget);
+    //        this.same = same(widget);
+    //    }
 
-    ////Windows.prototype.focusViewID = function () {
-    ////    return this.viewID(this.focusView);
-    ////}
+    //    if (stat == 2) {
+    //        var offsetX = (pos.currX - pos.origX);
+    //        widget.locX  = widget.click.x + offsetX; 
+    //        widget.width = widget.click.w - offsetX; 
 
-    ////Windows.prototype.viewsCount = function () {
-    ////    return this.views.size;
-    ////}
+    //        this.near.forEach((v)=>{
+    //            v.width = v.click.w + offsetX;
+    //        });
 
-    ////Windows.prototype.copenView = function () {
-    ////    this.focusView.changeDocument (consoleDoc);
-    ////}
+    //        this.same.forEach((v)=>{
+    //            v.locX  = widget.locX;
+    //            v.width = v.click.w - offsetX;
+    //        });
+    //    }
+    //}
 
-    ////Windows.prototype.septClick = function (widget, pos, stat) {
-    ////    if (stat == 0) {
-    ////        this.views.forEach((v, k) => {
-    ////            v.click.x = v.locX;
-    ////            v.click.y = v.locY;
-    ////            v.click.w = v.width;
-    ////            v.click.h = v.height;
-    ////        });
-    ////    }
+    //Windows.prototype.statClick = function (widget, pos, stat) {
+    //    if (stat == 0) {
+    //        this.views.forEach((v, k) => {
+    //            v.click.x = v.locX;
+    //            v.click.y = v.locY;
+    //            v.click.w = v.width;
+    //            v.click.h = v.height;
+    //        });
+    //    }
 
-    ////    var near = (resizeWidget)=>{
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var x = v.locX + v.width;
-    ////            if (Math.abs(x - resizeWidget.locX) <= 2) {
-    ////                match.push(v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    }
+    //    var same = (resizeWidget)=>{
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            if ((v.locY + v.height) == (resizeWidget.height + resizeWidget.locY)) {
+    //                if (this.viewID(v) != this.viewID(resizeWidget)) {
+    //                    match.push (v);
+    //                }
+    //            }
+    //        });
+    //        return match;
+    //    }
 
-    ////    var same = (resizeWidget)=>{
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            if (v.locX == resizeWidget.locX) {
-    ////                if (this.viewID(v) != this.viewID(resizeWidget)) {
-    ////                    match.push (v);
-    ////                }
-    ////            }
-    ////        });
-    ////        return match;
-    ////    }
+    //    var near = (resizeWidget)=>{
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var y = v.locY;
+    //            if (Math.abs(y - (resizeWidget.locY + resizeWidget.height)) <= 2) {
+    //                match.push(v);
+    //            }
+    //        });
+    //        return match;
+    //    }
 
-    ////    if (stat == 1) {
-    ////        this.near = near(widget);
-    ////        this.same = same(widget);
-    ////    }
+    //    if (stat == 1) {
+    //        this.same = same (widget);
+    //        this.near = near (widget);
+    //    }
 
-    ////    if (stat == 2) {
-    ////        var offsetX = (pos.currX - pos.origX);
-    ////        widget.locX  = widget.click.x + offsetX; 
-    ////        widget.width = widget.click.w - offsetX; 
+    //    if (stat == 2) {
+    //        var offsetY = (pos.currY - pos.origY);
+    //        widget.height = widget.height + (offsetY); 
 
-    ////        this.near.forEach((v)=>{
-    ////            v.width = v.click.w + offsetX;
-    ////        });
+    //        this.near.forEach((v)=>{
+    //            v.locY = v.locY + offsetY;
+    //            v.height = v.height - offsetY;
+    //        });
 
-    ////        this.same.forEach((v)=>{
-    ////            v.locX  = widget.locX;
-    ////            v.width = v.click.w - offsetX;
-    ////        });
-    ////    }
-    ////}
+    //        this.same.forEach((v)=>{
+    //            v.height = v.height + offsetY;
+    //        });
+    //    }
+    //}
 
-    ////Windows.prototype.statClick = function (widget, pos, stat) {
-    ////    if (stat == 0) {
-    ////        this.views.forEach((v, k) => {
-    ////            v.click.x = v.locX;
-    ////            v.click.y = v.locY;
-    ////            v.click.w = v.width;
-    ////            v.click.h = v.height;
-    ////        });
-    ////    }
+    //Windows.prototype.mergeView = function (merge) {
+    //    var k = this.viewID (merge);
+    //    this.views.delete (k);
 
-    ////    var same = (resizeWidget)=>{
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            if ((v.locY + v.height) == (resizeWidget.height + resizeWidget.locY)) {
-    ////                if (this.viewID(v) != this.viewID(resizeWidget)) {
-    ////                    match.push (v);
-    ////                }
-    ////            }
-    ////        });
-    ////        return match;
-    ////    }
+    //    var flvg = (resizeWidget)=>{ /* find left views group */
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var x = v.locX + v.width;
+    //            if (Math.abs(x - (resizeWidget.locX)) <= 2) {
+    //                match.push(v);
+    //            }
+    //        });
+    //        return match;
+    //    }
+    //    var lvg = flvg (merge);
+    //    console.log ("Has left view count = " + lvg.length);
 
-    ////    var near = (resizeWidget)=>{
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var y = v.locY;
-    ////            if (Math.abs(y - (resizeWidget.locY + resizeWidget.height)) <= 2) {
-    ////                match.push(v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    }
+    //    var frvg = (resizeWidget)=>{ /* find right views group */
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var x = v.locX;
+    //            if (Math.abs(x - (resizeWidget.locX + resizeWidget.width)) <= 2) {
+    //                match.push(v);
+    //            }
+    //        });
+    //        return match;
+    //    }
+    //    var rvg = frvg (merge);
+    //    console.log ("Has right view count = " + rvg.length);
 
-    ////    if (stat == 1) {
-    ////        this.same = same (widget);
-    ////        this.near = near (widget);
-    ////    }
+    //    var ftvg = (resizeWidget)=>{ /* find top views group */
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var y = v.locY + v.height;
+    //            if (Math.abs(y - (resizeWidget.locY)) <= 2) {
+    //                match.push(v);
+    //            }
+    //        });
+    //        return match;
+    //    }
+    //    var tvg = ftvg (merge);
+    //    console.log ("Has top view count = " + tvg.length);
 
-    ////    if (stat == 2) {
-    ////        var offsetY = (pos.currY - pos.origY);
-    ////        widget.height = widget.height + (offsetY); 
+    //    var fbvg = (resizeWidget)=>{ /* find bottom views group */
+    //        var match = [];
+    //        this.views.forEach((v, k) => {
+    //            var y = v.locY;
+    //            if (Math.abs(y - (resizeWidget.locY + resizeWidget.height)) <= 2) {
+    //                match.push(v);
+    //            }
+    //        });
+    //        return match;
+    //    }
+    //    var bvg = fbvg (merge);
+    //    console.log ("Has bottom view count = " + bvg.length);
 
-    ////        this.near.forEach((v)=>{
-    ////            v.locY = v.locY + offsetY;
-    ////            v.height = v.height - offsetY;
-    ////        });
+    //    if (tvg.length != 0) {
+    //        tvg.forEach ((v)=>{
+    //            v.height = v.height + merge.height;
+    //        });
+    //    }
+    //    else if (bvg.length != 0) {
+    //        bvg.forEach ((v)=>{
+    //            v.locY = merge.locY;
+    //            v.height = v.height + merge.height;
+    //        });
+    //    }
+    //    else if (rvg.length != 0) {
+    //        rvg.forEach ((v)=>{
+    //            v.locX = merge.locX;
+    //            v.width = v.width + merge.width;
+    //        });
+    //    }
+    //    else if (lvg.length != 0) {
+    //        lvg.forEach ((v)=>{
+    //            v.width = v.width + merge.width;
+    //        });
+    //    }
+    //}
 
-    ////        this.same.forEach((v)=>{
-    ////            v.height = v.height + offsetY;
-    ////        });
-    ////    }
-    ////}
+    //Windows.prototype.exit = function () {
+    //    var allSaved = true;
+    //    var matched = [];
+    //    this.views.forEach((v, k)=>{
+    //        try {
+    //            if (v.edit.document.savepoint == false) {
+    //                allSaved = false;
+    //                matched.push (v.edit.document.path);
+    //            }
+    //        }
+    //        catch (e) {
+    //        }
+    //    });
 
-    ////Windows.prototype.mergeView = function (merge) {
-    ////    var k = this.viewID (merge);
-    ////    this.views.delete (k);
-
-    ////    var flvg = (resizeWidget)=>{ /* find left views group */
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var x = v.locX + v.width;
-    ////            if (Math.abs(x - (resizeWidget.locX)) <= 2) {
-    ////                match.push(v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    }
-    ////    var lvg = flvg (merge);
-    ////    console.log ("Has left view count = " + lvg.length);
-
-    ////    var frvg = (resizeWidget)=>{ /* find right views group */
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var x = v.locX;
-    ////            if (Math.abs(x - (resizeWidget.locX + resizeWidget.width)) <= 2) {
-    ////                match.push(v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    }
-    ////    var rvg = frvg (merge);
-    ////    console.log ("Has right view count = " + rvg.length);
-
-    ////    var ftvg = (resizeWidget)=>{ /* find top views group */
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var y = v.locY + v.height;
-    ////            if (Math.abs(y - (resizeWidget.locY)) <= 2) {
-    ////                match.push(v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    }
-    ////    var tvg = ftvg (merge);
-    ////    console.log ("Has top view count = " + tvg.length);
-
-    ////    var fbvg = (resizeWidget)=>{ /* find bottom views group */
-    ////        var match = [];
-    ////        this.views.forEach((v, k) => {
-    ////            var y = v.locY;
-    ////            if (Math.abs(y - (resizeWidget.locY + resizeWidget.height)) <= 2) {
-    ////                match.push(v);
-    ////            }
-    ////        });
-    ////        return match;
-    ////    }
-    ////    var bvg = fbvg (merge);
-    ////    console.log ("Has bottom view count = " + bvg.length);
-
-    ////    if (tvg.length != 0) {
-    ////        tvg.forEach ((v)=>{
-    ////            v.height = v.height + merge.height;
-    ////        });
-    ////    }
-    ////    else if (bvg.length != 0) {
-    ////        bvg.forEach ((v)=>{
-    ////            v.locY = merge.locY;
-    ////            v.height = v.height + merge.height;
-    ////        });
-    ////    }
-    ////    else if (rvg.length != 0) {
-    ////        rvg.forEach ((v)=>{
-    ////            v.locX = merge.locX;
-    ////            v.width = v.width + merge.width;
-    ////        });
-    ////    }
-    ////    else if (lvg.length != 0) {
-    ////        lvg.forEach ((v)=>{
-    ////            v.width = v.width + merge.width;
-    ////        });
-    ////    }
-    ////}
-
-    ////Windows.prototype.exit = function () {
-    ////    var allSaved = true;
-    ////    var matched = [];
-    ////    this.views.forEach((v, k)=>{
-    ////        try {
-    ////            if (v.edit.document.savepoint == false) {
-    ////                allSaved = false;
-    ////                matched.push (v.edit.document.path);
-    ////            }
-    ////        }
-    ////        catch (e) {
-    ////        }
-    ////    });
-
-    ////    if (allSaved == true) {
-    ////        SDL.postEvent(0x100); /* quit */
-    ////    }
-    ////    else {
-    ////        this.interact.document.deleteChars(0, this.interact.document.length);
-    ////        this.interact.document.insertChars(matched[0] + " is not saved.");
-    ////    }
-    ////}
-
-    ////Windows.prototype.closeCurrView = function () {
-    ////    var doc = this.focusView.edit.document;
-
-    ////    if (doc.savepoint == false) {
-    ////        this.interact.document.deleteChars(0, this.interact.document.length);
-    ////        this.interact.document.insertChars("File is not saved.");
-    ////        return;
-    ////    }
-
-    ////    this.focusView.visiable = false;
-    ////    this.mergeView(this.focusView);
-    ////    this.focusView.width  = 0;
-    ////    this.focusView.height = 0;
-
-    ////    console.log (this.fHistory.length);
-    ////    var index = this.fHistory.indexOf (this.focusView);
-    ////    if (index > -1) {
-    ////        this.fHistory.splice(index, 1);
-    ////    }
-    ////    this.focusView = null;
-    ////    console.log (this.fHistory.length);
-
-    ////    var focus = this.preFocusView("Edit");
-    ////    focus.setFocus();
-    ////}
-
-    ////Windows.prototype.vsplit = function (doc) {
-    ////    var h = this.focusView.height;
-    ////    h = h / 2;
-    ////    this.focusView.height = h;
-
-    ////    var document = this.focusView.edit.document;
-
-    ////    this.focusView = new EditView (this.parent, this.interact, 
-    ////        this.focusView.locX, 
-    ////        this.focusView.locY + this.focusView.height, 
-    ////        this.focusView.width, 
-    ////        h);
-
-    ////    if (typeof doc === 'undefined') {
-    ////        this.focusView.changeDocument(document);
-    ////    }
-    ////    else {
-    ////        this.focusView.changeDocument(doc);
-    ////    }
-
-    ////    this.focusView.click = {};
-    ////    this.views.set (INDEXOFVIEW++, this.focusView);
-
-    ////    this.autoWindowID();
-    ////    this.focusView.setFocus();
-    ////    return this.focusView;
-    ////}
-
-    ////Windows.prototype.hsplit = function (doc) {
-    ////    var w = this.focusView.width;
-    ////    w = w / 2;
-
-    ////    var document = this.focusView.edit.document;
-
-    ////    this.focusView.width = w;
-    ////    this.focusView = new EditView (this.parent, this.interact, 
-    ////        this.focusView.locX + this.focusView.width, 
-    ////        this.focusView.locY, 
-    ////        w, 
-    ////        this.focusView.height);
-
-    ////    if (typeof doc === 'undefined') {
-    ////        this.focusView.changeDocument(document);
-    ////    }
-    ////    else {
-    ////        this.focusView.changeDocument(doc);
-    ////    }
-    ////    this.focusView.click = {};
-    ////    this.views.set (INDEXOFVIEW++, this.focusView);
-
-    ////    this.autoWindowID();
-    ////    this.focusView.setFocus();
-    ////    return this.focusView;
-    ////}
-
-    ////Windows.prototype.focusChange = function (widget) {
-    ////    //try {
-    ////    //    this.views.forEach ((v, k, map)=>{
-    ////    //        if (v == widget.parent) {
-    ////    //            this.setFocus(widget.parent);
-    ////    //            this.focusView = widget.parent;
-    ////    //            this.interact.focusView = widget;
-    ////    //            widget.inval ();
-    ////    //        }
-    ////    //    });
-    ////    //}
-    ////    //catch (e) {
-    ////    //    console.log (e.toString());
-    ////    //}
-    ////}
-    //return Windows;
+    //    if (allSaved == true) {
+    //        SDL.postEvent(0x100); /* quit */
+    //    }
+    //    else {
+    //        this.interact.document.deleteChars(0, this.interact.document.length);
+    //        this.interact.document.insertChars(matched[0] + " is not saved.");
+    //    }
+    //}
 })();

@@ -193,6 +193,7 @@
     Inherite(Nerd, BaseObj);
 
     Nerd.prototype.chdir = function (fp) {
+        this.update(fp);
     }
 
     Nerd.prototype.update = function (fp) {

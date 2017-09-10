@@ -11,7 +11,7 @@
         doc.insertChars(l);
         set.runtime.curr = l;
 
-        windows.chdir(set.runtime.curr);
+        windows.namedCtrl("Nerd").chdir(set.runtime.curr);
     }
     return true;
 })();

@@ -1,7 +1,7 @@
 (function (){
     return function(editor, cmd, shift, alt, ctrl){
         if (cmd == "C_wv") {
-            windows.hsplit();
+            windows.split("vert");
         }
         if (cmd == "C_v") {
             editor.sync(SCI_SETSELECTIONMODE, 3, 0x00);

@@ -24,7 +24,7 @@
             editor.sync(SCI_WORDRIGHT, 0, 0);
         }
         if (cmd == "C_w") {
-            windows.autoWindowID();
+            windows.autoViewID();
             return false;
         }
         return true;

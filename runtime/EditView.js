@@ -3,6 +3,7 @@
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:SIZECHANGE":
+                    console.log ("EditView::SYS::SIZECHANGE");
                     this.sept.setLocation(0, 0);
                     this.sept.setSize (8, this.handle.height);
 
@@ -19,11 +20,11 @@
 
         try {
             this.handle = NewWidget(parent, OnEvt.bind(this));
+            this.parent = parent;
             this.x = 0;
             this.y = 0;
             this.w = parent.width;
             this.h = parent.height;
-            this.parent = parent;
 
             this.handle.locX = 0;
             this.handle.loxY = 0;
