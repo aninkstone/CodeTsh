@@ -128,13 +128,13 @@
             function click (context, argument){
                 switch (argument.state) {
                     case 0: /* mouse down */
-                        windows.statClick (context.parent, argument, 0);
+                        //windows.statClick (context.parent, argument, 0);
                         break;
                     case 1: /* mouse move */
-                        windows.statClick (context.parent, argument, 1);
+                        //windows.statClick (context.parent, argument, 1);
                         break;
                     case 2: /* mouse up */
-                        windows.statClick (context.parent, argument, 2);
+                        //windows.statClick (context.parent, argument, 2);
                         break;
                     default:
                         break;

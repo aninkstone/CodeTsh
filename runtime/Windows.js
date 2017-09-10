@@ -76,12 +76,98 @@
 
             this.direction = "vert";
 
-            this.addWidget(new NerdTree(parent));
+            //this.addWidget(new NerdTree(parent));
             this.addWidget(new Interact(parent));
             this.addWidget(new EditView(parent));
         }
         catch (e) {
             console.log (e + " " + (new Error().stack));
+        }
+    }
+
+    Windows.prototype.merge = function (merge) {
+        var flvg = (w)=>{ /* find left views group */
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var x = vpos.x + vpos.w;
+                if (Math.abs(x - (wpos.x)) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        }
+
+        var lvg = flvg (merge);
+        console.log ("Has left view count = " + lvg.length);
+
+        var frvg = (w)=>{ /* find right views group */
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var x = vpos.x;
+                if (Math.abs(x - (wpos.x + wpos.w)) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        }
+        var rvg = frvg (merge);
+        console.log ("Has right view count = " + rvg.length);
+
+        var ftvg = (w)=>{ /* find top views group */
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var y = vpos.y + vpos.h;
+                if (Math.abs(y - (wpos.y)) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        }
+        var tvg = ftvg (merge);
+        console.log ("Has top view count = " + tvg.length);
+
+        var fbvg = (w)=>{ /* find bottom views group */
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var y = vpos.y;
+                if (Math.abs(y - (wpos.y + wpos.h)) <= 2) {
+                    match.push(v);
+                }
+            });
+            return match;
+        }
+        var bvg = fbvg (merge);
+        console.log ("Has bottom view count = " + bvg.length);
+
+        if (tvg.length != 0) {
+            tvg.forEach ((v)=>{
+                v.height = v.height + merge.height;
+            });
+        }
+        else if (bvg.length != 0) {
+            bvg.forEach ((v)=>{
+                v.locY = merge.locY;
+                v.height = v.height + merge.height;
+            });
+        }
+        if (lvg.length != 0) {
+            lvg.forEach ((v)=>{
+                v.width = v.width + merge.width;
+            });
+        }
+        else if (rvg.length != 0) {
+            rvg.forEach ((v)=>{
+                v.locX = merge.locX;
+                v.width = v.width + merge.width;
+            });
         }
     }
 
@@ -130,7 +216,7 @@
 
     Windows.prototype.close = function () {
         var v = this.focusMgr.focusEditPOP();
-        var d = v.edit.document;
+        var d = v.edit.handle.document;
 
         if (d.savepoint == false) {
             //this.interact.document.deleteChars(0, this.interact.document.length);
@@ -138,8 +224,8 @@
             return;
         }
 
-        this.v.visiable(false);
-        delWidget (v);
+        v.setVisiable(false);
+        this.delWidget (v);
         var v = this.focusMgr.focusEdit();
         v.setFocus();
 
@@ -163,6 +249,8 @@
         //    this.interact.document.deleteChars(0, this.interact.document.length);
         //    this.interact.document.insertChars(matched[0] + " is not saved.");
         //}
+
+        this.merge(v);
     }
 
     Windows.prototype.split = function (direction) {

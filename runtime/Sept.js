@@ -4,13 +4,13 @@
             function click (argument){
                 switch (argument.state) {
                     case 0: /* mouse down */
-                        windows.septClick (this.handle.parent, argument, 0);
+                        //windows.septClick (this.handle.parent, argument, 0);
                         break;
                     case 1: /* mouse move */
-                        windows.septClick (this.handle.parent, argument, 1);
+                        //windows.septClick (this.handle.parent, argument, 1);
                         break;
                     case 2: /* mouse up */
-                        windows.septClick (this.handle.parent, argument, 2);
+                        //windows.septClick (this.handle.parent, argument, 2);
                         break;
                     default:
                         break;

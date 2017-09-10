@@ -166,10 +166,12 @@
                     switch (argument.key) {
                         case 13:  /* enter  */
                             Execute(evt, argument.key, this.handle, this.handle.focusView);
-                            this.handle.focusView.setFocus();
+                            var edit = windows.focusMgr.focusEdit();
+                            edit.setFocus();
                             return true;
                         case 27:  /* escape */
-                            this.handle.focusView.setFocus();
+                            var edit = windows.focusMgr.focusEdit();
+                            edit.setFocus();
                             this.handle.document.deleteChars(0, this.handle.document.length);
                             return true;
                         default:
