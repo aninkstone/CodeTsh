@@ -450,7 +450,6 @@
 
     Windows.prototype.delWidget = function (widget) {
         widget.handle.visiable = false;
-
         var nearL = (w)=>{
             var s = w.position();
             var leftEdge = s.x + s.w;
@@ -490,6 +489,9 @@
         });
 
         this.update (null);
+
+        widget.setLocation(0, 0);
+        widget.setSize(0, 0);
     }
 
     Windows.prototype.addWidget = function (widget) {
