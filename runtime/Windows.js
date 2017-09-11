@@ -2,11 +2,13 @@
     function Stack() { 
         this.items = []; 
     }
+
     Stack.prototype.print = function () {
         this.items.forEach ((v)=>{
             console.log (v.type);
         });
     }
+
     Stack.prototype.push = function (ele) {
         this.items.push (ele);
 
@@ -14,18 +16,22 @@
             this.pop ();
         }
     }
+
     Stack.prototype.peek = function () {
         return this.items[this.items.length - 1];
     }
+
     Stack.prototype.pop = function () {
         return this.items.pop();
     }
     Stack.prototype.isEmpty = function () {
         return this.items.length == 0;
     }
+
     Stack.prototype.size = function () {
         return this.items.length;
     }
+
     Stack.prototype.clear = function () {
         return this.items = [];
     }
@@ -92,7 +98,7 @@
                 var vpos = v.position();
                 var wpos = w.position();
                 var x = vpos.x + vpos.w;
-                if (Math.abs(x - (wpos.x)) <= 5) {
+                if (Math.abs(x - (wpos.x)) <= 5 && Math.abs(wpos.h - vpos.h) <= 5) {
                     match.push(v);
                 }
             });
@@ -108,7 +114,7 @@
                 var vpos = v.position();
                 var wpos = w.position();
                 var x = vpos.x;
-                if (Math.abs(x - (wpos.x + wpos.w)) <= 5) {
+                if (Math.abs(x - (wpos.x + wpos.w)) <= 5 && Math.abs(wpos.h - vpos.h) <= 5) {
                     match.push(v);
                 }
             });
@@ -123,7 +129,7 @@
                 var vpos = v.position();
                 var wpos = w.position();
                 var y = vpos.y + vpos.h;
-                if (Math.abs(y - (wpos.y)) <= 5) {
+                if (Math.abs(y - (wpos.y)) <= 5 && Math.abs(wpos.w - vpos.w) <= 5) {
                     match.push(v);
                 }
             });
@@ -138,7 +144,7 @@
                 var vpos = v.position();
                 var wpos = w.position();
                 var y = vpos.y;
-                if (Math.abs(y - (wpos.y + wpos.h)) <= 2) {
+                if (Math.abs(y - (wpos.y + wpos.h)) <= 5 && Math.abs(wpos.w - vpos.w) <= 5) {
                     match.push(v);
                 }
             });
@@ -149,24 +155,36 @@
 
         if (tvg.length != 0) {
             tvg.forEach ((v)=>{
-                v.height = v.height + merge.height;
+                console.log ("Fix TOP");
+                var vpos = v.position();
+                var wpos = merge.position();
+                v.setSize(vpos.w, vpos.h + wpos.h);
             });
         }
         else if (bvg.length != 0) {
             bvg.forEach ((v)=>{
-                v.locY = merge.locY;
-                v.height = v.height + merge.height;
+                console.log ("Fix Bottom");
+                var vpos = v.position();
+                var wpos = merge.position();
+                v.setLocation(vpos.x, wpos.y);
+                v.setSize(vpos.w, wpos.y + vpos.y);
             });
         }
         if (lvg.length != 0) {
             lvg.forEach ((v)=>{
-                v.width = v.width + merge.width;
+                console.log ("Fix Left");
+                var vpos = v.position();
+                var wpos = merge.position();
+                v.setSize(vpos.w + wpos.w, vpos.h);
             });
         }
         else if (rvg.length != 0) {
             rvg.forEach ((v)=>{
-                v.locX = merge.locX;
-                v.width = v.width + merge.width;
+                console.log ("Fix Right");
+                var vpos = v.position();
+                var wpos = merge.position();
+                v.setLocation(wpos.x, vpos.y);
+                v.setSize(vpos.w + wpos.w, vpos.y);
             });
         }
     }
@@ -225,6 +243,8 @@
         }
 
         v.setVisiable(false);
+        this.merge(v);
+
         this.delWidget (v);
         var v = this.focusMgr.focusEdit();
         v.setFocus();
@@ -249,8 +269,6 @@
         //    this.interact.document.deleteChars(0, this.interact.document.length);
         //    this.interact.document.insertChars(matched[0] + " is not saved.");
         //}
-
-        this.merge(v);
     }
 
     Windows.prototype.split = function (direction) {
@@ -871,109 +889,6 @@
     //        this.same.forEach((v)=>{
     //            v.height = v.height + offsetY;
     //        });
-    //    }
-    //}
-
-    //Windows.prototype.mergeView = function (merge) {
-    //    var k = this.viewID (merge);
-    //    this.views.delete (k);
-
-    //    var flvg = (resizeWidget)=>{ /* find left views group */
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var x = v.locX + v.width;
-    //            if (Math.abs(x - (resizeWidget.locX)) <= 2) {
-    //                match.push(v);
-    //            }
-    //        });
-    //        return match;
-    //    }
-    //    var lvg = flvg (merge);
-    //    console.log ("Has left view count = " + lvg.length);
-
-    //    var frvg = (resizeWidget)=>{ /* find right views group */
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var x = v.locX;
-    //            if (Math.abs(x - (resizeWidget.locX + resizeWidget.width)) <= 2) {
-    //                match.push(v);
-    //            }
-    //        });
-    //        return match;
-    //    }
-    //    var rvg = frvg (merge);
-    //    console.log ("Has right view count = " + rvg.length);
-
-    //    var ftvg = (resizeWidget)=>{ /* find top views group */
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var y = v.locY + v.height;
-    //            if (Math.abs(y - (resizeWidget.locY)) <= 2) {
-    //                match.push(v);
-    //            }
-    //        });
-    //        return match;
-    //    }
-    //    var tvg = ftvg (merge);
-    //    console.log ("Has top view count = " + tvg.length);
-
-    //    var fbvg = (resizeWidget)=>{ /* find bottom views group */
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var y = v.locY;
-    //            if (Math.abs(y - (resizeWidget.locY + resizeWidget.height)) <= 2) {
-    //                match.push(v);
-    //            }
-    //        });
-    //        return match;
-    //    }
-    //    var bvg = fbvg (merge);
-    //    console.log ("Has bottom view count = " + bvg.length);
-
-    //    if (tvg.length != 0) {
-    //        tvg.forEach ((v)=>{
-    //            v.height = v.height + merge.height;
-    //        });
-    //    }
-    //    else if (bvg.length != 0) {
-    //        bvg.forEach ((v)=>{
-    //            v.locY = merge.locY;
-    //            v.height = v.height + merge.height;
-    //        });
-    //    }
-    //    else if (rvg.length != 0) {
-    //        rvg.forEach ((v)=>{
-    //            v.locX = merge.locX;
-    //            v.width = v.width + merge.width;
-    //        });
-    //    }
-    //    else if (lvg.length != 0) {
-    //        lvg.forEach ((v)=>{
-    //            v.width = v.width + merge.width;
-    //        });
-    //    }
-    //}
-
-    //Windows.prototype.exit = function () {
-    //    var allSaved = true;
-    //    var matched = [];
-    //    this.views.forEach((v, k)=>{
-    //        try {
-    //            if (v.edit.document.savepoint == false) {
-    //                allSaved = false;
-    //                matched.push (v.edit.document.path);
-    //            }
-    //        }
-    //        catch (e) {
-    //        }
-    //    });
-
-    //    if (allSaved == true) {
-    //        SDL.postEvent(0x100); /* quit */
-    //    }
-    //    else {
-    //        this.interact.document.deleteChars(0, this.interact.document.length);
-    //        this.interact.document.insertChars(matched[0] + " is not saved.");
     //    }
     //}
 })();
