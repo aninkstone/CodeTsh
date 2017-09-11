@@ -106,7 +106,7 @@
         }
 
         var lvg = flvg (merge);
-        console.log ("Has left view count = " + lvg.length);
+        //console.log ("Has left view count = " + lvg.length);
 
         var frvg = (w)=>{ /* find right views group */
             var match = [];
@@ -121,7 +121,7 @@
             return match;
         }
         var rvg = frvg (merge);
-        console.log ("Has right view count = " + rvg.length);
+        //console.log ("Has right view count = " + rvg.length);
 
         var ftvg = (w)=>{ /* find top views group */
             var match = [];
@@ -136,7 +136,7 @@
             return match;
         }
         var tvg = ftvg (merge);
-        console.log ("Has top view count = " + tvg.length);
+        //console.log ("Has top view count = " + tvg.length);
 
         var fbvg = (w)=>{ /* find bottom views group */
             var match = [];
@@ -151,11 +151,11 @@
             return match;
         }
         var bvg = fbvg (merge);
-        console.log ("Has bottom view count = " + bvg.length);
+        //console.log ("Has bottom view count = " + bvg.length);
 
         if (tvg.length != 0) {
             tvg.forEach ((v)=>{
-                console.log ("Fix TOP");
+                //console.log ("Fix TOP");
                 var vpos = v.position();
                 var wpos = merge.position();
                 v.setSize(vpos.w, vpos.h + wpos.h);
@@ -163,7 +163,7 @@
         }
         else if (bvg.length != 0) {
             bvg.forEach ((v)=>{
-                console.log ("Fix Bottom");
+                //console.log ("Fix Bottom");
                 var vpos = v.position();
                 var wpos = merge.position();
                 v.setLocation(vpos.x, wpos.y);
@@ -172,7 +172,7 @@
         }
         if (lvg.length != 0) {
             lvg.forEach ((v)=>{
-                console.log ("Fix Left");
+                //console.log ("Fix Left");
                 var vpos = v.position();
                 var wpos = merge.position();
                 v.setSize(vpos.w + wpos.w, vpos.h);
@@ -180,7 +180,7 @@
         }
         else if (rvg.length != 0) {
             rvg.forEach ((v)=>{
-                console.log ("Fix Right");
+                //console.log ("Fix Right");
                 var vpos = v.position();
                 var wpos = merge.position();
                 v.setLocation(wpos.x, vpos.y);
@@ -210,9 +210,7 @@
         }
         var object = null;
         this.views.forEach((v, k, m) => {
-            console.log ("Name: " + name + " -> " + v.type);
             if (v.type == name) {
-                console.log ("Found: " + typeof v);
                 object = v;
             }
         });
@@ -232,13 +230,16 @@
         }
     }
 
-    Windows.prototype.close = function () {
+    Windows.prototype.close = function (force) {
         var v = this.focusMgr.focusEditPOP();
         var d = v.edit.handle.document;
 
         if (d.savepoint == false) {
-            //this.interact.document.deleteChars(0, this.interact.document.length);
-            //this.interact.document.insertChars("File is not saved.");
+            var inet = namedCtrl ("Inet");
+            if (inet != null) {
+                inet.handle.document.deleteChars(0, this.interact.document.length);
+                inet.handle.document.insertChars("File is not saved.");
+            }
             return;
         }
 
@@ -373,7 +374,7 @@
 
         var nearL = ()=>{
             var leftMax = maxLeft();
-            console.log ("leftMax: " + leftMax);
+            //console.log ("leftMax: " + leftMax);
             var match = [];
             views.forEach((v, k) => {
                 var p = v.position();
@@ -387,7 +388,7 @@
 
         var nearB = ()=>{
             var botmMax = maxBotm();
-            console.log ("botmMax: " + botmMax);
+            //console.log ("botmMax: " + botmMax);
             var match = [];
             views.forEach((v, k) => {
                 var p = v.position();
@@ -402,8 +403,8 @@
         var l = nearL();
         var b = nearB();
 
-        console.log ("NearL widgets count:" + l.length);
-        console.log ("NearB widgets count:" + b.length);
+        //console.log ("NearL widgets count:" + l.length);
+        //console.log ("NearB widgets count:" + b.length);
 
         l.forEach((v)=>{
             var vpos = v.position();
@@ -428,14 +429,14 @@
             v.setSize(vpos.w, vpos.h);
         });
 
-        this.views.forEach((v, k, m) => {
-            var p = v.position();
-            console.log (v.type + ":");
-            console.log ("v.x :" + p.x);
-            console.log ("v.y :" + p.y);
-            console.log ("v.w :" + p.w);
-            console.log ("v.h :" + p.h);
-        });
+        //this.views.forEach((v, k, m) => {
+        //    var p = v.position();
+        //    console.log (v.type + ":");
+        //    console.log ("v.x :" + p.x);
+        //    console.log ("v.y :" + p.y);
+        //    console.log ("v.w :" + p.w);
+        //    console.log ("v.h :" + p.h);
+        //});
     };
 
     Windows.prototype.instanceOfTypeName = function (typeName) {
