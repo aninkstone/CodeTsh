@@ -110,7 +110,7 @@
         return 0;
     }
 
-    function Stat (parent, view) {
+    function Stat (p, view) {
         function OnDrw (canvas) {
             var p = new Paint();
             p.style = 0x00;
@@ -125,16 +125,16 @@
         }
 
         function OnEvt (evt, argument) {
-            function click (context, argument){
+            function click (argument){
                 switch (argument.state) {
                     case 0: /* mouse down */
-                        //windows.statClick (context.parent, argument, 0);
+                        windows.statClick (this.parent, argument, 0);
                         break;
                     case 1: /* mouse move */
-                        //windows.statClick (context.parent, argument, 1);
+                        windows.statClick (this.parent, argument, 1);
                         break;
                     case 2: /* mouse up */
-                        //windows.statClick (context.parent, argument, 2);
+                        windows.statClick (this.parent, argument, 2);
                         break;
                     default:
                         break;
@@ -143,7 +143,7 @@
 
             switch (evt) {
                 case "SYS:CLICK":
-                    click (this.handle , argument);
+                    click.bind(this)(argument);
                     break;
                 default:
                     break;
@@ -151,7 +151,8 @@
         }
 
         this.view = view;
-        this.handle = NewWidget (parent, OnEvt.bind(this), OnDrw.bind(this));
+        this.handle = NewWidget (p.handle, OnEvt.bind(this), OnDrw.bind(this));
+        this.parent = p;
     };
     return Inherite(Stat, BaseObj); 
 })();

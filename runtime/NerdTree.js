@@ -37,8 +37,8 @@
         this.handle.width  = this.w;
         this.handle.height = this.h;
 
-        this.edit = new Nerd (this.handle, this);
-        this.stat = new Stat (this.handle, this);
+        this.edit = new Nerd (this, this);
+        this.stat = new Stat (this, this);
         this.type = "Nerd";
 
         this.edit.setLocation(0, 0);

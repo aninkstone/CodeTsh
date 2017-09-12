@@ -1,5 +1,5 @@
 (function (){
-    function Edit (parent, view) {
+    function Edit (p, view) {
         this.view = view;
 
         function OnEvt (evt, argument) {
@@ -17,7 +17,7 @@
             return false;
         }
 
-        this.handle = NewEditor (parent, OnEvt.bind(this));
+        this.handle = NewEditor (p.handle, OnEvt.bind(this));
         this.handle.lexerSync(lexer_c);
         this.handle.ro(true);
     }

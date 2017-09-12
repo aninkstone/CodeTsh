@@ -1,15 +1,6 @@
 (function (){
     return function (editor, cmd, shift, alt, ctrl){
         if (cmd == "C_wC_w") {
-            var count = windows.viewsCount ();
-            var current = windows.focusViewID();
-            if (current + 1 < count) {
-                current += 1;
-            }
-            else {
-                current = 0;
-            }
-            windows.setFocusID (current);
             return true;
         }
         if (cmd == "dw") {

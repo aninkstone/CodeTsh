@@ -94,14 +94,32 @@
     Windows.prototype.merge = function (merge) {
         var flvg = (w)=>{ /* find left views group */
             var match = [];
+            match.fixed = false;
             this.views.forEach((v, k) => {
                 var vpos = v.position();
                 var wpos = w.position();
                 var x = vpos.x + vpos.w;
-                if (Math.abs(x - (wpos.x)) <= 5 && Math.abs(wpos.h - vpos.h) <= 5) {
+                if (Math.abs(x - (wpos.x)) <= 5) {
                     match.push(v);
                 }
             });
+            if (match.length == 0) {
+                return match;
+            }
+            var fixed = null;
+            var wpos = merge.position();
+            match.forEach((v, idx, arr)=>{
+                var vpos = v.position();
+                if (vpos.h == wpos.h && vpos.y == wpos.y) {
+                    fixed = v;
+                }
+            });
+            if (fixed != null) {
+                var m = [];
+                m.push (fixed);
+                m.fixed = true;
+                return m;
+            }
             return match;
         }
 
@@ -110,82 +128,259 @@
 
         var frvg = (w)=>{ /* find right views group */
             var match = [];
+            match.fixed = false;
             this.views.forEach((v, k) => {
                 var vpos = v.position();
                 var wpos = w.position();
                 var x = vpos.x;
-                if (Math.abs(x - (wpos.x + wpos.w)) <= 5 && Math.abs(wpos.h - vpos.h) <= 5) {
+                if (Math.abs(x - (wpos.x + wpos.w)) <= 5) {
                     match.push(v);
                 }
             });
+            if (match.length == 0) {
+                return match;
+            }
+            var fixed = null;
+            var wpos = w.position();
+            match.forEach((v, idx, arr)=>{
+                var vpos = v.position();
+                if (vpos.h == wpos.h && vpos.y == wpos.y) {
+                    fixed = v;
+                }
+            });
+            if (fixed != null) {
+                var m = [];
+                m.push (fixed);
+                m.fixed = true;
+                return m;
+            }
             return match;
         }
+
         var rvg = frvg (merge);
         //console.log ("Has right view count = " + rvg.length);
 
         var ftvg = (w)=>{ /* find top views group */
             var match = [];
+            match.fixed = false;
             this.views.forEach((v, k) => {
                 var vpos = v.position();
                 var wpos = w.position();
                 var y = vpos.y + vpos.h;
-                if (Math.abs(y - (wpos.y)) <= 5 && Math.abs(wpos.w - vpos.w) <= 5) {
+                if (Math.abs(y - (wpos.y)) <= 5) {
                     match.push(v);
                 }
             });
+            if (match.length == 0) {
+                return match;
+            }
+            var fixed = null;
+            var wpos = merge.position();
+            match.forEach((v, idx, arr)=>{
+                var vpos = v.position();
+                if (vpos.w == wpos.w && vpos.x == wpos.x) {
+                    fixed = v;
+                }
+            });
+            if (fixed != null) {
+                var m = [];
+                m.push (fixed);
+                m.fixed = true;
+                return m;
+            }
             return match;
         }
+
         var tvg = ftvg (merge);
         //console.log ("Has top view count = " + tvg.length);
 
         var fbvg = (w)=>{ /* find bottom views group */
             var match = [];
+            match.fixed = false;
             this.views.forEach((v, k) => {
                 var vpos = v.position();
                 var wpos = w.position();
                 var y = vpos.y;
-                if (Math.abs(y - (wpos.y + wpos.h)) <= 5 && Math.abs(wpos.w - vpos.w) <= 5) {
+                if (Math.abs(y - (wpos.y + wpos.h)) <= 5) {
                     match.push(v);
                 }
             });
+            if (match.length == 0) {
+                return match;
+            }
+            var fixed = null;
+            var wpos = merge.position();
+            match.forEach((v)=>{
+                var vpos = v.position();
+                if (vpos.w == wpos.w && vpos.x == wpos.x) {
+                    fixed = v;
+                }
+            });
+            if (fixed != null) {
+                var m = [];
+                m.push (fixed);
+                m.fixed = true;
+                return m;
+            }
             return match;
         }
         var bvg = fbvg (merge);
         //console.log ("Has bottom view count = " + bvg.length);
 
-        if (tvg.length != 0) {
-            tvg.forEach ((v)=>{
-                //console.log ("Fix TOP");
-                var vpos = v.position();
-                var wpos = merge.position();
-                v.setSize(vpos.w, vpos.h + wpos.h);
-            });
+        var dot = ()=>{
+            if (tvg.length != 0) {
+                //var fixed = null;
+                //var wpos = merge.position();
+                //tvg.forEach((v, idx, arr)=>{
+                //    var vpos = v.position();
+                //    if (vpos.w == wpos.w && vpos.x == wpos.x) {
+                //        fixed = v;
+                //    }
+                //});
+                //if (fixed != null) {
+                //    console.log ("Fix TOP2");
+                //    var vpos = fixed.position();
+                //    var wpos = merge.position();
+                //    fixed.setSize(vpos.w, vpos.h + wpos.h);
+                //}
+                //if (fixed == null) {
+                    tvg.forEach ((v)=>{
+                        //console.log ("Fix TOP -> fixed:" + tvg.fixed);
+                        var vpos = v.position();
+                        var wpos = merge.position();
+                        v.setSize(vpos.w, vpos.h + wpos.h);
+                    });
+                //}
+            }
+        };
+        var dob = ()=>{
+            if (bvg.length != 0) {
+                //var fixed = null;
+                //var wpos = merge.position();
+                //bvg.forEach((v)=>{
+                //    var vpos = v.position();
+                //    if (vpos.w == wpos.w && vpos.x == wpos.x) {
+                //        fixed = v;
+                //    }
+                //});
+
+                //if (fixed != null) {
+                //    console.log ("Fix Bottom2");
+                //    var vpos = fixed.position();
+                //    var wpos = merge.position();
+                //    fixed.setLocation(vpos.x, wpos.y);
+                //    fixed.setSize(vpos.w, wpos.h + vpos.h);
+                //}
+                //if (fixed == null) {
+                    bvg.forEach((v)=>{
+                        //console.log ("Fix Bottom -> fixed:" + bvg.fixed);
+                        var vpos = v.position();
+                        var wpos = merge.position();
+                        v.setLocation(vpos.x, wpos.y);
+                        v.setSize(vpos.w, wpos.h + vpos.h);
+                    });
+                //}
+            }
+        };
+        var dol = ()=>{
+            if (lvg.length != 0) {
+                //var fixed = null;
+                //var wpos = merge.position();
+                //lvg.forEach((v, idx, arr)=>{
+                //    var vpos = v.position();
+                //    if (vpos.h == wpos.h && vpos.y == wpos.y) {
+                //        fixed = v;
+                //    }
+                //});
+                //if (fixed != null) {
+                //    console.log ("Fix Left2");
+                //    var vpos = fixed.position();
+                //    var wpos = merge.position();
+                //    fixed.setSize(vpos.w + wpos.w, vpos.h);
+                //}
+                //if (fixed == null) {
+                    lvg.forEach ((v)=>{
+                        //console.log ("Fix Left -> fixed:" + lvg.fixed);
+                        var vpos = v.position();
+                        var wpos = merge.position();
+                        v.setSize(vpos.w + wpos.w, vpos.h);
+                    });
+                //}
+            }
+        };
+        var dor = ()=>{
+            if (rvg.length != 0) {
+                //var fixed = null;
+                //var wpos = merge.position();
+                //rvg.forEach((v, idx, arr)=>{
+                //    var vpos = v.position();
+                //    if (vpos.h == wpos.h && vpos.y == wpos.y) {
+                //        fixed = v;
+                //    }
+                //});
+                //if (fixed != null) {
+                //    console.log ("Fix Right2");
+                //    var vpos = fixed.position();
+                //    var wpos = merge.position();
+                //    fixed.setLocation(wpos.x, vpos.y);
+                //    fixed.setSize(vpos.w + wpos.w, vpos.h);
+                //}
+                //if (fixed == null) {
+                    rvg.forEach ((v)=>{
+                        //console.log ("Fix Right -> fixed:" + rvg.fixed);
+                        var vpos = v.position();
+                        var wpos = merge.position();
+                        v.setLocation(wpos.x, vpos.y);
+                        v.setSize(vpos.w + wpos.w, vpos.h);
+                    });
+                //}
+            }
+        };
+        var policy = ()=>{
+            var p = {
+                count: 0,
+                doact: function(){},
+            };
+            if (p.count < tvg.length && tvg.length != 0) {
+                p.count = tvg.length;
+                p.doact = dot;
+            }
+            if (p.count < lvg.length && lvg.length != 0) {
+                p.count = lvg.length;
+                p.doact = dol;
+            }
+            if (p.count < rvg.length && rvg.length != 0) {
+                p.count = rvg.length;
+                p.doact = dor;
+            }
+            if (p.count < bvg.length && bvg.length != 0) {
+                p.count = bvg.length;
+                p.doact = dob;
+            }
+            p.doact();
+        };
+        //console.log ("tvg fixed:" + tvg.fixed + "  " + "bvg fixed:" + bvg.fixed);
+        //console.log ("lvg fixed:" + lvg.fixed + "  " + "rvg fixed:" + rvg.fixed);
+
+        var bFixed = false;
+        if (tvg.fixed == true) {
+            bFixed = true;
+            dot();
         }
-        else if (bvg.length != 0) {
-            bvg.forEach ((v)=>{
-                //console.log ("Fix Bottom");
-                var vpos = v.position();
-                var wpos = merge.position();
-                v.setLocation(vpos.x, wpos.y);
-                v.setSize(vpos.w, wpos.y + vpos.y);
-            });
+        if (rvg.fixed == true && bFixed == false) {
+            bFixed = true;
+            dor();
         }
-        if (lvg.length != 0) {
-            lvg.forEach ((v)=>{
-                //console.log ("Fix Left");
-                var vpos = v.position();
-                var wpos = merge.position();
-                v.setSize(vpos.w + wpos.w, vpos.h);
-            });
+        if (bvg.fixed == true && bFixed == false) {
+            bFixed = true;
+            dob();
         }
-        else if (rvg.length != 0) {
-            rvg.forEach ((v)=>{
-                //console.log ("Fix Right");
-                var vpos = v.position();
-                var wpos = merge.position();
-                v.setLocation(wpos.x, vpos.y);
-                v.setSize(vpos.w + wpos.w, vpos.y);
-            });
+        if (lvg.fixed == true && bFixed == false) {
+            bFixed = true;
+            dol();
+        }
+        if (bFixed == false) {
+            policy();
         }
     }
 
@@ -451,33 +646,40 @@
 
     Windows.prototype.delWidget = function (widget) {
         widget.handle.visiable = false;
-        var nearL = (w)=>{
+
+        var closeEdit = (w)=>{
+        };
+
+        var closeNerd = (w)=>{
             var s = w.position();
-            var leftEdge = s.x + s.w;
+            var l = s.x + s.w;
             var match = [];
             this.views.forEach((v, k) => {
                 var p = v.position();
                 var x = p.x;
-                if (Math.abs(leftEdge - x) <= 5) {
+                if (Math.abs(l - x) <= 5) {
                     match.push(v);
                 }
             });
-            return match;
+
+            var wpos = w.position();
+            match.forEach((v)=>{
+                var vpos = v.position();
+                v.setLocation(wpos.x, vpos.y);
+                v.setSize(vpos.w + wpos.w, vpos.h);
+            });
         };
 
         switch (widget.type) {
             case "Edit":
+                closeEdit(widget);
                 break;
             case "Inet":
                 break;
             case "Nerd":
-                var l = nearL(widget);
-                l.forEach((v)=>{
-                    var vpos = v.position();
-                    var wpos = widget.position();
-                    v.setLocation(0, vpos.y);
-                    v.setSize(vpos.w + wpos.w, vpos.h);
-                });
+                closeNerd(widget);
+                break;
+            case "Snap":
                 break;
             default:
                 break;
@@ -486,6 +688,7 @@
         this.views.forEach((v, k, m) => {
             if (widget === v) {
                 this.views.delete(k);
+                v.handle.document = "";
             }
         });
 
@@ -691,25 +894,12 @@
         }
     };
 
-    return Windows;
-
-    //Windows.prototype.focusNerd = function () {
-    //    //this.nerdtree.setFocus();
-    //}
-
-    //Windows.prototype.setFocusID  = function (index) {
-    //    var obj = this.views.get (index);
-    //    if (obj) {
-    //        obj.setFocus();
-    //    }
-    //}
-
     //Windows.prototype.moveFocus2L = function () {
-    //    var findLeft = (resizeWidget)=>{
+    //    var findLeft = (w)=>{
     //        var match = [];
     //        this.views.forEach((v, k) => {
     //            var x = v.locX + v.width;
-    //            if (Math.abs(x - resizeWidget.locX) <= 2) {
+    //            if (Math.abs(x - w.locX) <= 2) {
     //                match.push (v);
     //            }
     //        });
@@ -723,11 +913,11 @@
     //}
 
     //Windows.prototype.moveFocus2R = function () {
-    //    var findRight = (resizeWidget)=>{
+    //    var findRight = (w)=>{
     //        var match = [];
     //        this.views.forEach((v, k) => {
     //            var x = v.locX;
-    //            if (Math.abs(x - (resizeWidget.locX + resizeWidget.width)) <= 2) {
+    //            if (Math.abs(x - (w.locX + w.width)) <= 2) {
     //                match.push (v);
     //            }
     //        });
@@ -741,11 +931,11 @@
     //}
 
     //Windows.prototype.moveFocus2T = function () {
-    //    var findTop = (resizeWidget)=>{
+    //    var findTop = (w)=>{
     //        var match = [];
     //        this.views.forEach((v, k) => {
     //            var y = v.locY + v.height;
-    //            if (Math.abs(y - resizeWidget.locY) <= 2) {
+    //            if (Math.abs(y - w.locY) <= 2) {
     //                match.push (v);
     //            }
     //        });
@@ -759,11 +949,11 @@
     //}
 
     //Windows.prototype.moveFocus2B = function () {
-    //    var findBottom = (resizeWidget)=>{
+    //    var findBottom = (w)=>{
     //        var match = [];
     //        this.views.forEach((v, k) => {
     //            var y = v.locY;
-    //            if (Math.abs(y - (resizeWidget.height + resizeWidget.locY)) <= 2) {
+    //            if (Math.abs(y - (w.height + w.locY)) <= 2) {
     //                match.push (v);
     //            }
     //        });
@@ -798,22 +988,22 @@
     //        });
     //    }
 
-    //    var near = (resizeWidget)=>{
+    //    var near = (w)=>{
     //        var match = [];
     //        this.views.forEach((v, k) => {
     //            var x = v.locX + v.width;
-    //            if (Math.abs(x - resizeWidget.locX) <= 2) {
+    //            if (Math.abs(x - w.locX) <= 2) {
     //                match.push(v);
     //            }
     //        });
     //        return match;
     //    }
 
-    //    var same = (resizeWidget)=>{
+    //    var same = (w)=>{
     //        var match = [];
     //        this.views.forEach((v, k) => {
-    //            if (v.locX == resizeWidget.locX) {
-    //                if (this.viewID(v) != this.viewID(resizeWidget)) {
+    //            if (v.locX == w.locX) {
+    //                if (this.viewID(v) != this.viewID(w)) {
     //                    match.push (v);
     //                }
     //            }
@@ -841,57 +1031,147 @@
     //        });
     //    }
     //}
+    
+    Windows.prototype.septClick = function (widget, pos, stat) {
+        if (stat == 0) {
+            var vpos = widget.position();
+            widget.click = {};
+            widget.click.x = vpos.x;
+            widget.click.y = vpos.y;
+            widget.click.w = vpos.w;
+            widget.click.h = vpos.h;
+        }
 
-    //Windows.prototype.statClick = function (widget, pos, stat) {
-    //    if (stat == 0) {
-    //        this.views.forEach((v, k) => {
-    //            v.click.x = v.locX;
-    //            v.click.y = v.locY;
-    //            v.click.w = v.width;
-    //            v.click.h = v.height;
-    //        });
-    //    }
+        var nearR = (w)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var x = vpos.x + vpos.w;
+                if (Math.abs(x - wpos.x) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
 
-    //    var same = (resizeWidget)=>{
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            if ((v.locY + v.height) == (resizeWidget.height + resizeWidget.locY)) {
-    //                if (this.viewID(v) != this.viewID(resizeWidget)) {
-    //                    match.push (v);
-    //                }
-    //            }
-    //        });
-    //        return match;
-    //    }
+        var align = (w)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var x = vpos.x;
+                if (Math.abs(x - wpos.x) <= 5 && vpos.y != wpos.y) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
 
-    //    var near = (resizeWidget)=>{
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var y = v.locY;
-    //            if (Math.abs(y - (resizeWidget.locY + resizeWidget.height)) <= 2) {
-    //                match.push(v);
-    //            }
-    //        });
-    //        return match;
-    //    }
+        var r = nearR(widget);
+        var s = align(widget);
 
-    //    if (stat == 1) {
-    //        this.same = same (widget);
-    //        this.near = near (widget);
-    //    }
+        if (stat == 2) {
+            var offsetX = (pos.currX - pos.origX);
+            var wpos = widget.position();
+            widget.setLocation (widget.click.x + offsetX, wpos.y);
+            widget.setSize (widget.click.w - offsetX, wpos.h);
 
-    //    if (stat == 2) {
-    //        var offsetY = (pos.currY - pos.origY);
-    //        widget.height = widget.height + (offsetY); 
+            wpos = widget.position();
+            s.forEach((v)=>{
+                var vpos = v.position();
+                v.setLocation(wpos.x, vpos.y);
+                v.setSize(vpos.w - offsetX, vpos.h);
+            });
 
-    //        this.near.forEach((v)=>{
-    //            v.locY = v.locY + offsetY;
-    //            v.height = v.height - offsetY;
-    //        });
+            wpos = widget.position();
+            r.forEach((v)=>{
+                var vpos = v.position();
+                v.setSize(wpos.x - vpos.x, vpos.h);
+            });
+        }
+    }
 
-    //        this.same.forEach((v)=>{
-    //            v.height = v.height + offsetY;
-    //        });
-    //    }
-    //}
+    Windows.prototype.statClick = function (widget, pos, stat) {
+        if (stat == 0) {
+            var vpos = widget.position();
+            widget.click = {};
+            widget.click.x = vpos.x;
+            widget.click.y = vpos.y;
+            widget.click.w = vpos.w;
+            widget.click.h = vpos.h;
+        }
+
+        var nearB = (w)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var x = vpos.x + vpos.w;
+                if (Math.abs(x - wpos.x) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
+
+        var r = nearR(widget);
+
+        if (stat == 2) {
+            var offsetX = (pos.currX - pos.origX);
+            var wpos = widget.position();
+            widget.setLocation (widget.click.x + offsetX, wpos.y);
+            widget.setSize (widget.click.w - offsetX, wpos.h);
+
+            //wpos = widget.position();
+            //r.forEach((v)=>{
+            //    var vpos = v.position ();
+            //    v.setSize(wpos.x - vpos.x, vpos.h);
+            //});
+        }
+        //var same = (w)=>{
+        //    var match = [];
+        //    this.views.forEach((v, k) => {
+        //        var vpos = v.position();
+        //        var wpos = w.position();
+        //        if ((vpos.y + vpos.h) == (wpos.h + wpos.y)) {
+        //            if (w != v) {
+        //                match.push (v);
+        //            }
+        //        }
+        //    });
+        //    return match;
+        //}
+
+        //var near = (w)=>{
+        //    var match = [];
+        //    this.views.forEach((v, k) => {
+        //        var y = v.locY;
+        //        if (Math.abs(y - (w.locY + w.height)) <= 2) {
+        //            match.push(v);
+        //        }
+        //    });
+        //    return match;
+        //}
+
+        //if (stat == 1) {
+        //    this.same = same (widget);
+        //    this.near = near (widget);
+        //}
+
+        //if (stat == 2) {
+        //    var offsetY = (pos.currY - pos.origY);
+        //    widget.height = widget.height + (offsetY); 
+
+        //    this.near.forEach((v)=>{
+        //        v.locY = v.locY + offsetY;
+        //        v.height = v.height - offsetY;
+        //    });
+
+        //    this.same.forEach((v)=>{
+        //        v.height = v.height + offsetY;
+        //    });
+        //}
+    }
+    return Windows;
 })();

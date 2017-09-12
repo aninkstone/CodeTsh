@@ -49,9 +49,9 @@
             this.handle.width  = parent.width;
             this.handle.height = parent.height;
 
-            this.edit = new Edit (this.handle, this);
-            this.stat = new Stat (this.handle, this);
-            this.sept = new Sept (this.handle, this);
+            this.edit = new Edit (this, this);
+            this.stat = new Stat (this, this);
+            this.sept = new Sept (this, this);
             this.type = "Edit";
 
             OnEvt.bind(this)("SYS:SIZECHANGE");

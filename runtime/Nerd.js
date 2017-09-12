@@ -150,7 +150,7 @@
         return false;
     };
 
-    function Nerd (parent) {
+    function Nerd (p) {
         function OnEvt (evt, argument) {
             function click (context, arg) {
                 switch (arg.state) {
@@ -183,9 +183,10 @@
             }
         }
 
-        this.handle = NewEditor(parent, OnEvt.bind(this));
+        this.handle = NewEditor(p.handle, OnEvt.bind(this));
         this.handle.lexerSync(lexer_nerdtree); 
         this.handle.ro(true);
+        this.parent = p;
 
         this.update(set.runtime.curr);
     }
