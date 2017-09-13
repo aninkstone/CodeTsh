@@ -71,11 +71,11 @@
     }
 
     Editor.prototype.charAdded = function (argument) {
-        //var b = this.sync(SCI_GETREADONLY, 0x00, 0x00);
-        //if (b == 0) {
-        //    Indent(this, String.fromCharCode(argument));
-        //    Complete(this, String.fromCharCode(argument));
-        //}
+        var b = this.sync(SCI_GETREADONLY, 0x00, 0x00);
+        if (b == 0) {
+            Indent(this, String.fromCharCode(argument));
+            Complete(this, String.fromCharCode(argument));
+        }
     }
 
     Editor.prototype.modified = function () {

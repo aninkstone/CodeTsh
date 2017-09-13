@@ -7,7 +7,6 @@
         else {
             windows.addWidget(new NerdTree(windows.parent));
         }
-        //windows.focusNerd();
         return true;
     }
 })();
