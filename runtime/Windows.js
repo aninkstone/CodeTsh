@@ -892,77 +892,89 @@
         }
     };
 
-    //Windows.prototype.moveFocus2L = function () {
-    //    var findLeft = (w)=>{
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var x = v.locX + v.width;
-    //            if (Math.abs(x - w.locX) <= 2) {
-    //                match.push (v);
-    //            }
-    //        });
-    //        return match;
-    //    };
+    Windows.prototype.moveFocus2L = function () {
+        var findLeft = (w)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var x = vpos.x + vpos.w;
+                if (Math.abs(x - (wpos.x)) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
 
-    //    var match = findLeft(this.focusView);
-    //    if (match.length > 0) {
-    //        match [0].setFocus();
-    //    }
-    //}
+        var focus = this.focusMgr.focusEdit();
+        var match = findLeft(focus);
+        if (match.length > 0) {
+            match [0].setFocus();
+        }
+    }
 
-    //Windows.prototype.moveFocus2R = function () {
-    //    var findRight = (w)=>{
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var x = v.locX;
-    //            if (Math.abs(x - (w.locX + w.width)) <= 2) {
-    //                match.push (v);
-    //            }
-    //        });
-    //        return match;
-    //    };
+    Windows.prototype.moveFocus2R = function () {
+        var findRight = (w)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var x = vpos.x;
+                if (Math.abs(x - (wpos.x + wpos.w)) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
 
-    //    var match = findRight(this.focusView);
-    //    if (match.length > 0) {
-    //        match [0].setFocus();
-    //    }
-    //}
+        var focus = this.focusMgr.focusEdit();
+        var match = findRight(focus);
+        if (match.length > 0) {
+            match[0].setFocus();
+        }
+    }
 
-    //Windows.prototype.moveFocus2T = function () {
-    //    var findTop = (w)=>{
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var y = v.locY + v.height;
-    //            if (Math.abs(y - w.locY) <= 2) {
-    //                match.push (v);
-    //            }
-    //        });
-    //        return match;
-    //    };
+    Windows.prototype.moveFocus2T = function () {
+        var findTop = (w)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var y = vpos.y + vpos.h;
+                if (Math.abs(y - (wpos.y)) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
 
-    //    var match = findTop (this.focusView);
-    //    if (match.length > 0) {
-    //        match [0].setFocus();
-    //    }
-    //}
+        var focus = this.focusMgr.focusEdit();
+        var match = findTop (focus);
+        if (match.length > 0) {
+            match[0].setFocus();
+        }
+    }
 
-    //Windows.prototype.moveFocus2B = function () {
-    //    var findBottom = (w)=>{
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var y = v.locY;
-    //            if (Math.abs(y - (w.height + w.locY)) <= 2) {
-    //                match.push (v);
-    //            }
-    //        });
-    //        return match;
-    //    };
+    Windows.prototype.moveFocus2B = function () {
+        var findBottom = (w)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var y = vpos.y;
+                if (Math.abs(y - (wpos.y + wpos.h)) <= 5) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
 
-    //    var match = findBottom (this.focusView);
-    //    if (match.length > 0) {
-    //        match [0].setFocus();
-    //    }
-    //}
+        var focus = this.focusMgr.focusEdit();
+        var match = findBottom (focus);
+        if (match.length > 0) {
+            match [0].setFocus();
+        }
+    }
 
     Windows.prototype.septClick = function (widget, pos, stat) {
         if (stat == 0) {
