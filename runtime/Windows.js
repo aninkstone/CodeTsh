@@ -1006,6 +1006,7 @@
         if (stat == 2) {
             var offsetX = (pos.currX - pos.origX);
             var wpos = widget.position();
+
             widget.setLocation (widget.click.x + offsetX, wpos.y);
             widget.setSize (widget.click.w - offsetX, wpos.h);
 
@@ -1039,71 +1040,53 @@
             this.views.forEach((v, k) => {
                 var vpos = v.position();
                 var wpos = w.position();
-                var x = vpos.x + vpos.w;
-                if (Math.abs(x - wpos.x) <= 5) {
+                var y = vpos.y;
+                if (Math.abs(y - (wpos.y + wpos.h)) <= 5) {
                     match.push(v);
                 }
             });
             return match;
         };
 
-        var r = nearR(widget);
+        var align = (w)=>{
+            var match = [];
+            this.views.forEach((v, k) => {
+                var vpos = v.position();
+                var wpos = w.position();
+                var y = vpos.y + vpos.h;
+                if (Math.abs(y - (wpos.y + wpos.h)) <= 5 && vpos.x != wpos.x) {
+                    match.push(v);
+                }
+            });
+            return match;
+        };
+
+        var b = nearB (widget);
+        var s = align (widget);
 
         if (stat == 2) {
-            var offsetX = (pos.currX - pos.origX);
+            var offsetY = (pos.currY - pos.origY);
             var wpos = widget.position();
-            widget.setLocation (widget.click.x + offsetX, wpos.y);
-            widget.setSize (widget.click.w - offsetX, wpos.h);
+            var mins = 50;
+            var size = wpos.h + offsetY;
+            if (size < mins) {
+                size = mins;
+            }
+            widget.setSize (wpos.w, size);
 
-            //wpos = widget.position();
-            //r.forEach((v)=>{
-            //    var vpos = v.position ();
-            //    v.setSize(wpos.x - vpos.x, vpos.h);
-            //});
+            wpos = widget.position();
+            b.forEach((v)=>{
+                var vpos = v.position ();
+                v.setLocation(vpos.x, wpos.y + wpos.h);
+                v.setSize(vpos.w, vpos.h - offsetY);
+            });
+
+            wpos = widget.position();
+            s.forEach((v)=>{
+                var vpos = v.position ();
+                v.setSize(vpos.w, vpos.h + offsetY);
+            });
         }
-        //var same = (w)=>{
-        //    var match = [];
-        //    this.views.forEach((v, k) => {
-        //        var vpos = v.position();
-        //        var wpos = w.position();
-        //        if ((vpos.y + vpos.h) == (wpos.h + wpos.y)) {
-        //            if (w != v) {
-        //                match.push (v);
-        //            }
-        //        }
-        //    });
-        //    return match;
-        //}
-
-        //var near = (w)=>{
-        //    var match = [];
-        //    this.views.forEach((v, k) => {
-        //        var y = v.locY;
-        //        if (Math.abs(y - (w.locY + w.height)) <= 2) {
-        //            match.push(v);
-        //        }
-        //    });
-        //    return match;
-        //}
-
-        //if (stat == 1) {
-        //    this.same = same (widget);
-        //    this.near = near (widget);
-        //}
-
-        //if (stat == 2) {
-        //    var offsetY = (pos.currY - pos.origY);
-        //    widget.height = widget.height + (offsetY); 
-
-        //    this.near.forEach((v)=>{
-        //        v.locY = v.locY + offsetY;
-        //        v.height = v.height - offsetY;
-        //    });
-
-        //    this.same.forEach((v)=>{
-        //        v.height = v.height + offsetY;
-        //    });
-        //}
     }
     return Windows;
 })();
