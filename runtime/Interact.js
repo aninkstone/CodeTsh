@@ -1,5 +1,5 @@
 (function(){
-    function ExecuteScript (thiz, editor) {
+    function ExecuteScript (thiz, focus) {
         var copen = thiz.document;
         try {
             var content = "";
@@ -11,17 +11,17 @@
                 return;
             }
 
-            var caller = function (copen, editor, arg) {
+            var caller = function (copen, focus, arg) {
                 copen.deleteChars(0, copen.length);
                 copen.insertChars(LANGUAGE.interact.Error01 + ": " + arg);
             };
 
-            var opeRunner = function (t, editor, content) {
+            var opeRunner = function (t, focus, content) {
                 eval(content);
             }
 
             content = content.substr(1, content.length)
-            opeRunner (copen, editor, content);
+            opeRunner (copen, focus.edit.handle, content);
         }
         catch (e) {
             copen.deleteChars(0, copen.length);
@@ -29,7 +29,7 @@
         }
     }
 
-    function ExecuteSlash (thiz, editor) {
+    function ExecuteSlash (thiz, focus) {
         var copen = thiz.document;
         try {
             var content = "";
@@ -41,12 +41,12 @@
                 return;
             }
 
-            var caller = function (copen, editor, arg) {
+            var caller = function (copen, focus, arg) {
                 copen.deleteChars(0, copen.length);
                 copen.insertChars(LANGUAGE.interact.Error01 + ": " + arg);
             };
 
-            var opeRunner = function (t, editor, content, cmd) {
+            var opeRunner = function (t, focus, content, cmd) {
                 var args = content.split(" ");
                 args[0] = args[0].substr(1, args[0].length);
                 fs = new FileSystem();
@@ -55,16 +55,16 @@
                 script = fs.readFile(set.runtime.path + "/runtime/script/command/" + cmd+ ".js");
                 script = eval(script);
                 if (script) {
-                    script(t, editor, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+                    script(t, focus.edit.handle, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
                 }
                 else {
-                    caller(t, editor, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+                    caller(t, focus.edit.handle, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
                 }
             }
             var firstChar = content.charAt(0);
             switch (firstChar) {
                 case "/":
-                    opeRunner (copen, editor, content, "slash");
+                    opeRunner (copen, focus, content, "slash");
                     break;
                 default:
                     break;
@@ -102,10 +102,10 @@
                 script = fs.readFile(set.runtime.path + "/runtime/script/command/" + cmd + ".js");
                 script = eval(script);
                 if (script) {
-                    script(t, e, args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+                    script(t, e.edit.handle, args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
                 }
                 else {
-                    caller(t, e, args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+                    caller(t, e.edit.handle, args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
                 }
             }
 
@@ -125,8 +125,8 @@
         }
     };
 
-    function Execute (evt, key, thiz, editor) {
-        var copen = thiz.document;
+    function Execute (evt, key) {
+        var copen = this.handle.document;
 
         var content = "";
         for (idx = 0; idx < copen.length && idx < 5; ++idx) {
@@ -136,20 +136,22 @@
             return;
         }
 
+        var focus = windows.focusMgr.focusEdit();
+
         var firstChar = content.charAt(0);
         switch (firstChar) {
             case ":":
                 if (evt == "SYS:KEY" && key == 13) {
-                    ExecuteCommand(thiz, thiz.focusView);
+                    ExecuteCommand(this.handle, focus);
                 }
                 break;
             case ">":
                 if (evt == "SYS:KEY" && key == 13) {
-                    ExecuteScript(thiz, thiz.focusView);
+                    ExecuteScript(this.handle, focus);
                 }
                 break;
             case "/":
-                ExecuteSlash(thiz, thiz.focusView);
+                ExecuteSlash(this.handle, focus);
                 break;
             default:
                 break;
@@ -160,12 +162,12 @@
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:INPUTTEXT":
-                    Execute(evt, argument.key, this.handle, this.handle.focusView);
+                    Execute.bind(this)(evt, argument.key);
                     break;
                 case "SYS:KEY":
                     switch (argument.key) {
                         case 13:  /* enter  */
-                            Execute(evt, argument.key, this.handle, this.handle.focusView);
+                            Execute.bind(this)(evt, argument.key);
                             var edit = windows.focusMgr.focusEdit();
                             edit.setFocus();
                             return true;

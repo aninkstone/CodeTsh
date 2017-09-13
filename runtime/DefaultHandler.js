@@ -79,10 +79,11 @@
                         this.sync(SCI_SETCARETSTYLE, 0x01, 0x00);
                         break;
                     case 47:  /* / */
-                        this.interact.setFocus();
-                        this.interact.document.deleteChars(0, this.interact.document.length);
-                        this.interact.document.insertChars("/");
-                        this.interact.sync(SCI_GOTOPOS, this.interact.document.length, 0x00);
+                        var inet = windows.namedCtrl("Inet");
+                        inet.handle.setFocus();
+                        inet.handle.document.deleteChars(0, inet.handle.document.length);
+                        inet.handle.document.insertChars("/");
+                        inet.handle.sync(SCI_GOTOPOS, inet.handle.document.length, 0x00);
                         break;
                     case 59:  /* : */
                         var inet = windows.namedCtrl("Inet");

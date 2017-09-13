@@ -16,7 +16,7 @@
 
         if (typeof fname !== 'string') {
             copen.deleteChars(0, doc.length);
-            copen.insertChars(fname + " 无效的文件名");
+            copen.insertChars(fname + " Invalidate file name");
             return;
         }
 
@@ -27,28 +27,28 @@
             if (ok) {
                 doc.setSavePoint();
                 copen.deleteChars(0, doc.length);
-                copen.insertChars(fname + " 已写入");
+                copen.insertChars(fname + " Written");
             }
             else {
                 copen.deleteChars(0, doc.length);
-                copen.insertChars(fname + " 写入失败");
+                copen.insertChars(fname + " Write file failed");
             }
         }
         else {
             if (doc.savepoint == true) {
                 copen.deleteChars(0, doc.length);
-                copen.insertChars(fname + " 无变更");
+                copen.insertChars(fname + " No change");
             }
             else {
                 var ok = doSave(doc, fname);
                 if (ok) {
                     doc.setSavePoint();
                     copen.deleteChars(0, doc.length);
-                    copen.insertChars(fname + " 已写入");
+                    copen.insertChars(fname + " Written");
                 }
                 else {
                     copen.deleteChars(0, doc.length);
-                    copen.insertChars(fname + " 写入失败");
+                    copen.insertChars(fname + " Write file failed");
                 }
             }
         }

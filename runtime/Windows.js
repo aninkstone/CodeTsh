@@ -688,7 +688,7 @@
         this.views.forEach((v, k, m) => {
             if (widget === v) {
                 this.views.delete(k);
-                v.handle.document = "";
+                v.handle.document = "./CodeTor.txt";
             }
         });
 
@@ -827,8 +827,6 @@
                 }
 
                 focus.setSize (p.w, p.h);
-
-
                 focus.inval();
             }
 
@@ -966,72 +964,6 @@
     //    }
     //}
 
-    //Windows.prototype.focusViewID = function () {
-    //    return this.viewID(this.focusView);
-    //}
-
-    //Windows.prototype.viewsCount = function () {
-    //    return this.views.size;
-    //}
-
-    //Windows.prototype.copenView = function () {
-    //    this.focusView.changeDocument (consoleDoc);
-    //}
-
-    //Windows.prototype.septClick = function (widget, pos, stat) {
-    //    if (stat == 0) {
-    //        this.views.forEach((v, k) => {
-    //            v.click.x = v.locX;
-    //            v.click.y = v.locY;
-    //            v.click.w = v.width;
-    //            v.click.h = v.height;
-    //        });
-    //    }
-
-    //    var near = (w)=>{
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            var x = v.locX + v.width;
-    //            if (Math.abs(x - w.locX) <= 2) {
-    //                match.push(v);
-    //            }
-    //        });
-    //        return match;
-    //    }
-
-    //    var same = (w)=>{
-    //        var match = [];
-    //        this.views.forEach((v, k) => {
-    //            if (v.locX == w.locX) {
-    //                if (this.viewID(v) != this.viewID(w)) {
-    //                    match.push (v);
-    //                }
-    //            }
-    //        });
-    //        return match;
-    //    }
-
-    //    if (stat == 1) {
-    //        this.near = near(widget);
-    //        this.same = same(widget);
-    //    }
-
-    //    if (stat == 2) {
-    //        var offsetX = (pos.currX - pos.origX);
-    //        widget.locX  = widget.click.x + offsetX; 
-    //        widget.width = widget.click.w - offsetX; 
-
-    //        this.near.forEach((v)=>{
-    //            v.width = v.click.w + offsetX;
-    //        });
-
-    //        this.same.forEach((v)=>{
-    //            v.locX  = widget.locX;
-    //            v.width = v.click.w - offsetX;
-    //        });
-    //    }
-    //}
-    
     Windows.prototype.septClick = function (widget, pos, stat) {
         if (stat == 0) {
             var vpos = widget.position();
