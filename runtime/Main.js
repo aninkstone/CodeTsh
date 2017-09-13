@@ -32,6 +32,7 @@ var set = {
     vim: {
         search: {},
         cmd:"",
+        mark:  {},
         reg_X: {},
         reg_0: {},
         reg_1: {},
@@ -99,8 +100,8 @@ var NewWidget = require(set.runtime.path + "/runtime/object/Widget.js");
 var NewEditor = require(set.runtime.path + "/runtime/object/Editor.js");
 
 var FilePath = require(set.runtime.path + "/runtime/Path.js");
-//var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
-var defaultDoc = $.api.document.createDocument("runtime/Windows.js");
+var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
+//var defaultDoc = $.api.document.createDocument("runtime/Windows.js");
 var consoleDoc = $.api.document.createDocument("./tmp/copen.txt");
 
 console.log = function (l) {

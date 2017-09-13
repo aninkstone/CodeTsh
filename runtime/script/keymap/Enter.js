@@ -1,7 +1,7 @@
 (function (){
     function readCurrentLine (editor) {
-        curPos = editor.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
-        linenu = editor.sync(SCI_LINEFROMPOSITION, curPos, 0x00); 
+        var curPos = editor.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+        var linenu = editor.sync(SCI_LINEFROMPOSITION, curPos, 0x00); 
         return editor.sync(SCI_GETLINE, linenu, 0x00);
     }
 

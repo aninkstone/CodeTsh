@@ -3,41 +3,51 @@
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:SIZECHANGE":
-                    this.sept.setLocation(0, 0);
-                    this.sept.setSize (8, this.handle.height);
+                    //try {
+                    //    var has = windows.hasViewL (this);
+                    //    if (has == true) {
+                    //        this.sept.setLocation(0, 0);
+                    //        this.sept.setSize (8, this.handle.height);
+                    //    }
+                    //    else {
+                    //        this.sept.setLocation(0, 0);
+                    //        this.sept.setSize (0, this.handle.height);
+                    //    }
+                    //}
+                    //catch (e) {
+                        this.sept.setLocation(0, 0);
+                        this.sept.setSize (0, this.handle.height);
+                    //}
 
                     this.stat.setSize (this.handle.width - this.sept.handle.width, 23);
                     this.stat.setLocation(this.sept.handle.width, this.handle.height - this.stat.handle.height);
 
                     this.edit.setLocation(this.sept.handle.width, 0);
                     this.edit.setSize(this.handle.width - this.sept.handle.width, this.handle.height - this.stat.handle.height);
-
-                    //var e = this.edit.position();
-                    //console.log ("edit:");
-                    //console.log ("v.x :" + e.x);
-                    //console.log ("v.y :" + e.y);
-                    //console.log ("v.w :" + e.w);
-                    //console.log ("v.h :" + e.h);
-                    //var s = this.sept.position();
-                    //console.log ("sept:");
-                    //console.log ("v.x :" + s.x);
-                    //console.log ("v.y :" + s.y);
-                    //console.log ("v.w :" + s.w);
-                    //console.log ("v.h :" + s.h);
-                    //var t = this.stat.position();
-                    //console.log ("stat:");
-                    //console.log ("v.x :" + t.x);
-                    //console.log ("v.y :" + t.y);
-                    //console.log ("v.w :" + t.w);
-                    //console.log ("v.h :" + t.h);
                     break;
                 default:
                     break;
             }
         }
 
+        function OnDrw (canvas) {
+            try {
+                var has = windows.hasViewL (this);
+                if (has == true) {
+                    this.sept.setLocation(0, 0);
+                    this.sept.setSize (8, this.handle.height);
+                }
+                else {
+                    this.sept.setLocation(0, 0);
+                    this.sept.setSize (0, this.handle.height);
+                }
+            }
+            catch (e) {
+            }
+        }
+
         try {
-            this.handle = NewWidget(parent, OnEvt.bind(this));
+            this.handle = NewWidget(parent, OnEvt.bind(this), OnDrw.bind(this));
             this.parent = parent;
             this.x = 0;
             this.y = 0;

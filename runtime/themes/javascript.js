@@ -346,12 +346,18 @@ function* lexer_javascript_fold () {
     yield [SCI_MARKERSETBACK, SC_MARKNUM_FOLDERMIDTAIL, 0xE0E0E0];
     yield [SCI_MARKERSETBACKSELECTED, SC_MARKNUM_FOLDERMIDTAIL, 0xFF];
 
-    yield [SCI_MARKERDEFINE, 1, SC_MARK_BOOKMARK];
+    //yield [SCI_MARKERDEFINE, 1, SC_MARK_BOOKMARK];
+    //yield [SCI_MARKERSETFORE, 1, 0xFF222827];
+    //yield [SCI_MARKERSETBACK, 1, 0xFFE0E0E0];
+    //yield [SCI_MARKERSETBACKSELECTED, 1, 0xFF];
+
+    yield [SCI_MARKERDEFINE, 1, SC_MARK_CIRCLE];
+    //yield [SCI_MARKERDEFINE, 1, SC_MARK_ARROW];
     yield [SCI_MARKERSETFORE, 1, 0xFF222827];
     yield [SCI_MARKERSETBACK, 1, 0xFFE0E0E0];
     yield [SCI_MARKERSETBACKSELECTED, 1, 0xFF];
 
-    yield [SCI_MARKERADD, 5, 1];
+    //yield [SCI_MARKERADD, 5, 1];
     // The highlight is disabled for plus/minus.
     yield [SCI_MARKERENABLEHIGHLIGHT, 0x00, 0x00];
 }

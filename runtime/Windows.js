@@ -91,6 +91,32 @@
         }
     }
 
+    Windows.prototype.hasViewL = function (focus) {
+        var match = [];
+        var w = focus;
+        this.views.forEach((v, k) => {
+            var vpos = v.position();
+            var wpos = w.position();
+            var x = vpos.x + vpos.w;
+            if (Math.abs(x - (wpos.x)) <= 5) {
+                match.push(v);
+            }
+        });
+        if (match.length > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    Windows.prototype.hasViewR = function (focus) {
+    }
+
+    Windows.prototype.hasViewB = function (focus) {
+    }
+
+    Windows.prototype.hasViewT = function (focus) {
+    }
+
     Windows.prototype.merge = function (merge) {
         var flvg = (w)=>{ /* find left views group */
             var match = [];
