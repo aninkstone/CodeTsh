@@ -1,6 +1,7 @@
 (function(){
     return function(doc, editor, path){
-        windows.copenView();
+        var v = windows.focusMgr.focusEdit();
+        v.setDocument(consoleDoc);
     }
     return true;
 })();

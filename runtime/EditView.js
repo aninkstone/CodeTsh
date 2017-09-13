@@ -81,15 +81,6 @@
         handle.document = doc;
         handle.setFocus();
 
-        //if (handle.document.path == "./tmp/copen.txt") {
-        //    this.edit.OnModified = function () {
-        //        this.edit.sync(SCI_DOCUMENTEND);
-        //    }
-        //}
-        //else {
-        //    handle.OnModified = null;
-        //}
-
         var ext = FilePath.extname(doc.path);
         switch (ext) {
             case ".cpp":

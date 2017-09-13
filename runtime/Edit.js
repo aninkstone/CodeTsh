@@ -11,6 +11,11 @@
                     return HandlerDefault.OnKeyU.bind(this.handle)(argument.key);
                 case "SYS:KEY":
                     return HandlerDefault.OnKeyD.bind(this.handle)(argument.key, argument.shift, argument.alt, argument.ctrl);
+                case "SYS:MODIFIED":
+                    if (this.handle.document.path == "./tmp/copen.txt") {
+                        this.handle.sync(SCI_DOCUMENTEND);
+                    }
+                    break;
                 default:
                     break;
             }

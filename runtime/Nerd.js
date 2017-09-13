@@ -36,28 +36,28 @@
         OnModified:      function(){ },
     };
 
-    var nodeClick = function (edit) {
+    var nodeClick = function () {
         try {
-            var curpos = edit.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
-            var linenu = edit.sync(SCI_LINEFROMPOSITION, curpos, 0x00); 
+            var curpos = this.handle.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+            var linenu = this.handle.sync(SCI_LINEFROMPOSITION, curpos, 0x00); 
 
-            var beg = edit.document.lineStart(linenu);
-            var end = edit.document.lineEnd(linenu);
+            var beg = this.handle.document.lineStart(linenu);
+            var end = this.handle.document.lineEnd(linenu);
 
             var l = "";
             for (idx = beg; idx < end; ++idx) {
-                l += (String.fromCharCode(edit.document.charAt(idx))); 
+                l += (String.fromCharCode(this.handle.document.charAt(idx))); 
             }
 
             var ul = l.indexOf('-');
             var pl = l.indexOf('+');
 
             if (ul != -1) {
-                openFile (l.substring(ul + 1));
+                openFile.bind(this) (l.substring(ul + 1));
             }
 
             if (pl != -1) {
-                openNode (l.substring(pl + 1));
+                openNode.bind(this) (l.substring(pl + 1));
             }
         }
         catch (e) {
@@ -68,9 +68,8 @@
     var openFile = function (name) {
         name = name.trim('\n').trim(' ').trim('\r');
         var doc = $.api.document.createDocument(set.runtime.curr + "/" + name);
-
-        var view = windows.preFocusView("Edit");
-        view.setDocument(doc);
+        var v = windows.focusMgr.focusEdit();
+        v.setDocument(doc);
     }
 
     var openNode = function (name) {
@@ -79,26 +78,26 @@
         name = set.runtime.curr + "/" + name;
         l = fs.chdir (name);
         set.runtime.curr = l;
-        windows.chdir(set.runtime.curr);
+        this.chdir(set.runtime.curr);
     }
 
     var OnKeyD = function (key, shift, alt, ctrl) {
-        ro = this.sync(SCI_GETREADONLY, 0x00, 0x00);
+        ro = this.handle.sync(SCI_GETREADONLY, 0x00, 0x00);
         if (ro == 1) {
             switch (key) {
                 case 114: /* r */
-                    windows.chdir(set.runtime.curr);
+                    this.chdir(set.runtime.curr);
                     break;
                 case 117: /* o */
                     if (ctrl) {
-                        ExecuteCommand(this, String.fromCharCode(key), shift, alt, ctrl);
+                        ExecuteCommand(this.handle, String.fromCharCode(key), shift, alt, ctrl);
                     }
                     else {
                         openNode ("..");
                     }
                     break;
                 case 13:  /* enter */
-                    nodeClick (this.handle);
+                    nodeClick.bind(this)();
                     break;
                 case 98:  /* b */
                 case 100: /* d */
@@ -114,7 +113,7 @@
                 case 118: /* v */
                 case 119: /* w */
                 case 121: /* y */
-                    ExecuteCommand(this, String.fromCharCode(key), shift, alt, ctrl);
+                    ExecuteCommand(this.handle, String.fromCharCode(key), shift, alt, ctrl);
                     break;
                 case 47:  /* / */
                     //this.interact.setFocus();
@@ -152,14 +151,14 @@
 
     function Nerd (p) {
         function OnEvt (evt, argument) {
-            function click (context, arg) {
+            function click (arg) {
                 switch (arg.state) {
                     case 0:
                         break;
                     case 1:
                         break;
                     case 2:
-                        nodeClick (context);
+                        nodeClick.bind(this)();
                         break;
                     default:
                         break;
@@ -169,15 +168,15 @@
                 case "SYS:SIZECHANGE":
                     break;
                 case "SYS:CLICK":
-                    click (this.handle, argument);
+                    click.bind(this)(argument);
                     break;
                 case "SYS:FOCUSIN":
                     this.handle.sync(SCI_SETCURSOR, SC_CURSORARROW, 0x00);
                     break;
                 case "SYS:KEY":
-                    return OnKeyD.bind(this.handle)(argument.key, argument.shift, argument.alt, argument.ctrl);
+                    return OnKeyD.bind(this)(argument.key, argument.shift, argument.alt, argument.ctrl);
                 case "SYS:KEYUP":
-                    return OnKeyU.bind(this.handle)(argument.key);
+                    return OnKeyU.bind(this)(argument.key);
                 default:
                     break;
             }
