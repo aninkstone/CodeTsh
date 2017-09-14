@@ -40,19 +40,9 @@ function* lexer_font() {
 };
 
 function* lexer_default_margin_zero (){
-    //yield [SCI_SETMARGINTYPEN, 0x00, SC_MARGIN_SYMBOL];
-    //yield [SCI_SETMARGINWIDTHN, 0x00, 26];
-    //yield [SCI_SETMARGINMASKN,  0x01, 0x01];
-    //yield [SCI_SETMARGINS, 64, 0x00];
 };
 
 function* lexer_default_margin_linenumber (){
-    yield [SCI_STYLESETFORE, STYLE_LINENUMBER, 0x0BFFFF];
-    yield [SCI_STYLESETBACK, STYLE_LINENUMBER, 0x222827];
-    yield [SCI_STYLESETFONT, STYLE_LINENUMBER, set.font.family];
-    yield [SCI_STYLESETSIZEFRACTIONAL, STYLE_LINENUMBER, 1800];
-    //yield [SCI_SETMARGINTYPEN, 0x01, SC_MARGIN_NUMBER];
-    //yield [SCI_SETMARGINWIDTHN, 0x01, 20];
 };
 
 function* lexer_default_tabwidth() {
