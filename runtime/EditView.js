@@ -3,21 +3,21 @@
         function OnEvt (evt, argument) {
             switch (evt) {
                 case "SYS:SIZECHANGE":
-                    //try {
-                    //    var has = windows.hasViewL (this);
-                    //    if (has == true) {
-                    //        this.sept.setLocation(0, 0);
-                    //        this.sept.setSize (8, this.handle.height);
-                    //    }
-                    //    else {
-                    //        this.sept.setLocation(0, 0);
-                    //        this.sept.setSize (0, this.handle.height);
-                    //    }
-                    //}
-                    //catch (e) {
-                        this.sept.setLocation(0, 0);
-                        this.sept.setSize (0, this.handle.height);
-                    //}
+                    try {
+                        var has = windows.hasViewL (this);
+                        if (has == true) {
+                            this.sept.setLocation(0, 0);
+                            this.sept.setSize (8, this.handle.height);
+                        }
+                        else {
+                            this.sept.setLocation(0, 0);
+                            this.sept.setSize (0, this.handle.height);
+                        }
+                    }
+                    catch (e) {
+                      this.sept.setLocation(0, 0);
+                      this.sept.setSize (0, this.handle.height);
+                    }
 
                     this.stat.setSize (this.handle.width - this.sept.handle.width, 23);
                     this.stat.setLocation(this.sept.handle.width, this.handle.height - this.stat.handle.height);
@@ -31,19 +31,20 @@
         }
 
         function OnDrw (canvas) {
-            try {
-                var has = windows.hasViewL (this);
-                if (has == true) {
-                    this.sept.setLocation(0, 0);
-                    this.sept.setSize (8, this.handle.height);
-                }
-                else {
-                    this.sept.setLocation(0, 0);
-                    this.sept.setSize (0, this.handle.height);
-                }
-            }
-            catch (e) {
-            }
+            OnEvt.bind(this)("SYS:SIZECHANGE");
+            //try {
+            //    var has = windows.hasViewL (this);
+            //    if (has == true) {
+            //        this.sept.setLocation(0, 0);
+            //        this.sept.setSize (8, this.handle.height);
+            //    }
+            //    else {
+            //        this.sept.setLocation(0, 0);
+            //        this.sept.setSize (0, this.handle.height);
+            //    }
+            //}
+            //catch (e) {
+            //}
         }
 
         try {

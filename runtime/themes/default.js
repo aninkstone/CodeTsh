@@ -40,10 +40,10 @@ function* lexer_font() {
 };
 
 function* lexer_default_margin_zero (){
-    yield [SCI_SETMARGINTYPEN, 0x00, SC_MARGIN_SYMBOL];
-    yield [SCI_SETMARGINWIDTHN, 0x00, 26];
-    yield [SCI_SETMARGINMASKN,  0x01, 0x01];
-    yield [SCI_SETMARGINS, 64, 0x00];
+    //yield [SCI_SETMARGINTYPEN, 0x00, SC_MARGIN_SYMBOL];
+    //yield [SCI_SETMARGINWIDTHN, 0x00, 26];
+    //yield [SCI_SETMARGINMASKN,  0x01, 0x01];
+    //yield [SCI_SETMARGINS, 64, 0x00];
 };
 
 function* lexer_default_margin_linenumber (){

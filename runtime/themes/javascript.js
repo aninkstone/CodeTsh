@@ -6,7 +6,7 @@ function* lexer_javascript (){
 
     yield [SCI_STYLECLEARALL, 0x00, 0x00];
 
-    yield* lexer_default_margin_zero ();
+    //yield* lexer_default_margin_zero ();
     //yield* lexer_default_margin_linenumber();
 
     yield* lexer_default_tabwidth();
@@ -51,10 +51,6 @@ function* lexer_javascript (){
     yield* lexer_javascript_setindent();
 
     yield* lexer_javascript_fold ();
-};
-
-function* lexer_margin_zero (){
-    yield [SCI_SETMARGINS, 0x00, 0x00];
 };
 
 function* lexer_javascript_font() {
@@ -306,10 +302,9 @@ function* lexer_javascript_fold () {
     yield [SCI_SETFOLDMARGINHICOLOUR, 0x01, 0x0B00FF];
 
     yield [SCI_SETMARGINTYPEN,  0x01, SC_MARGIN_SYMBOL];
-    yield [SCI_SETMARGINWIDTHN, 0x01, 26];
+    yield [SCI_SETMARGINWIDTHN, 0x01, 16];
     yield [SCI_SETMARGINMASKN,  0x01, ~SC_MASK_FOLDERS];
 	yield [SCI_SETMARGINSENSITIVEN, 0x01, 0x01];
-	yield [SCI_SETMARGINSENSITIVEN, 0x00, 0x01];
 
     yield [SCI_MARKERDEFINE, SC_MARKNUM_FOLDEROPEN, SC_MARK_MINUS];
     yield [SCI_MARKERSETFORE, SC_MARKNUM_FOLDEROPEN, 0xFF222827];
