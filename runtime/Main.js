@@ -100,8 +100,8 @@ var NewWidget = require(set.runtime.path + "/runtime/object/Widget.js");
 var NewEditor = require(set.runtime.path + "/runtime/object/Editor.js");
 
 var FilePath = require(set.runtime.path + "/runtime/Path.js");
-var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
-//var defaultDoc = $.api.document.createDocument("runtime/Windows.js");
+//var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
+var defaultDoc = $.api.document.createDocument("runtime/Windows.js");
 var consoleDoc = $.api.document.createDocument("./tmp/copen.txt");
 
 console.log = function (l) {
@@ -124,6 +124,7 @@ var Complete = require(set.runtime.path + "/runtime/DefaultAC.js");
 var HandlerDefault = require(set.runtime.path + "/runtime/DefaultHandler.js");
 var Indent = require(set.runtime.path + "/runtime/DefaultIndent.js");
 
+require(set.runtime.path + "/runtime/themes/mark.js");
 require(set.runtime.path + "/runtime/themes/default.js");
 require(set.runtime.path + "/runtime/themes/c.js");
 require(set.runtime.path + "/runtime/themes/javascript.js");
