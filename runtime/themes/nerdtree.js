@@ -50,6 +50,11 @@ function* lexer_font() {
 
 function* lexer_margin_zero (){
     yield [SCI_SETMARGINS, 0x00, 0x00];
+    //yield [SCI_SETMARGINS, 0x01, 0x00];
+    //yield [SCI_SETMARGINTYPEN,  0x00, SC_MARGIN_SYMBOL];
+    //yield [SCI_SETMARGINWIDTHN, 0x00, 16];
+    //yield [SCI_SETMARGINMASKN,  0x00, 0x00];
+	//yield [SCI_SETMARGINSENSITIVEN, 0x00, 0x01];
 };
 
 function* lexer_tab_width() {
