@@ -1,6 +1,6 @@
 (function(){
     return function(doc, editor, text){
-        editor.searchForward(text);
+        editor.search(text);
         return true;
     }
 })();

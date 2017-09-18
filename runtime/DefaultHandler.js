@@ -11,6 +11,9 @@
             }
             if (ro == 1) {
                 switch (key) {
+                    case 27:  /* esc */
+                        ExecuteCommand(this, "Esc", shift, alt, ctrl);
+                        break;
                     case 61:  /* = */
                         ExecuteCommand(this, "ESign", shift, alt, ctrl);
                         break;

@@ -61,7 +61,7 @@
     function draw_99 (context, canvas, paint, offset) {
         try {
             var cp = context.view.edit.handle.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
-            var ln = context.view.edit.handle.sync(SCI_LINEFROMPOSITION, cp, 0x00); 
+            var ln = context.view.edit.handle.line('.');
             var lc = context.view.edit.handle.sync(SCI_GETLINECOUNT);
 
             var beg = context.view.edit.handle.document.lineStart(ln);

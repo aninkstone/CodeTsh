@@ -132,7 +132,93 @@
         //this.sync(SCI_SETREADONLY, b, 0x00);
     }
 
+    /*
+    {flags} is a string, which can contain these character flags:
+    'b' search backward instead of forward
+    'n' do not move the cursor
+    's' set the ' mark at the previous location of the cursor
+    */
+    Editor.prototype.search = function (pattern, flags, stopline) {
+        set.vim.search.target = pattern;
+        set.vim.search.flags = SCFIND_REGEXP | SCFIND_MATCHCASE;
+        set.vim.search.stopline = 0;
+
+        let search = set.vim.search;
+
+        search.beg = this.cursor(0, 0) - search.target.length;
+        search.end = this.sync(SCI_GETLENGTH, 0x00, 0x00);
+
+        this.sync(SCI_SETSEARCHFLAGS, search.flags, 0x00);
+        this.sync(SCI_SETTARGETSTART, search.beg, 0x00);
+        this.sync(SCI_SETTARGETEND,   search.end, 0x00);
+
+        let r = this.sync(SCI_SEARCHINTARGET, search.target.length, search.target);
+        if (r != -1) {
+            this.sync(SCI_GOTOPOS, r, 0x00);
+            this.sync(SCI_SETSEL, r, r + set.vim.search.target.length);
+        }
+        else {
+            //FIXME: show error
+        }
+    }
+
+    /*
+    {expr} the result is a number, which is the line number of the file position given with {expr}. The accepted positions are:
+    .  the cursor position
+    $  the last line in the current buffer
+    'x position of mark x (if the mark is not set, 0 is returned)
+    w0 first line visible in current window
+    w$ last visiable in current window
+    */
+    Editor.prototype.line = function (expr) {
+        switch (expr) {
+            case '.':
+                var cur = this.sync(SCI_GETCURRENTPOS);
+                return this.sync(SCI_LINEFROMPOSITION, cur);
+            default:
+                break;
+        }
+    }
+
+    /*
+    Positions the cursor at the column (byte count) {col} in the
+    line {lnum}.  The first column is one.
+
+    If {lnum} is greater than the number of lines in the buffer,
+    the cursor will be positioned at the last line in the buffer.
+    If {lnum} is zero, the cursor will stay in the current line.
+    If {col} is greater than the number of bytes in the line,
+    the cursor will be positioned at the last character in the
+    line.
+    If {col} is zero, the cursor will stay in the current column.
+    */
+    Editor.prototype.cursor = function (lnum = 0, col = 0) {
+        if (lnum == 0 && col == 0) {
+            return this.sync (SCI_GETCURRENTPOS, 0, 0);
+        }
+
+        return 0;
+    }
+    /*
+    col({expr})    The result is a Number, which is the byte index of the column
+    position given with {expr}.  The accepted positions are:
+    .  the cursor position
+    $  the end of the cursor line (the result is the
+       number of bytes in the cursor line plus one)
+    'x position of mark x (if the mark is not set, 0 is
+       returned)
+    */
+    Editor.prototype.col = function (expr) {
+        switch (expr) {
+            case '.':
+                break;
+            default:
+                break;
+        }
+    }
+
     Editor.prototype.searchForward = function (target) {
+        var currPos = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
         if (typeof (target) === 'string'){
             set.vim.search.target = target;
             set.vim.search.beg = 0;
@@ -142,8 +228,9 @@
         }
         else {
             this.sync(SCI_CLEARSELECTIONS, 0x00, 0x00);
-            set.vim.search.prv = set.vim.search.pos; 
-            set.vim.search.beg = set.vim.search.pos + set.vim.search.target.length;
+            //set.vim.search.prv = currPos; 
+            set.vim.search.prv = set.vim.search.pos;
+            set.vim.search.beg = set.vim.search.prv + set.vim.search.target.length;
             set.vim.search.end = this.sync(SCI_GETLENGTH, 0x00, 0x00);
             set.vim.search.pos = -1;
         }
@@ -151,8 +238,6 @@
         if (set.vim.search.target.length < 1) {
             return;
         }
-
-        var currPos = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
 
         this.sync(SCI_SETSEARCHFLAGS, SCFIND_REGEXP | SCFIND_MATCHCASE, 0x00);
         this.sync(SCI_SETTARGETSTART, set.vim.search.beg, 0x00);
@@ -168,7 +253,6 @@
         else {
             this.sync(SCI_SETSEL, set.vim.search.prv, set.vim.search.prv + set.vim.search.target.length);
         }
-
     };
 
     Editor.prototype.ro = function (b) {

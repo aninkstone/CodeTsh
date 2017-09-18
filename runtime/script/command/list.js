@@ -76,7 +76,7 @@
             dir.insertChars (insert);
         });
 
-        editor.parent.changeDocument(dir);
+        editor.setDocument(dir);
         editor.sync(SCI_SETREADONLY, 0x01, 0x00);
 
         lexerSync (editor, lexer_browser);

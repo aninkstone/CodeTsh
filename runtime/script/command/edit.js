@@ -24,7 +24,7 @@
             content = fs.readFile(fpath);
             open = new Document ();
             open.direct = fpath;
-            editor.parent.changeDocument(open);
+            editor.setDocument(open);
         }
     };
 })();

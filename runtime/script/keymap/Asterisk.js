@@ -1,6 +1,6 @@
 (function (){
     return function Asterisk (editor, ctrl, shift, k) {
-        var pos = editor.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+        var pos = editor.cursor(0, 0);
         var beg = editor.sync(SCI_WORDSTARTPOSITION, pos, 1);
         var end = editor.sync(SCI_WORDENDPOSITION, pos, 1);
 
@@ -9,6 +9,6 @@
             var c = editor.sync(SCI_GETCHARAT, beg + idx, 0x00);
             chars += String.fromCharCode(c);
         }
-        editor.searchForward (chars);
+        editor.search(chars);
     }
 })();
