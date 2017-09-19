@@ -5,7 +5,8 @@ function* lexer_default (){
     yield* lexer_foreground_color();
     yield* lexer_font();
 
-    //yield* lexer_default_margin_zero();
+    yield* lexer_default_margin();
+
     //yield* lexer_default_margin_linenumber();
     yield* lexer_default_caret();
     yield* lexer_default_tabwidth();
@@ -37,6 +38,14 @@ function* lexer_foreground_color () {
 function* lexer_font() {
     yield [SCI_STYLESETFONT, STYLE_DEFAULT, set.font.family];
     yield [SCI_STYLESETSIZEFRACTIONAL, STYLE_DEFAULT, set.font.size];
+};
+
+function* lexer_default_margin (){
+    yield [SCI_SETMARGINS, 0x01, 0x00];
+    yield [SCI_SETMARGINTYPEN,  0x00, SC_MARGIN_SYMBOL];
+    yield [SCI_SETMARGINWIDTHN, 0x00, 16];
+    yield [SCI_SETMARGINMASKN,  0x00, 0x00];
+	yield [SCI_SETMARGINSENSITIVEN, 0x00, 0x01];
 };
 
 function* lexer_default_margin_zero (){

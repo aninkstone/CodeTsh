@@ -6,8 +6,9 @@
             set.vim.mark.a = lnu;
             editor.sync(SCI_MARKERDELETEALL, 2, 0);
             editor.sync(SCI_MARKERADD, lnu, 2);
+            return true;
         }
-        return true;
+        return false;
     };
 })();
 

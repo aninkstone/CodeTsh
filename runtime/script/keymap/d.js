@@ -1,5 +1,6 @@
 (function (){
     return function (editor, cmd, shift, alt, ctrl){
+        console.log ("cmd:" + cmd);
         if (ctrl) {
             editor.sync(SCI_LINEDOWN,  0x0A, 0x00);
             editor.sync(SCI_LINESCROLL,0x00, 0x0A);

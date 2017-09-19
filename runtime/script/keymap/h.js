@@ -4,7 +4,10 @@
             windows.moveFocus2L();
             return true;
         }
-        editor.sync(SCI_CHARLEFT, 0, 0);
-        return true;
+        if (cmd == 'h') {
+            editor.sync(SCI_CHARLEFT, 0, 0);
+            return true;
+        }
+        return false;
     };
 })();

@@ -2,9 +2,12 @@
     return function(editor, cmd, shift, alt, ctrl){
         if (cmd == "C_wq") {
             windows.close();
-            return;
+            return true;
         }
-        editor.sync(SCI_CANCEL);
-        return true;
+        if (cmd == 'q') {
+            editor.sync(SCI_CANCEL);
+            return true;
+        }
+        return false;
     };
 })();

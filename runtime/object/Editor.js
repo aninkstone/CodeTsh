@@ -51,10 +51,10 @@
                 this.focusOut();
                 break;
             case "SYS:KEY":
-                this.keyDown(argument);
+                this.keyD(argument);
                 break;
             case "SYS:KEYUP":
-                this.keyUp(argument);
+                this.keyU(argument);
                 break;
             case "SYS:DROPFILE":
                 this.dropFile(argument);
@@ -106,33 +106,36 @@
         this.sync(SCI_SETCODEPAGE, codepage);
     }
 
-    Editor.prototype.doc = function (doc) {
+    Editor.prototype.doc = function (doc, lexer) {
+        let lex = lexer_default;
         this.document = doc;
-        var ext = FilePath.extname(doc.path);
-        switch (ext) {
-            case ".cpp":
-            case ".c":
-            case ".h":
-                this.lexerSync (lexer_c);
-                break;
-            case ".js":
-                this.lexerSync (lexer_javascript);
-                break;
-            case ".html":
-            case ".htm":
-                this.lexerSync (lexer_html);
-                break;
-            case ".txt":
-                this.lexerSync (lexer_customize);
-                break;
-            default:
-                this.lexerSync (lexer_default);
-                break;
-        };
+        if (typeof lexer == 'undefined'){
+            var ext = FilePath.extname(doc.path);
+            switch (ext) {
+                case ".cpp":
+                case ".c":
+                case ".h":
+                    lex = lexer_c;
+                    break;
+                case ".js":
+                    lex = lexer_javascript;
+                    break;
+                case ".html":
+                case ".htm":
+                    lex = lexer_html;
+                    break;
+                case ".txt":
+                    lex = lexer_customize;
+                    break;
+                default:
+                    break;
+            };
+        }
+        this.lexerSync (lex);
     }
 
     Editor.prototype.updateUI = function () {
-        var caretP = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
+        var caretP = this.line(0, 0);
         this.document.caretP = caretP;
     }
 
@@ -146,10 +149,10 @@
         console.log("SYS:MARGINCLICK-> lineNu:" + (l + 1) + " margin:" + margin );
     }
 
-    Editor.prototype.keyUp = function (args) {
+    Editor.prototype.keyU = function (args) {
     }
 
-    Editor.prototype.keyDown = function (args) {
+    Editor.prototype.keyD = function (args) {
     }
 
     Editor.prototype.dropFile = function (path) {

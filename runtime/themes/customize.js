@@ -1,6 +1,9 @@
 function* lexer_customize(){
     yield* lexer_background_color();
     yield* lexer_foreground_color();
+
+    yield [SCI_STYLECLEARALL, 0x00, 0x00];
+
     yield* lexer_font();
     yield* lexer_tab_width();
     yield* lexer_eolmode();
@@ -8,11 +11,7 @@ function* lexer_customize(){
     yield* lexer_linemode();
     yield* lexer_customize_word();
 
-    yield [SCI_STYLECLEARALL, 0x00, 0x00];
-
-    //yield [SCI_STYLESETFONT, STYLE_CONTROLCHAR, set.font.family];
-    //yield [SCI_STYLESETSIZEFRACTIONAL, STYLE_CONTROLCHAR, 1000];
-    //yield [SCI_SETVIEWEOL, 0x01, 0x00];
+    yield* lexer_default_margin();
 
     yield [SCI_SETLEXER, 0x00, 0];
 };

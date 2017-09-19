@@ -16,6 +16,8 @@ function* lexer_json(){
     yield* lexer_json_error();
     yield* lexer_json_keywords();
 
+    yield* lexer_default_margin();
+
     yield [SCI_SETLEXERLANGUAGE, 0x00, "json"];
 };
 

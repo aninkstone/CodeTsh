@@ -23,7 +23,10 @@
             windows.moveFocus2B();
             return true;
         }
-        editor.sync(SCI_LINEDOWN, 0x01, 0);
-        return true;
+        if (cmd == 'j') {
+            editor.sync(SCI_LINEDOWN, 0x01, 0);
+            return true;
+        }
+        return false;
     };
 })(); 

@@ -10,14 +10,16 @@
             set.vim.reg_X = {};
             set.vim.reg_X.cmd = 'dw';
             set.vim.reg_X.type = 'word';
+            return true;
         }
         if (cmd == "w") {
             editor.sync(SCI_WORDRIGHT, 0, 0);
+            return true;
         }
         if (cmd == "C_w") {
             windows.autoViewID();
             return false;
         }
-        return true;
+        return false;
     };
 })();

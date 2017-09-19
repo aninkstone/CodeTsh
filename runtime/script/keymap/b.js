@@ -7,9 +7,10 @@
             editor.sync(SCI_MARKERDELETEALL, 2, 0);
             editor.sync(SCI_MARKERADD, lnu, 2);
         }
-        else {
+        if (cmd == 'b') {
             editor.sync(SCI_WORDLEFT, 0x00, 0x00);
+            return true;
         }
-        return true;
+        return false;
     };
 })();

@@ -2,10 +2,12 @@
     return function(editor, cmd, shift, alt, ctrl){
         if (cmd == "C_wv") {
             windows.split("vert");
+            return true;
         }
         if (cmd == "C_v") {
             editor.sync(SCI_SETSELECTIONMODE, 3, 0x00);
+            return true;
         }
-        return true;
+        return false;
     };
 })();

@@ -2,6 +2,12 @@
     function EditView (parent, x, y, w, h) {
         function OnEvt (evt, argument) {
             switch (evt) {
+                case "SYS:CHARADDED":
+                case "SYS:KEYUP":
+                case "SYS:KEY":
+                case "SYS:MODIFIED":
+                case "SYS:EDITUPDATEUI":
+                    break;
                 case "SYS:SIZECHANGE":
                     try {
                         var has = windows.hasViewL (this);
@@ -32,19 +38,7 @@
 
         function OnDrw (canvas) {
             OnEvt.bind(this)("SYS:SIZECHANGE");
-            //try {
-            //    var has = windows.hasViewL (this);
-            //    if (has == true) {
-            //        this.sept.setLocation(0, 0);
-            //        this.sept.setSize (8, this.handle.height);
-            //    }
-            //    else {
-            //        this.sept.setLocation(0, 0);
-            //        this.sept.setSize (0, this.handle.height);
-            //    }
-            //}
-            //catch (e) {
-            //}
+            this.stat.handle.inval();
         }
 
         try {
@@ -89,11 +83,11 @@
             return -1;
         }
 
-        handle.setFocus();
         handle.doc (doc);
         handle.sync(SCI_GOTOPOS, handle.document.caretP, 0x00);
         handle.codepage(0);
         handle.ro (true);
+        handle.setFocus();
     }
 
     return EditView;

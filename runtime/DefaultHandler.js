@@ -50,6 +50,10 @@
                     case 55:  /* 7 */
                     case 56:  /* 8 */
                     case 57:  /* 9 */
+                        break;
+                    case 92:  /* \ */
+                        ExecuteCommand(this, "L_", shift, alt, ctrl);
+                        break;
                     case 97:  /* a */
                     case 98:  /* b */
                     case 99:  /* c */

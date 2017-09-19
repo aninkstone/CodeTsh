@@ -12,21 +12,22 @@
     }
 
     return function Enter (editor, ctrl, shift, k) {
-        chars = readCurrentLine (editor);
+        //chars = readCurrentLine (editor);
 
-        var path = filePath (editor, chars);
-        var fs = new FileSystem();
+        //var path = filePath (editor, chars);
+        //var fs = new FileSystem();
 
-        if (fs.isRegularFile(path)) {
-            b = editor.sync(SCI_GETREADONLY, 0x00, 0x00);
-            editor.sync(SCI_SETREADONLY, 0x00, 0x00);
-            editor.document.direct = path;
-            editor.sync(SCI_SETREADONLY, b, 0x00);
+        //if (fs.isRegularFile(path)) {
+        //    b = editor.sync(SCI_GETREADONLY, 0x00, 0x00);
+        //    editor.sync(SCI_SETREADONLY, 0x00, 0x00);
+        //    editor.document.direct = path;
+        //    editor.sync(SCI_SETREADONLY, b, 0x00);
 
-            loadLexer(editor, path);
-        }
+        //    loadLexer(editor, path);
+        //}
 
-        if (fs.isDirectory(path)) {
-        }
+        //if (fs.isDirectory(path)) {
+        //}
+        return true;
     }
 })();

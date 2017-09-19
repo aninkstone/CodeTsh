@@ -195,7 +195,13 @@ function ExecuteCommand (widget, cmd, shift, alt, ctrl){
         if (shift == true) {
             set.vim.cmd += "S_";
         }
+
         set.vim.cmd += cmd;
+        var inet = windows.namedCtrl("Inet");
+        inet.handle.document.deleteChars(0, inet.handle.document.length);
+        inet.handle.document.insertChars("[keymap]:" + set.vim.cmd);
+        inet.handle.sync(SCI_GOTOPOS, inet.handle.document.length, 0x00);
+
         if (script) {
             bConsume = script(widget, set.vim.cmd, shift, alt, ctrl);
             if (bConsume == true) {

@@ -1,6 +1,6 @@
 (function(){
-    function ExecuteScript (thiz, focus) {
-        var copen = thiz.document;
+    function ExecuteScript (widget, focus) {
+        var copen = widget.document;
         try {
             var content = "";
             for (idx = 0; idx < copen.length; ++idx) {
@@ -29,8 +29,8 @@
         }
     }
 
-    function ExecuteSlash (thiz, focus) {
-        var copen = thiz.document;
+    function ExecuteSlash (widget, focus) {
+        var copen = widget.document;
         try {
             var content = "";
             for (idx = 0; idx < copen.length; ++idx) {
@@ -77,8 +77,8 @@
         }
     }
 
-    function ExecuteCommand (thiz, editor){
-        copen = thiz.document;
+    function ExecuteCommand (widget, focus){
+        copen = widget.document;
         try {
             var content = "";
             for (idx = 0; idx < copen.length; ++idx) {
@@ -88,7 +88,7 @@
                 return;
             }
 
-            var caller = function (copen, editor, arg) {
+            var caller = function (copen, focus, arg) {
                 copen.deleteChars(0, copen.length);
                 copen.insertChars("Not command: " + arg);
             };
@@ -112,7 +112,7 @@
             var firstChar = content.charAt(0);
             switch (firstChar) {
                 case ":":
-                    opeRunner (copen, editor, content);
+                    opeRunner (copen, focus, content);
                     break;
                 default:
                     break;
@@ -211,5 +211,18 @@
         this.handle.lexerSync(lexer_commander);
     };
 
-    return Inherite(Interact, BaseObj);
+    Inherite(Interact, BaseObj);
+
+    Interact.prototype.ExecuteCommand = function (cmd) {
+        this.handle.document.deleteChars(0, this.handle.document.length);
+        this.handle.document.insertChars(cmd);
+        this.handle.sync(SCI_GOTOPOS, this.handle.document.length, 0x00);
+        var focus = windows.focusMgr.focusEdit();
+        ExecuteCommand(this.handle, focus);
+    }
+
+    Interact.prototype.ExecuteScript = function (cmd) {
+    }
+
+    return Interact;
 })();

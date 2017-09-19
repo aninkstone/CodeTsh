@@ -10,5 +10,7 @@
             chars += String.fromCharCode(c);
         }
         editor.search(chars);
+
+        return true;
     }
 })();
