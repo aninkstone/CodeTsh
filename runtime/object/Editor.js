@@ -102,6 +102,35 @@
     Editor.prototype.focusOut = function () {
     }
 
+    Editor.prototype.codepage = function (codepage) {
+        this.sync(SCI_SETCODEPAGE, codepage);
+    }
+
+    Editor.prototype.doc = function (doc) {
+        this.document = doc;
+        var ext = FilePath.extname(doc.path);
+        switch (ext) {
+            case ".cpp":
+            case ".c":
+            case ".h":
+                this.lexerSync (lexer_c);
+                break;
+            case ".js":
+                this.lexerSync (lexer_javascript);
+                break;
+            case ".html":
+            case ".htm":
+                this.lexerSync (lexer_html);
+                break;
+            case ".txt":
+                this.lexerSync (lexer_customize);
+                break;
+            default:
+                this.lexerSync (lexer_default);
+                break;
+        };
+    }
+
     Editor.prototype.updateUI = function () {
         var caretP = this.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
         this.document.caretP = caretP;

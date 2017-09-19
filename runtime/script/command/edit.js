@@ -5,12 +5,13 @@
             doc.insertChars(fpath + " Invalidate path");
             return;
         }
-        fs = new FileSystem();
+
+        let fs = new FileSystem();
         if (!fs.isDirectory (fpath) && !fs.isRegularFile (fpath)) {
             return;
         }
 
-        abs = FilePath.win32.isAbsolute(fpath);
+        let abs = FilePath.win32.isAbsolute(fpath);
         if (!abs) {
             if (fpath == '.') {
                 fpath = set.runtime.curr;
@@ -21,10 +22,13 @@
         }
 
         if (fs.isRegularFile (fpath)) {
-            content = fs.readFile(fpath);
-            open = new Document ();
+            var open = new Document ();
+            fs.readFile(fpath, function (err, content) {
+                open.insertChars(content);
+            });
             open.direct = fpath;
-            editor.setDocument(open);
+            editor.doc(open);
+            editor.ro (true);
         }
     };
 })();

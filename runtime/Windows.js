@@ -24,6 +24,14 @@
     Stack.prototype.pop = function () {
         return this.items.pop();
     }
+    
+    Stack.prototype.remove = function (ele) {
+        let idx = this.items.indexOf(ele);
+        if (idx != -1) {
+            this.items.splice(idx, 1);
+        }
+    }
+    
     Stack.prototype.isEmpty = function () {
         return this.items.length == 0;
     }
@@ -52,6 +60,14 @@
 
     FocusManager.prototype.focusEditPOP = function () {
         return this.edits.pop();
+    }
+    
+    FocusManager.prototype.removeEdit = function (widget) {
+        this.edits.remove(widget);
+    }
+    
+    FocusManager.prototype.removeCtrl = function (widget) {
+        this.ctrls.remove(widget);
     }
 
     FocusManager.prototype.focusTo = function (view) {
@@ -698,11 +714,13 @@
 
         switch (widget.type) {
             case "Edit":
+                this.focusMgr.removeEdit(widget);
                 closeEdit(widget);
                 break;
             case "Inet":
                 break;
             case "Nerd":
+                this.focusMgr.removeCtrl(widget);
                 closeNerd(widget);
                 break;
             case "Snap":

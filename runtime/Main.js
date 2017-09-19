@@ -141,6 +141,13 @@ NerdTree = require(set.runtime.path + "/runtime/NerdTree.js");
 EditView = require(set.runtime.path + "/runtime/EditView.js");
 Windows =  require(set.runtime.path + "/runtime/Windows.js");
 
+//(function(){ //panic
+//    let fs = new FileSystem();
+//    var dc = new Document();
+//    fs.readFile ("./CodeTor.txt", function (err, ctx){
+//        dc.insertChars(ctx);
+//    });
+//})();
 
 //var t = new Thread ();
 //t.run (function (){

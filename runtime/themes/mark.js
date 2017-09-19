@@ -98,4 +98,3 @@ function* lexer_mark_extral () {
     yield [SCI_MARKERSETBACK, 4, 0xFFE0E0E0];
     yield [SCI_MARKERSETBACKSELECTED, 4, 0xFF];
 }
-

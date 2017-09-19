@@ -89,32 +89,10 @@
             return -1;
         }
 
-        handle.document = doc;
         handle.setFocus();
-
-        var ext = FilePath.extname(doc.path);
-        switch (ext) {
-            case ".cpp":
-            case ".c":
-            case ".h":
-                lexerSync (handle, lexer_c);
-                break;
-            case ".js":
-                lexerSync (handle, lexer_javascript);
-                break;
-            case ".html":
-            case ".htm":
-                lexerSync (handle, lexer_html);
-                break;
-            case ".txt":
-                lexerSync (handle, lexer_customize);
-                break;
-            default:
-                lexerSync (handle, lexer_default);
-                break;
-        };
+        handle.doc (doc);
         handle.sync(SCI_GOTOPOS, handle.document.caretP, 0x00);
-        handle.sync(SCI_SETCODEPAGE, 0, 0x00);
+        handle.codepage(0);
         handle.ro (true);
     }
 
