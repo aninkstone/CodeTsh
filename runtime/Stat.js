@@ -47,7 +47,8 @@
         var p = "";
         try {
             var doc = context.view.edit.handle.document;
-            p = FilePath.basename (doc.path);
+            let fp = new FilePath ();
+            p = fp.baseName (doc.path);
             if (doc.savepoint == false) {
                 p += " [Unsaved]"
             }
@@ -61,7 +62,7 @@
     function draw_99 (context, canvas, paint, offset) {
         try {
             var cp = context.view.edit.handle.sync(SCI_GETCURRENTPOS, 0x00, 0x00);
-            var ln = context.view.edit.handle.line('.');
+            var ln = context.view.edit.handle.lineNumber('.');
             var lc = context.view.edit.handle.sync(SCI_GETLINECOUNT);
 
             var beg = context.view.edit.handle.document.lineStart(ln);

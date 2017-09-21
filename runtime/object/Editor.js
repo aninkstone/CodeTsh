@@ -110,7 +110,8 @@
         let lex = lexer_default;
         this.document = doc;
         if (typeof lexer == 'undefined'){
-            var ext = FilePath.extname(doc.path);
+            let fp = new FilePath ();
+            var ext = fp.extName(doc.path);
             switch (ext) {
                 case ".cpp":
                 case ".c":
@@ -135,7 +136,7 @@
     }
 
     Editor.prototype.updateUI = function () {
-        var caretP = this.line(0, 0);
+        var caretP = this.lineNumber(0, 0);
         this.document.caretP = caretP;
     }
 
@@ -194,6 +195,41 @@
         }
     }
 
+    Editor.prototype.line = function (lnum, end) {
+        let arr = [];
+
+        let l = (n) => {
+            let s = this.document.lineStart(n);
+            let e = this.document.lineEnd(n);
+            var t = "";
+            for (let b = s; b <= e; ++b) {
+                let c = String.fromCharCode(this.document.charAt(b));
+                t += c;
+            }
+            return t;
+        }
+
+        let s = (expr) => {
+            switch (expr) {
+                case '.':
+                    let n = this.lineNumber('.');
+                    return l (n);
+                default:
+                    break;
+            }
+        };
+
+        switch (typeof lnum) {
+            case 'string':
+                return s (lnum);
+            case 'number':
+            default:
+                break;
+        }
+
+        return arr;
+    }
+
     /*
     {expr} the result is a number, which is the line number of the file position given with {expr}. The accepted positions are:
     .  the cursor position
@@ -202,10 +238,10 @@
     w0 first line visible in current window
     w$ last visiable in current window
     */
-    Editor.prototype.line = function (expr) {
+    Editor.prototype.lineNumber = function (expr) {
+        var cur = this.sync(SCI_GETCURRENTPOS);
         switch (expr) {
             case '.':
-                var cur = this.sync(SCI_GETCURRENTPOS);
                 return this.sync(SCI_LINEFROMPOSITION, cur);
             default:
                 break;

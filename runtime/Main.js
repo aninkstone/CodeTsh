@@ -77,6 +77,8 @@ var set = {
     },
     documents: new Map (),
     window: {},
+    cmdpath: "",
+    keypath: "",
 };
 
 var $ = {
@@ -91,6 +93,8 @@ var windows = {};
 
 set.runtime.path = (new FileSystem()).getcwd();
 set.runtime.curr = (new FileSystem()).getcwd();
+set.runtime.cmdpath = set.runtime.path + "/runtime/script/cmd/";
+set.runtime.keypath = set.runtime.path + "/runtime/script/key/";
 
 require(set.runtime.path + "/runtime/object/BaseObj.js");
 require(set.runtime.path + "/runtime/Language.js");
@@ -99,7 +103,6 @@ require(set.runtime.path + "/runtime/object/Document.js");
 var NewWidget = require(set.runtime.path + "/runtime/object/Widget.js");
 var NewEditor = require(set.runtime.path + "/runtime/object/Editor.js");
 
-var FilePath = require(set.runtime.path + "/runtime/Path.js");
 //var defaultDoc = $.api.document.createDocument("./CodeTor.txt");
 var defaultDoc = $.api.document.createDocument("runtime/Windows.js");
 var consoleDoc = $.api.document.createDocument("./tmp/copen.txt");
@@ -168,7 +171,8 @@ function lexerSync (handle, lex) {
 };
 
 function loadLexer (editor, path) {
-    ext = FilePath.extname(path);
+    let fp = new FilePath();
+    ext = fp.extName(path);
     switch (ext) {
         case ".cpp":
         case ".c":
@@ -184,7 +188,7 @@ function loadLexer (editor, path) {
 function ExecuteCommand (widget, cmd, shift, alt, ctrl){
     try {
         fs = new FileSystem();
-        script = fs.readFile(set.runtime.path + "/runtime/script/keymap/" + cmd + ".js");
+        script = fs.readFile(set.runtime.keypath + cmd + ".js");
         script = eval(script);
         if (ctrl == true) {
             set.vim.cmd += "C_";

@@ -72,7 +72,8 @@
     }
 
     var OnSavePointHandle = function (doc){
-        var ext = FilePath.extname(doc.path);
+        let fp = new FilePath ();
+        let ext = fp.extName(doc.path);
         switch (ext) {
             case ".cpp":
             case ".c":
@@ -174,7 +175,11 @@
         },
 
         openDocument: function (fpath, cb) {
-            var doc = null;
+            let doc = null;
+            let fs = new FileSystem ();
+            let fp = new FilePath ();
+            fpath = fp.absPath(fpath);
+
             if (set.documents.has (fpath) == false) {
                 if (typeof cb == 'undefined') {
                     doc = new Document (fpath, defaultCB);

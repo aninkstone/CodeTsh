@@ -1,6 +1,7 @@
 (function (){
     function Edit (p, view) {
         this.view = view;
+        this.FilePath = new FilePath();
 
         this.keyUHandle = function (key) {
             return HandlerDefault.OnKeyU.bind(this.handle)(key);
@@ -19,7 +20,7 @@
                 case "SYS:KEY":
                     return this.keyDHandle.bind(this)(argument.key, argument.shift, argument.alt, argument.ctrl);
                 case "SYS:MODIFIED":
-                    if (this.handle.document.path == "./tmp/copen.txt") {
+                    if (this.FilePath.fileName(this.handle.document.path) == "copen.txt") {
                         this.handle.sync(SCI_DOCUMENTEND);
                     }
                     break;
